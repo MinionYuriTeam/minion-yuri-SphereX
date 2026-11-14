@@ -9,15 +9,47 @@
 </head>
 
 <body>
-    <h1>Minion Yuri</h1>
-    <div class="nav-bar">
-        <ul>
-            <li><a href="frontend/index.html">Image Magnifier</a></li>
-            <li><a href="">Data Acces</a></li>
-            <li><a href="">Information</a></li>
-            <li><a href="">Documentation</a></li>
-        </ul>
-    </div>
+    <nav class="nav-bar">
+        <div class="nav-inner">
+            <h1 class="site-title" href="index.html">Minion Yuri</h1>
+            <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="navList" aria-label="Open menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+            </button>
+
+            <ul class="nav-list" id="navList">
+            <li><a class="nav-link" href="frontend/index.html">Image Magnifier</a></li>
+
+            <li>
+                <button class="nav-link" id="dataBtn" aria-expanded="false" aria-haspopup="true" aria-controls="dataMenu">
+                Data Access <span class="caret" aria-hidden="true"></span>
+                </button>
+                <ul class="dropdown" id="dataMenu" aria-label="Data Access submenu">
+                <li><a href="#">Data Explorers</a></li>
+                <li><a href="#">APIs</a></li>
+                <li><a href="#">Browsable Directories</a></li>
+                <li><a href="#">Python Packages</a></li>
+                </ul>
+            </li>
+
+            <li>
+                <button class="nav-link" id="infoBtn" aria-expanded="false" aria-haspopup="true" aria-controls="infoMenu">
+                Information <span class="caret" aria-hidden="true"></span>
+                </button>
+                <ul class="dropdown" id="infoMenu" aria-label="Information submenu">
+                <li><a href="#">Team</a></li>
+                <li><a href="#">How it works</a></li>
+                <li><a href="#">About the Data</a></li>
+                <li><a href="#">Mission Overview</a></li>
+                </ul>
+            </li>
+
+            <li><a class="nav-link" href="#">Documentation</a></li>
+            </ul>
+        </div>
+    </nav>
+
 
     <div class="toolbar">
         <div class="tool-group">
@@ -119,6 +151,7 @@
         </div>
     </footer>
     <script src="/frontend/js/image_magnifier.js"></script>
+        <script src="/frontend/js/navbar.js"></script>
 </body>
 
 </html>
