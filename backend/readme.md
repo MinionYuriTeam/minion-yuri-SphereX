@@ -1,6 +1,8 @@
 # backend
 
 Python does all the astronomy; the frontend only gets JSON and PNGs.
+For the whole project (and how to connect the frontend), see the
+[root README](../README.md).
 
 ```
 backend/
