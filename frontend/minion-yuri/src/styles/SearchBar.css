@@ -1,0 +1,37 @@
+/* SAM — styles for the search form (SearchBar.js) */
+form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+label {
+  width: 100%;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+input {
+  flex: 1;
+  min-width: 200px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #243049;
+  background: #0e1526;
+  color: #e6eaf2;
+  font-family: monospace;
+  font-size: 14px;
+}
+
+input:focus {
+  outline: 2px solid #ff8a4c;
+  outline-offset: 2px;
+}
+
+.search-error {
+  width: 100%;
+  margin: 0;
+  font-size: 13px;
+  color: #ff8a4c;
+}

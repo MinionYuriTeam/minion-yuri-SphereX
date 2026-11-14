@@ -1,0 +1,32 @@
+.presets {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.presets span {
+  font-size: 13px;
+  color: #8c96ab;
+  margin-right: 6px;
+}
+
+.presets button {
+  border-radius: 99px;
+  font-size: 13px;
+  background: #131b2e;
+  border: 1px solid #243049;
+  color: #e6eaf2;
+  font-weight: 400;
+}
+
+.presets button:hover {
+  border-color: #8c96ab;
+}
+
+.presets button.active {
+  background: #e6eaf2;
+  border-color: #e6eaf2;
+  color: #0b1120;
+  font-weight: 600;
+}
