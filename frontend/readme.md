@@ -1,5 +1,5 @@
 # Minion-yuri Home-page
-A page made by 
+A page made by
 
 ## Installation
 ```bash
