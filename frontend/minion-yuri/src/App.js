@@ -13,6 +13,7 @@ import ShareLink from './components/ShareLink';     // F7
 // SHOYA
 import BandPicker from './components/BandPicker';   // F3/F5, later F10
 import RunBackendHelp from './components/RunBackendHelp'; // "start your own backend" help
+import EasterEgg from './components/EasterEgg';           // ↑↑↓↓←→←→ B A Enter
 // JAY
 import Loupe from './components/Loupe';                   // F6
 import ViewToggle from './components/ViewToggle';         // F9
@@ -109,6 +110,7 @@ function App() {
 
   return (
     <div className="app">
+      <EasterEgg />
       <header className="topbar">
         <div>
           <p className="eyebrow">NASA SPHEREx · Infrared sky explorer</p>

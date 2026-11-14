@@ -411,6 +411,11 @@ on the server.
 - **Don't commit data.** `backend/output/` and `.venv/` are git-ignored.
 - **Blocked for 30+ minutes?** Say so in the group chat.
 
+## Easter Egg 🕹️
+
+Type **↑ ↑ ↓ ↓ ← → ← → B A Enter** anywhere on the site (not inside the search
+box) and see what happens. Esc to get back to work.
+
 ## Credits
 
 - This research has made use of the **NASA/IPAC Infrared Science Archive (IRSA)**,

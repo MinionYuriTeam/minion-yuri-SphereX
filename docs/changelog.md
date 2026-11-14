@@ -2,6 +2,25 @@
 
 Newest first. One entry per piece of work, with the branch it landed on.
 
+## 14 Nov 2026: Easter egg: SPACE JUNK SWEEPER (`frontendApiConnection`)
+
+- Type **↑ ↑ ↓ ↓ ← → ← → B A Enter** anywhere on the site (not in a text
+  field) to open an original arcade shooter: fly a survey satellite and clear
+  drifting space junk so SPHEREx can see the stars. Big junk breaks into
+  smaller pieces, waves get bigger, best score is remembered.
+- Controls: ← → turn · ↑ thrust · Space fire · P pause · M sound · Esc leave.
+- Sound effects are synthesised with the Web Audio API (no audio files):
+  laser, crunches, engine rumble, boom, chimes. M mutes and is remembered.
+- No libraries or downloads; works on the public site without a backend.
+- Files: `src/components/EasterEgg.js` (key listener), `SpaceJunkSweeper.js`
+  (game), `src/styles/EasterEgg.css`.
+- Tested in the browser:
+  - The code opens it.
+  - Firing, scoring and lives work.
+  - Sounds play and M mutes them.
+  - Esc closes it and releases the audio.
+  - The page's keyboard shortcuts don't fire while playing.
+
 ## 14 Nov 2026: Built-in test targets + "run your own backend" (`frontendApiConnection`)
 
 Hugging Face paused our free Space (CPU quota) and Render isn't free, so the
