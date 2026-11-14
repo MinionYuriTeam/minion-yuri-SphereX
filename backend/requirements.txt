@@ -1,0 +1,9 @@
+astropy==8.0.2
+astroquery==0.4.11
+fastapi==0.163.0
+matplotlib==3.11.2
+numpy==2.5.4
+pillow==13.0.0
+pyvo==1.10.0
+requests==2.34.2
+uvicorn==0.54.0
