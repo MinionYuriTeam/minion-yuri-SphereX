@@ -12,27 +12,91 @@
     <h1>Minion Yuri</h1>
     <div class="nav-bar">
         <ul>
-            <li><a href="">Image Magnifier</a></li>
+            <li><a href="frontend/index.html">Image Magnifier</a></li>
             <li><a href="">Data Acces</a></li>
             <li><a href="">Information</a></li>
             <li><a href="">Documentation</a></li>
         </ul>
     </div>
 
-    <div class="controls">
-        <label>Lens Size
+    <div class="toolbar">
+        <div class="tool-group">
+            Lens
             <input type="range" id="lensSize" min="80" max="320" value="180">
-        </label>
-        <label>Zoom
-            <input type="range" id="zoomLevel" min="1.5" max="6" step="0.5" value="2.5">
-        </label>
-        <label>
-            <input type="file" id="fileInput" accept="image/">  <!-- change to file extension for NASA specific image formats-->
-        </label>
+            <span class="badge" id="lensBadge">180 px</span>
+        </div>
+
+        <div class="tool-group">
+            <div class="stepper">
+            <button class="step-btn" id="zoomOut" title="Zoom out (−)">−</button>
+            <button class="step-btn" id="zoomIn" title="Zoom in (+)">+</button>
+            </div>
+            Zoom
+            <input type="range" id="zoomLevel" min="1.5" max="10" step="0.5" value="2.5">
+            <span class="badge" id="zoomBadge">2.5×</span>
+        </div>
+
+        <div class="tool-group">
+            <input type="file" id="fileInput" accept="image/*">
+        </div>
     </div>
+
+    <div class="readout">
+        <span>X <input type="number" id="coordX" min="0" step="1" value="0"></span>
+        <span>Y <input type="number" id="coordY" min="0" step="1" value="0"></span>
+        <span><span class="swatch" id="swatch"></span><span id="hexVal">—</span></span>
+        <span>source: <strong id="dimVal">—</strong></span>
+    </div>
+    <button id="helpBtn" title="Help — all features">?</button>
     <div class="stage" id="stage">
     <img id="image" src="image.webp">
     <div class="lens" id="lens"></div>
+    </div>
+
+    <div class="modal-overlay" id="helpModal">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+            <button id="closeModal" title="Close">×</button>
+            <h2 id="modalTitle">Guide — all features</h2>
+
+            <h3>Loupe basics</h3>
+            <ul>
+            <li><span class="what">Show the magnifier and inspect the image</span><kbd>hover</kbd></li>
+            <li><span class="what">Pan the view inside the lens</span><kbd>move mouse</kbd></li>
+            <li><span class="what">Freeze / unfreeze the loupe in place</span><kbd>double-click</kbd> or <kbd>P</kbd></li>
+            </ul>
+
+            <h3>Zoom</h3>
+            <ul>
+            <li><span class="what">Zoom in</span><kbd>+</kbd> / <kbd>+</kbd> button / <kbd>wheel up</kbd></li>
+            <li><span class="what">Zoom out</span><kbd>−</kbd> / <kbd>−</kbd> button / <kbd>wheel down</kbd></li>
+            <li><span class="what">Fine control</span><kbd>zoom slider</kbd> (1.5× – 10×)</li>
+            </ul>
+
+            <h3>Lens size</h3>
+            <ul>
+            <li><span class="what">Smaller lens (80 px min)</span><kbd>[</kbd></li>
+            <li><span class="what">Larger lens (320 px max)</span><kbd>]</kbd></li>
+            <li><span class="what">Exact size</span><kbd>lens slider</kbd></li>
+            </ul>
+
+            <h3>Precise inspection</h3>
+            <ul>
+            <li><span class="what">Jump the loupe to an exact pixel — type X and/or Y, press Enter; the lens pins itself (dashed border)</span><kbd>X / Y fields</kbd></li>
+            <li><span class="what">Live readout: cursor coordinates in original-image pixels, hex color + swatch under the cursor, source dimensions</span><kbd>auto</kbd></li>
+            </ul>
+
+            <h3>Your own image</h3>
+            <ul>
+            <li><span class="what">Load any local image — the magnifier, sampler, and coordinate fields all work on it</span><kbd>file picker</kbd></li>
+            </ul>
+
+            <h3>Tips</h3>
+            <ul>
+            <li><span class="what">Shortcut keys are ignored while you're typing in an input or dragging a slider</span></li>
+            <li><span class="what">Mouse movement is ignored while the lens is pinned, so readouts stay steady — double-click again to release</span></li>
+            <li><span class="what">Close this guide with Esc</span><kbd>Esc</kbd></li>
+            </ul>
+        </div>
     </div>
 
     <footer class="footer">
