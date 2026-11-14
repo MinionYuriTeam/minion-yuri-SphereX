@@ -80,7 +80,7 @@ function App() {
             index={index}
             setIndex={setIndex}
             fov={view.fov}
-            side={<><Loupe /><DifferenceView /></>}
+            side={<><Loupe imageUrl={data.epochs[index]?.png_url} /><DifferenceView /></>}
           >
             <FovPicker
               fov={view.fov}

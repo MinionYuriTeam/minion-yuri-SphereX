@@ -42,7 +42,8 @@
 }
 
 .side {
-  flex: 1 1 170px;
+  flex: 1 1 260px;  /* room for Jay's loupe */
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 12px;
