@@ -1,0 +1,28 @@
+/* Shared button styles — used by search, presets, FOV, band, player */
+button {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #243049;
+  background: #0e1526;
+  color: #e6eaf2;
+  font: inherit;
+  cursor: pointer;
+}
+
+button:hover {
+  border-color: #8c96ab;
+}
+
+button[type="submit"],
+button.active {
+  background: #ff8a4c;
+  border-color: #ff8a4c;
+  color: #1a0d05;
+  font-weight: 700;
+}
+
+/* small labels next to buttons ("Try one of these", "Field of view") */
+.row span {
+  font-size: 13px;
+  color: #8c96ab;
+}

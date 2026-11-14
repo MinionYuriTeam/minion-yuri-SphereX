@@ -1,0 +1,40 @@
+.fov {
+  background: #0e1526;
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fov-label {
+  font-size: 12px;
+  color: #8c96ab;
+}
+
+.fov-buttons {
+  display: flex;
+  gap: 4px;
+}
+
+.fov-buttons button {
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  background: #131b2e;
+  border: 1px solid #243049;
+  color: #e6eaf2;
+  font-weight: 400;
+}
+
+.fov-buttons button:hover {
+  border-color: #8c96ab;
+}
+
+.fov-buttons button.active {
+  background: #e6eaf2;
+  border-color: #e6eaf2;
+  color: #0b1120;
+  font-weight: 600;
+}
