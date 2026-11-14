@@ -124,10 +124,11 @@ def _aligned_frame(exposure, cutout, grid):
             "mjd": float(cutout.header.get("MJD-AVG", exposure["mjd"]))}
 
 
-def _group_by_visit(frames, gap_days):
+def _group_by_visit(frames, gap_days, max_span_days=14.0):
     groups = []
     for frame in frames:  # frames are sorted by date
-        if groups and frame["mjd"] - groups[-1][-1]["mjd"] <= gap_days:
+        if (groups and frame["mjd"] - groups[-1][-1]["mjd"] <= gap_days
+                and frame["mjd"] - groups[-1][0]["mjd"] <= max_span_days):
             groups[-1].append(frame)
         else:
             groups.append([frame])
