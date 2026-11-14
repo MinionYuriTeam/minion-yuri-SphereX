@@ -38,11 +38,17 @@ class Cutout:
 
 
 def load_cutout(exposure, coord, fov_arcmin, cache_dir):
-    """The square around `coord` from one exposure, from disk if we have it."""
-    path = cache_dir / f"{exposure['obs_id']}_D{exposure['array']}.fits"
-    if path.exists():
-        with fits.open(path) as hdus:
-            return Cutout(hdus[0].data, hdus["FLAGS"].data, hdus[0].header)
+    """The square around `coord` from one exposure, from disk if we have it.
+
+    cache_dir is .../cutouts/<fov>arcmin/. A square cached for a BIGGER field
+    of view also covers this one, so it is reused instead of downloading again.
+    """
+    name = f"{exposure['obs_id']}_D{exposure['array']}.fits"
+    path = cache_dir / name
+    for candidate in [path] + _bigger_cached(cache_dir, name, fov_arcmin):
+        if candidate.exists():
+            with fits.open(candidate) as hdus:
+                return Cutout(hdus[0].data, hdus["FLAGS"].data, hdus[0].header)
 
     # The output square is north-up but the detector is rotated, so download
     # a box sqrt(2) bigger (plus a small margin) to cover it at any angle.
@@ -51,6 +57,19 @@ def load_cutout(exposure, coord, fov_arcmin, cache_dir):
     fits.HDUList([fits.PrimaryHDU(cutout.image, cutout.header),
                   fits.ImageHDU(cutout.flags, name="FLAGS")]).writeto(path, overwrite=True)
     return cutout
+
+
+def _bigger_cached(cache_dir, name, fov_arcmin):
+    """Cached files with the same name for bigger fields of view, smallest first."""
+    found = []
+    for folder in cache_dir.parent.glob("*arcmin"):
+        try:
+            fov = float(folder.name.removesuffix("arcmin"))
+        except ValueError:
+            continue
+        if fov > fov_arcmin and (folder / name).exists():
+            found.append((fov, folder / name))
+    return [p for _, p in sorted(found)]
 
 
 def read_cutout(url, coord, box_arcmin):

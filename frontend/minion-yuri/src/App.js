@@ -12,6 +12,7 @@ import BlinkPlayer from './components/BlinkPlayer'; // F4
 import ShareLink from './components/ShareLink';     // F7
 // SHOYA
 import BandPicker from './components/BandPicker';   // F3/F5, later F10
+import RunBackendHelp from './components/RunBackendHelp'; // "start your own backend" help
 // JAY
 import Loupe from './components/Loupe';                   // F6
 import ViewToggle from './components/ViewToggle';         // F9
@@ -68,7 +69,7 @@ function App() {
   const [index, setIndex] = useState(0);          // which frame is showing
   const [loadTime, setLoadTime] = useState(null); // seconds, shown next to Field of view
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(null);       // Error from getFrames (err.code 'NO_BACKEND' = no backend running)
   const [retry, setRetry] = useState(0);          // bump to load the same view again
 
   // every time the view changes (search, preset, FOV, array): load the frames
@@ -76,7 +77,7 @@ function App() {
     const controller = new AbortController();     // cancels this request if the view changes again
     const start = performance.now();
     setLoading(true);
-    setError('');
+    setError(null);
     setData(null);
 
     getFrames(view, { signal: controller.signal })
@@ -86,7 +87,7 @@ function App() {
         setLoadTime(((performance.now() - start) / 1000).toFixed(1));
       })
       .catch((err) => {
-        if (err.name !== 'AbortError') setError(err.message);
+        if (err.name !== 'AbortError') setError(err);
       })
       .finally(() => {
         if (!controller.signal.aborted) setLoading(false);
@@ -150,10 +151,18 @@ function App() {
           <section className="panel player-panel">
             {loading && <Loading />}
 
-            {error && (
+            {error?.code === 'NO_BACKEND' && (
+              <RunBackendHelp
+                api={error.api}
+                presetName={TARGETS.find((t) => t.ra === view.ra && t.dec === view.dec)?.name}
+                onRetry={() => setRetry((r) => r + 1)}
+              />
+            )}
+
+            {error && error.code !== 'NO_BACKEND' && (
               <div className="status status-error">
                 <p><strong>Couldn't load this patch.</strong></p>
-                <p>{error}</p>
+                <p>{error.message}</p>
                 <button onClick={() => setRetry((r) => r + 1)}>Try again</button>
               </div>
             )}

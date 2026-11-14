@@ -49,7 +49,9 @@ function SearchBar({ targets, onSearch }) {
       onSearch({ ra: found.ra_now ?? found.ra, dec: found.dec_now ?? found.dec });
     } catch (err) {
       setError(
-        err.status === 404
+        err.code === "NO_BACKEND"
+          ? `Looking up "${text}" needs the backend running on your computer. Pick one of the built-in targets below, or type decimal coordinates (e.g. 269.45, 4.69) to see how to start the backend.`
+          : err.status === 404
           ? `Couldn't find "${text}". Try a name like Barnard's Star, or coordinates like 269.45, 4.69 or 08h55m10.8s -07d14m42s`
           : err.message
       );

@@ -1,0 +1,84 @@
+{
+ "array": 3,
+ "wavelength_um": [
+  1.63,
+  2.435
+ ],
+ "epochs": [
+  {
+   "date": "2025-05-18",
+   "datetime": "2025-05-18T04:53:32.932",
+   "date_start": "2025-05-16T22:57:21.196",
+   "date_end": "2025-05-20T16:40:34.079",
+   "n_exposures": 6,
+   "png_url": "baked/r-draconis/D3_fov10/epoch_00.png",
+   "flags_png_url": "baked/r-draconis/D3_fov10/epoch_00_flags.png"
+  },
+  {
+   "date": "2025-06-09",
+   "datetime": "2025-06-09T05:35:54.596",
+   "date_start": "2025-06-02T03:02:40.333",
+   "date_end": "2025-06-12T20:45:47.145",
+   "n_exposures": 15,
+   "png_url": "baked/r-draconis/D3_fov10/epoch_01.png",
+   "flags_png_url": "baked/r-draconis/D3_fov10/epoch_01_flags.png"
+  },
+  {
+   "date": "2025-12-29",
+   "datetime": "2025-12-29T23:50:11.799",
+   "date_start": "2025-12-26T05:14:57.344",
+   "date_end": "2026-01-03T13:42:10.781",
+   "n_exposures": 20,
+   "png_url": "baked/r-draconis/D3_fov10/epoch_02.png",
+   "flags_png_url": "baked/r-draconis/D3_fov10/epoch_02_flags.png"
+  },
+  {
+   "date": "2026-01-13",
+   "datetime": "2026-01-13T09:55:52.284",
+   "date_start": "2026-01-13T09:53:43.354",
+   "date_end": "2026-01-13T09:58:01.215",
+   "n_exposures": 3,
+   "png_url": "baked/r-draconis/D3_fov10/epoch_03.png",
+   "flags_png_url": "baked/r-draconis/D3_fov10/epoch_03_flags.png"
+  },
+  {
+   "date": "2026-04-23",
+   "datetime": "2026-04-23T03:16:55.523",
+   "date_start": "2026-04-22T07:57:40.431",
+   "date_end": "2026-04-24T15:24:32.927",
+   "n_exposures": 11,
+   "png_url": "baked/r-draconis/D3_fov10/epoch_04.png",
+   "flags_png_url": "baked/r-draconis/D3_fov10/epoch_04_flags.png"
+  },
+  {
+   "date": "2026-05-15",
+   "datetime": "2026-05-15T08:22:52.961",
+   "date_start": "2026-05-06T06:05:34.155",
+   "date_end": "2026-05-23T11:53:43.991",
+   "n_exposures": 23,
+   "png_url": "baked/r-draconis/D3_fov10/epoch_05.png",
+   "flags_png_url": "baked/r-draconis/D3_fov10/epoch_05_flags.png"
+  },
+  {
+   "date": "2026-06-10",
+   "datetime": "2026-06-10T17:18:12.277",
+   "date_start": "2026-06-08T13:55:44.836",
+   "date_end": "2026-06-12T20:40:39.719",
+   "n_exposures": 8,
+   "png_url": "baked/r-draconis/D3_fov10/epoch_06.png",
+   "flags_png_url": "baked/r-draconis/D3_fov10/epoch_06_flags.png"
+  }
+ ],
+ "ra": 248.167611,
+ "dec": 66.754979,
+ "fov": 10,
+ "size_px": 99,
+ "pixel_scale_arcsec": 6.15,
+ "display_range": [
+  -0.15510567277669907,
+  49.67017421722508
+ ],
+ "n_skipped": 5,
+ "n_failed": 0,
+ "baked": true
+}

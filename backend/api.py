@@ -23,6 +23,7 @@ import time
 
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from pipeline import (BadInput, NotFound, ResolverUnavailable, SearchUnavailable,
@@ -31,10 +32,20 @@ from pipeline.render import save_epoch_pngs
 from pipeline.settings import OUTPUT_ROOT, position_dir
 
 app = FastAPI(title="Minion Yuri SPHEREx API")
+# Any site may call this API, including the public frontend (stealingthemoon.earth)
+# calling a backend on the visitor's own machine (http://localhost:8000).
+# allow_private_network answers Chrome's "may a public site talk to localhost?"
+# check (Private / Local Network Access); Chrome may also ask the visitor.
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["GET"],
-                   allow_headers=["*"])
+                   allow_headers=["*"], allow_private_network=True)
 OUTPUT_ROOT.mkdir(parents=True, exist_ok=True)
 app.mount("/files", StaticFiles(directory=OUTPUT_ROOT), name="files")
+
+
+@app.get("/", include_in_schema=False)
+def home():
+    """The Hugging Face Space page opens '/': show the interactive API docs."""
+    return RedirectResponse("/docs")
 
 
 @app.get("/api/health")
