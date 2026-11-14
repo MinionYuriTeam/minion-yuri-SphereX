@@ -1,6 +1,8 @@
 # backend
 
 Python does all the astronomy; the frontend only gets JSON and PNGs.
+For the whole project (and how to connect the frontend), see the
+[root README](../README.md).
 
 ```
 backend/
@@ -135,15 +137,77 @@ for e in s.epochs:            # oldest first
 
 ## Command-line tool
 
+`epochs.py` makes pictures of one position without running the API. Run it
+from the **`backend/`** folder: `.venv` and `epochs.py` live there, so from the
+project root you get `no such file or directory: .venv/bin/python`.
+
 ```bash
-.venv/bin/python epochs.py                                  # asks for RA / Dec
-.venv/bin/python epochs.py 269.452075 4.693391              # all arrays, 3′
-.venv/bin/python epochs.py 269.446074 4.770708 --fov 5 --arrays 1 6
-.venv/bin/python epochs.py 269.452075 4.693391 --per-exposure
+cd backend
+.venv/bin/python epochs.py [ra] [dec] [--fov FOV] [--arrays N [N ...]] [--per-exposure]
 ```
 
-Writes `D<n>_frames.png` (grid with dates), `D<n>_frames.gif` (animation)
-and `D<n>_frames.fits` (cube + DATES table) to `output/<ra>_<dec>/`.
+### All arguments
+
+| Argument | Default | What it does |
+|---|---|---|
+| `ra` | asks you | Right Ascension in decimal degrees (0–360) |
+| `dec` | asks you | Declination in decimal degrees (−90 to 90) |
+| `--fov FOV` | `3` | Width of the square in **arcminutes**. Pixels across ≈ FOV × 9.76: `3` → 29 px, `5` → 49 px, `10` → 99 px, `31` → 303 px |
+| `--arrays N [N ...]` | `1 2 3 4 5 6` | Which detector arrays to make, 1 (short wavelength) to 6 (long). Several are separated by spaces: `--arrays 1 6` |
+| `--per-exposure` | off | One frame per **exposure** (~60 per array) instead of one per **visit** (~4–7 per array, exposures stacked) |
+| `-h`, `--help` | | Show this list in the terminal |
+
+Leave out `ra` and `dec` and it asks for them, like `main.py` does.
+
+### Examples
+
+```bash
+# ask for RA / Dec, all 6 arrays, 3′ square, one frame per visit
+.venv/bin/python epochs.py
+
+# Barnard's Star at its year-2000 position (the star itself is ~4.5′ north)
+.venv/bin/python epochs.py 269.452075 4.693391
+
+# Barnard's Star where it is today, 5′ square, only arrays 1 and 6
+.venv/bin/python epochs.py 269.446074 4.770708 --fov 5 --arrays 1 6
+
+# every single exposure instead of one frame per visit
+.venv/bin/python epochs.py 269.452075 4.693391 --per-exposure
+
+# a bigger square (~300 px); exposures that can't fill it are skipped
+.venv/bin/python epochs.py 269.446074 4.770708 --fov 31 --arrays 3
+
+# everything at once
+.venv/bin/python epochs.py 133.757786 -7.242023 --fov 10 --arrays 5 6 --per-exposure
+```
+
+### Visit vs exposure
+
+SPHEREx takes many exposures of a patch over a few days (a **visit**), then
+comes back about six months later. By default, exposures less than 7 days
+apart are stacked into one frame per visit. That removes cosmic rays and
+noise, so stars keep the same brightness and only real changes blink. The
+number in brackets on each frame of the PNG is how many exposures went in:
+`2025-08-21 (17)`. With `--per-exposure` every exposure is its own frame, which
+gives many more frames but more flicker.
+
+### Output
+
+Written to `output/<ra>_<dec>/` (e.g. `output/269.452075_4.693391/`), per array:
+
+| File | Contents |
+|---|---|
+| `D<n>_frames.png` | Every frame side by side, with dates |
+| `D<n>_frames.gif` | The frames as a blinking animation, oldest first |
+| `D<n>_frames.fits` | The frames as a data cube (MJy/sr) plus a `DATES` table, for astronomy tools |
+
+Running again with a different `--fov` or `--per-exposure` overwrites these
+three files. Downloads are cached in `output/<ra>_<dec>/cutouts/<fov>arcmin/`,
+so a second run with the same `--fov` takes seconds.
+
+The terminal prints, per array, the wavelength range, the number of frames and
+their size, how many exposures were skipped or failed, and each frame's date
+and exposure count.
 
 ## How it works, in plain words
 

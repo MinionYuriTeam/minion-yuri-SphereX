@@ -37,29 +37,65 @@ function readUrl() {
     ra: num('ra', TARGETS[0].ra),
     dec: num('dec', TARGETS[0].dec),
     fov: num('fov', 5),
-    array: num('array', 3),
+    array: num('array', TARGETS[0].array),
   };
+}
+
+// shown while the backend works; the first load of a new spot can take up to a minute
+function Loading() {
+  const [seconds, setSeconds] = useState(0);
+  useEffect(() => {
+    const timer = setInterval(() => setSeconds((s) => s + 1), 1000);
+    return () => clearInterval(timer);
+  }, []);
+  return (
+    <div className="status">
+      <div className="status-spinner" aria-hidden="true" />
+      <p><strong>Loading SPHEREx images… {seconds} s</strong></p>
+      <p>
+        {seconds < 8
+          ? 'Lining up every visit to this spot.'
+          : 'First time for this spot: downloading from NASA\'s archive. This can take up to a minute; next time it\'s instant.'}
+      </p>
+    </div>
+  );
 }
 
 function App() {
   const [view, setView] = useState(readUrl);
 
-  const [data, setData] = useState(null);         // the frames from the API (mock for now)
+  const [data, setData] = useState(null);         // the frames from the API
   const [index, setIndex] = useState(0);          // which frame is showing
   const [loadTime, setLoadTime] = useState(null); // seconds, shown next to Field of view
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [retry, setRetry] = useState(0);          // bump to load the same view again
 
-  // every time the view changes (search, preset, FOV): load the frames
+  // every time the view changes (search, preset, FOV, array): load the frames
   useEffect(() => {
+    const controller = new AbortController();     // cancels this request if the view changes again
     const start = performance.now();
-    getFrames(view).then((json) => {
-      setData(json);
-      setIndex(0);
-      setLoadTime(((performance.now() - start) / 1000).toFixed(1));
-    });
+    setLoading(true);
+    setError('');
+    setData(null);
+
+    getFrames(view, { signal: controller.signal })
+      .then((json) => {
+        setData(json);
+        setIndex(0);
+        setLoadTime(((performance.now() - start) / 1000).toFixed(1));
+      })
+      .catch((err) => {
+        if (err.name !== 'AbortError') setError(err.message);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false);
+      });
 
     const query = '?' + new URLSearchParams(view);
     window.history.replaceState(null, '', query + window.location.hash);
-  }, [view]);
+    return () => controller.abort();
+  }, [view, retry]);
 
   // which page is open: follows the part after # in the address bar
   const [page, setPage] = useState(window.location.hash);
@@ -100,24 +136,33 @@ function App() {
         <section className="panel">
           <SearchBar
             targets={TARGETS}
-            onSearch={({ ra, dec }) => setView({ ...view, ra, dec })}
+            onSearch={({ ra, dec, array }) => setView({ ...view, ra, dec, array: array ?? view.array })}
           />
           <Presets
             targets={TARGETS}
             current={view}
-            onPick={(t) => setView({ ...view, ra: t.ra, dec: t.dec })}
+            onPick={(t) => setView({ ...view, ra: t.ra, dec: t.dec, array: t.array ?? view.array })}
           />
         </section>
 
         {/* 2. Player on the left, info on the right (like the design) */}
         <div className="main">
           <section className="panel player-panel">
+            {loading && <Loading />}
+
+            {error && (
+              <div className="status status-error">
+                <p><strong>Couldn't load this patch.</strong></p>
+                <p>{error}</p>
+                <button onClick={() => setRetry((r) => r + 1)}>Try again</button>
+              </div>
+            )}
+
             {data && (
               <BlinkPlayer
                 epochs={data.epochs}
                 index={index}
                 setIndex={setIndex}
-                fov={view.fov}
                 side={<><Loupe imageUrl={data.epochs[index]?.png_url} /><DifferenceView /></>}
               >
                 <FovPicker
@@ -128,7 +173,16 @@ function App() {
               </BlinkPlayer>
             )}
 
-            <BandPicker />
+            {/* while loading or after an error the player is hidden, so keep FOV reachable */}
+            {!data && (
+              <FovPicker fov={view.fov} onChange={(f) => setView({ ...view, fov: f })} loadTime={null} />
+            )}
+
+            <BandPicker
+              array={view.array}
+              onChange={(a) => setView({ ...view, array: a })}
+              wavelength={data?.wavelength_um}
+            />
             <ViewToggle />
           </section>
 

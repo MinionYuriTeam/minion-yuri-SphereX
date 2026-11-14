@@ -94,3 +94,66 @@ input {
 .intro strong {
   color: #ff8a4c;
 }
+
+/* ===== LOADING / ERROR box in the player (App.js) ===== */
+.status {
+  aspect-ratio: 1;
+  max-width: 560px;
+  width: 100%;
+  background: #000;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 24px;
+  box-sizing: border-box;
+  text-align: center;
+  color: #c9d1e0;
+}
+
+.status p {
+  margin: 0;
+  max-width: 360px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.status-error strong {
+  color: #ff8a4c;
+}
+
+.status-spinner {
+  width: 36px;
+  height: 36px;
+  margin-bottom: 8px;
+  border: 3px solid #243049;
+  border-top-color: #ff8a4c;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* detector-array buttons (BandPicker.js) reuse the FOV look, with a wavelength line */
+.band-buttons {
+  flex-wrap: wrap;
+}
+
+.band-buttons button {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: auto;
+  min-height: 36px;
+  padding: 4px 10px;
+  line-height: 1.2;
+}
+
+.band-buttons small {
+  font-size: 10px;
+  opacity: 0.7;
+}
