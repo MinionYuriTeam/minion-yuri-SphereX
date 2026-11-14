@@ -27,13 +27,22 @@ const PAGES = {
   '#/data': AboutData,
 };
 
+function readUrl() {
+  const p = new URLSearchParams(window.location.search);
+  const num = (key, fallback) => {
+    const value = Number(p.get(key));
+    return p.get(key) === null || isNaN(value) ? fallback : value;
+  };
+  return {
+    ra: num('ra', TARGETS[0].ra),
+    dec: num('dec', TARGETS[0].dec),
+    fov: num('fov', 5),
+    array: num('array', 3),
+  };
+}
+
 function App() {
-  const [view, setView] = useState({
-    ra: TARGETS[0].ra,
-    dec: TARGETS[0].dec,
-    fov: 5,
-    array: 3,
-  });
+  const [view, setView] = useState(readUrl);
 
   const [data, setData] = useState(null);         // the frames from the API (mock for now)
   const [index, setIndex] = useState(0);          // which frame is showing
@@ -47,6 +56,9 @@ function App() {
       setIndex(0);
       setLoadTime(((performance.now() - start) / 1000).toFixed(1));
     });
+
+    const query = '?' + new URLSearchParams(view);
+    window.history.replaceState(null, '', query + window.location.hash);
   }, [view]);
 
   // which page is open: follows the part after # in the address bar
