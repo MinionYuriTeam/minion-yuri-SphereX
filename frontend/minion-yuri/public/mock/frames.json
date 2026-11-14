@@ -1,0 +1,10 @@
+{
+  "array": 3,
+  "wavelength_um": [1.63, 2.41],
+  "epochs": [
+    { "date": "2025-05-14", "n_exposures": 6, "png_url": "https://placehold.co/400x400/000000/ffffff?text=Epoch+1", "flags_png_url": null },
+    { "date": "2025-11-12", "n_exposures": 4, "png_url": "https://placehold.co/400x400/000000/ffffff?text=Epoch+2", "flags_png_url": null },
+    { "date": "2026-05-13", "n_exposures": 7, "png_url": "https://placehold.co/400x400/000000/ffffff?text=Epoch+3", "flags_png_url": null },
+    { "date": "2026-11-11", "n_exposures": 5, "png_url": "https://placehold.co/400x400/000000/ffffff?text=Epoch+4", "flags_png_url": null }
+  ]
+}
