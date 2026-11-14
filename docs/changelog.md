@@ -2,6 +2,26 @@
 
 Newest first. One entry per piece of work, with the branch it landed on.
 
+## 14 Nov 2026: Backend hosting on Hugging Face Spaces (`frontendApiConnection`)
+
+- **`deploy/huggingface/Dockerfile`**: Python 3.13 container for a Docker
+  Space: runs as user 1000, serves on port 7860, trusts the HTTPS proxy
+  (`--proxy-headers`) so PNG links are `https://`.
+- **`deploy/huggingface/README.md`**: the Space's page (front matter: Docker SDK,
+  port 7860) with endpoints and credits.
+- **`deploy/huggingface/deploy.sh <user>/<space>`**: clones the Space, replaces
+  it with `api.py`, `pipeline/`, `requirements.txt` + Dockerfile, commits, pushes.
+- **`deploy/precache.sh <url> [fov ...]`**: loads the 5 presets so they're cached
+  (run after each deploy or wake-up).
+- **`backend/api.py`**: `/` now redirects to `/docs`, so the Space page shows
+  the interactive API docs.
+- **Checked without Docker** (no container engine on the dev Mac):
+  - Every pinned package has a ready-made Linux build for Python 3.13.
+  - The assembled Space folder runs the way the Dockerfile runs it.
+  - `/` redirects; a first-time `/api/frames` took 22 s.
+  - With a faked HTTPS proxy header, PNG links come back as `https://…hf.space`.
+- README: new "Deploy the Backend (Hugging Face)" section.
+
 ## 14 Nov 2026: Frontend connected to the real backend (`frontendApiConnection`)
 
 - **`src/api/frames.js`**: uses the real backend by default. The address comes

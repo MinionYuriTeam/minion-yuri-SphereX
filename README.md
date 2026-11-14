@@ -45,6 +45,7 @@ Table of Contents
     - [1. Run the backend](#1-run-the-backend)
     - [2. Run the frontend](#2-run-the-frontend)
     - [3. Connect the frontend to the backend](#3-connect-the-frontend-to-the-backend)
+  - [Deploy the Backend (Hugging Face)](#deploy-the-backend-hugging-face)
   - [How It Works](#how-it-works)
   - [API](#api)
   - [Features and Owners](#features-and-owners)
@@ -58,7 +59,7 @@ Table of Contents
 - 🖥️ **Frontend:** React (Create React App), JavaScript, CSS
 - 🧠 **Backend:** Python, FastAPI, astropy, numpy, Pillow
 - 🛰️ **Data:** SPHEREx images from NASA/IPAC IRSA (search via SIA2, pixels from IRSA's AWS S3 copy), names via CDS Sesame, Gaia DR3 for proper motions
-- ☁️ **Hosting:** free tier for both apps (to be picked, see [Team](#team))
+- ☁️ **Hosting:** backend on a Hugging Face Space (Docker, free); frontend to be picked
 - 📦 **Package management:** npm (frontend), pip + venv (backend)
 
 ## Repository Structure
@@ -87,6 +88,10 @@ Table of Contents
     - components/           # search, player, loupe, presets, ...
     - pages/                # About the data, How it works, Team
   - README.md               # frontend details: who owns which component
+
+- deploy/
+  - huggingface/            # Dockerfile, Space README and deploy.sh for the backend
+  - precache.sh             # load the 5 presets once so they're cached on the server
 
 - docs/                     # requirements doc, prep slides, images, changelog
 ```
@@ -185,6 +190,49 @@ What the backend takes care of:
 > then back, makes git delete those files, including the downloads, so presets
 > load slowly once more. Since PR #5 `output/` is ignored, so this only happens
 > when you go back to older commits.
+
+## Deploy the Backend (Hugging Face)
+
+The backend runs as a free **Hugging Face Space** using Docker. A Space is its
+own git repo on huggingface.co; `deploy.sh` copies just the backend into it,
+and Hugging Face builds and runs the container.
+
+**Once: create the Space**
+1. Sign in at https://huggingface.co → **New Space**.
+2. Name it (e.g. `minion-yuri-api`), choose **Docker** → **Blank**, hardware
+   **CPU basic (free)**, visibility **Public**.
+3. Create an access token with **Write** permission at
+   https://huggingface.co/settings/tokens.
+
+**Every deploy**
+```bash
+deploy/huggingface/deploy.sh <hf-user>/minion-yuri-api
+```
+When git asks, use your Hugging Face username and the **token** as password
+(or run `HF_TOKEN=<token> deploy/huggingface/deploy.sh ...` to skip the prompt).
+The build takes a few minutes; follow it in the Space's **Logs** tab. The
+backend is then live at `https://<hf-user>-minion-yuri-api.hf.space`:
+- `/api/health` should answer `{"ok": true}`
+- `/` opens the interactive API docs
+
+**After every deploy or wake-up: pre-cache the presets**
+```bash
+deploy/precache.sh https://<hf-user>-minion-yuri-api.hf.space
+```
+Run it twice; the second run should take a few seconds per preset (F8: under 10 s).
+
+**Point the frontend at it:** build the frontend with
+`REACT_APP_API_URL=https://<hf-user>-minion-yuri-api.hf.space`.
+
+> [!note]
+> - **No extra settings needed.** The container trusts Hugging Face's HTTPS
+>   proxy, so PNG links come out as `https://<space>.hf.space/files/...`.
+>   `PUBLIC_BASE_URL` (a Space variable) is only needed for a custom domain.
+> - **Free Spaces sleep** after a period without visitors. The first request
+>   after that wakes it (about a minute) and the cache starts empty, so open the
+>   Space and re-run `precache.sh` before a demo.
+> - **The cache isn't permanent**: it lives in the container and is wiped by a
+>   restart or redeploy. Downloads are re-made on demand.
 
 ## How It Works
 

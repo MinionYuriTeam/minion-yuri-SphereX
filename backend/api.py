@@ -23,6 +23,7 @@ import time
 
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from pipeline import (BadInput, NotFound, ResolverUnavailable, SearchUnavailable,
@@ -35,6 +36,12 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["GET"],
                    allow_headers=["*"])
 OUTPUT_ROOT.mkdir(parents=True, exist_ok=True)
 app.mount("/files", StaticFiles(directory=OUTPUT_ROOT), name="files")
+
+
+@app.get("/", include_in_schema=False)
+def home():
+    """The Hugging Face Space page opens '/': show the interactive API docs."""
+    return RedirectResponse("/docs")
 
 
 @app.get("/api/health")
