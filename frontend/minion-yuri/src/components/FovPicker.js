@@ -2,7 +2,10 @@
 // Props it gets from App.js: fov, onChange(fov), loadTime
 import "../styles/FovPicker.css";
 
-const FOVS = [2, 5, 10];
+// arcminutes. Bigger fields show more sky but load slower the first time, and
+// more exposures are skipped (the target must be far enough from a detector edge
+// to fill the whole square). The backend allows up to 60.
+const FOVS = [2, 5, 10, 20, 40];
 
 function FovPicker({ fov, onChange, loadTime }) {
   return (

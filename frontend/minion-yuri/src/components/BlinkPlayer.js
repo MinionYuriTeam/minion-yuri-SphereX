@@ -1,5 +1,5 @@
 // SAM — F4 blink player
-// Props it gets from App.js: epochs, index, setIndex, fov
+// Props it gets from App.js: epochs, index, setIndex
 //   side     = what goes next to the image (Jay's loupe + difference)
 //   children = what goes next to Speed (the FovPicker)
 import { useEffect, useState } from "react";
@@ -7,7 +7,7 @@ import "../styles/BlinkPlayer.css";
 
 const SPEEDS = [1, 2, 5];
 
-function BlinkPlayer({ epochs, index, setIndex, side, children, fov = 5 }) {
+function BlinkPlayer({ epochs, index, setIndex, side, children }) {
   const [playing, setPlaying] = useState(true);
   const [fps, setFps] = useState(2);
 
@@ -19,8 +19,10 @@ function BlinkPlayer({ epochs, index, setIndex, side, children, fov = 5 }) {
     return () => clearInterval(timer);
   }, [playing, fps, epochs.length, setIndex]);
 
-  if (epochs.length === 0) return <p>No images for this patch.</p>;
-  const frame = epochs[index];
+  if (epochs.length === 0) {
+    return <p>No SPHEREx images for this patch on this detector array. Try another array or position.</p>;
+  }
+  const frame = epochs[Math.min(index, epochs.length - 1)];
 
   function step(d) {
     setPlaying(false);
@@ -34,7 +36,6 @@ function BlinkPlayer({ epochs, index, setIndex, side, children, fov = 5 }) {
           <img
             src={frame.png_url}
             alt={`Sky on ${frame.date}`}
-            style={{ transform: `scale(${5 / fov})` }} /* fake zoom for mock data — remove when the real API is live */
           />
           <div className="hud">
             <span>{frame.date}</span>

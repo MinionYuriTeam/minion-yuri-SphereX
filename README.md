@@ -122,39 +122,69 @@ npm install      # first time only
 npm start
 ```
 
-This opens http://localhost:3000. Out of the box it shows **mock data** from
-`public/mock/frames.json`, so the frontend works even without the backend.
+This opens http://localhost:3000 and talks to the backend at
+`http://localhost:8000`, so start the backend first.
 
 ### 3. Connect the frontend to the backend
 
-All backend calls go through one file:
-[`frontend/minion-yuri/src/api/frames.js`](frontend/minion-yuri/src/api/frames.js).
+**They're already connected.** With the backend on port 8000 and `npm start`
+running, the app loads real SPHEREx frames. All backend calls go through one
+file: [`frontend/minion-yuri/src/api/frames.js`](frontend/minion-yuri/src/api/frames.js).
 
-1. Start the backend on port 8000 (step 1).
-2. In `src/api/frames.js`, set `USE_MOCK = false`. `API_URL` already points at
-   `http://localhost:8000`.
-3. Start the frontend (step 2) and click a preset. Frames now come from the real API.
+Settings live in `frontend/minion-yuri/.env.local` (copy
+[`.env.example`](frontend/minion-yuri/.env.example)), and you restart `npm start`
+after changing them:
 
-What the backend already takes care of:
-- **CORS is open**, so the browser lets `localhost:3000` call `localhost:8000`.
+| Setting | Default | Use it for |
+|---|---|---|
+| `REACT_APP_API_URL` | `http://localhost:8000` | The backend's address, e.g. the deployed backend |
+| `REACT_APP_USE_MOCK` | `false` | `true` = use `public/mock/frames.json` instead of the backend (works offline) |
+
+**What happens in the app:**
+
+| You do | Frontend | Backend call |
+|---|---|---|
+| Open the page | Reads `?ra=&dec=&fov=&array=` from the URL (default: Barnard's Star, array 1) | `GET /api/frames` |
+| Click a preset | Moves to that target **and** its best detector array | `GET /api/frames` |
+| Search a preset name or decimal `RA, Dec` | Handled in the browser, instantly | `GET /api/frames` |
+| Search any other name (`Vega`) or sexagesimal (`08h55m10.8s -07d14m42s`) | Asks the backend, uses today's position (`ra_now`/`dec_now`) | `GET /api/resolve`, then `GET /api/frames` |
+| Click a detector array (1–6) or field of view (2/5/10/20/40′) | Reloads that view | `GET /api/frames` |
+
+While loading, the player shows a spinner with a seconds counter, and explains
+that a first visit to a spot can take up to a minute. If loading fails it
+shows what went wrong and a **Try again** button. Changing the view while it
+loads cancels the old request.
+
+What the backend takes care of:
+- **CORS is open**, so the browser lets `localhost:3000` call `localhost:8000`,
+  and Jay's loupe can read pixel colours from the PNGs.
 - **`png_url` is an absolute URL** (`http://localhost:8000/files/...`), so it
   works straight in `<img src>`.
 - `date` is `YYYY-MM-DD`, the same format as the mock.
 
 > [!note]
-> **On a deployed site:** set `API_URL` to the backend's public address, and
-> start the backend with `PUBLIC_BASE_URL=https://<backend-address>` so PNG links
-> point at the server instead of `localhost`.
+> **On a deployed site:** set `REACT_APP_API_URL` to the backend's public
+> address when building the frontend, and start the backend with
+> `PUBLIC_BASE_URL=https://<backend-address>` so PNG links point at the server
+> instead of `localhost`.
 
 **If something doesn't work:**
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| "Could not load the sky images." | Backend not running, or wrong `API_URL` | Check http://localhost:8000/api/health |
+| "Is the backend running at http://localhost:8000?" | Backend not running, or wrong `REACT_APP_API_URL` | Start the backend; check http://localhost:8000/api/health; click **Try again** |
 | Spinner for 15–45 s | First request for that position | Normal; it's cached afterwards |
-| Error 503 | NASA's search (IRSA) is having a bad moment and this position was never searched | Try again in a minute |
-| Star is off-centre | Fast-moving stars have moved since their catalogue date | Use `ra_now`/`dec_now` from `/api/resolve` (see [Test Targets](#test-targets)) |
-| Images look tiny | PNGs are native SPHEREx pixels (49×49 for 5′) | Scale up in CSS with `image-rendering: pixelated` |
+| 20′ / 40′ slower, or fewer exposures per frame | Bigger squares download more, and exposures where the target is near a detector edge can't fill them and are skipped | Normal. Barnard's Star at 40′: 391 px, 36 s first time, ~4 s cached, 13 of 60 exposures skipped |
+| Error mentioning IRSA's image search | NASA's search is having a bad moment and this position was never searched | Wait a minute, click **Try again** |
+| "No SPHEREx images for this patch on this detector array" | Every exposure there was cut off by a detector edge, or none exist | Try another array or a smaller field of view |
+| Changes to `.env.local` don't apply | CRA reads it only at start | Restart `npm start` |
+| A preset suddenly takes 30 s again | Its downloads in `backend/output/` were removed | Normal once; see the warning below |
+
+> [!warning]
+> Switching to an **old** commit where `backend/output/` was still tracked in git,
+> then back, makes git delete those files, including the downloads, so presets
+> load slowly once more. Since PR #5 `output/` is ignored, so this only happens
+> when you go back to older commits.
 
 ## How It Works
 
@@ -202,12 +232,12 @@ passes on the **deployed** site, not just locally.
 
 | Priority | Feature | ID | Owner | Status |
 |---|---|---|---|---|
-| Must | Coordinate search + field of view | F1, F2 | Sam (UI), Raman (`/api/resolve`) | Backend works locally; UI built on mock data |
-| Must | Blink player (1–2 fps, slider, play/pause) | F4 | Sam | Built on mock data |
-| Must | Detector-array selector, stacked per visit | F3, F5 | Raman | Backend works locally |
-| Must | Zoom loupe on the target | F6 | Jay | Built |
-| Must | Shareable URL with coordinates | F7 | Sam | Built |
-| Must | One-click presets for the 5 test targets | F8 | Sam + Axe (cache) | Presets built; server pre-cache to do |
+| Must | Coordinate search + field of view | F1, F2 | Sam (UI), Raman (`/api/resolve`) | Works locally with the real API (names, decimal, sexagesimal) |
+| Must | Blink player (1–2 fps, slider, play/pause) | F4 | Sam | Works locally with real frames |
+| Must | Detector-array selector, stacked per visit | F3, F5 | Raman | Works locally: array buttons 1–6 in the app |
+| Must | Zoom loupe on the target | F6 | Jay | Works locally on real frames |
+| Must | Shareable URL with coordinates | F7 | Sam | Works locally (`?ra=&dec=&fov=&array=`) |
+| Must | One-click presets for the 5 test targets | F8 | Sam + Axe (cache) | Work locally; server pre-cache to do |
 | Should | Difference mode (new minus old) | F9 | Jay | |
 | Should | Wavelength scrubber / false-colour RGB | F10 | Shoya | |
 | Should | Predicted Gaia track overlay | F11 | Jay + Shoya | |
@@ -230,9 +260,11 @@ their catalogue (year 2000) position, so presets should use **today's position**
 | RW Aurigae | Blink player, spectrum (variable star) | 76.956526, 30.401438 | D3 | 3 |
 | R Draconis | Blink player (variable star, many visits) | 248.167611, 66.754979 | D3 | 7 |
 
-> [!warning]
-> The current Epsilon Indi B preset in `src/data/target.js` (330.84, −56.786)
-> is roughly where Epsilon Indi **A** is, about 7′ away from B.
+These positions and arrays are what the presets in
+[`src/data/target.js`](frontend/minion-yuri/src/data/target.js) use. (Before,
+the Epsilon Indi B preset pointed roughly at Epsilon Indi **A**, about 7′
+away.) The backend caches per exact position, so pre-cache these exact numbers
+on the server.
 
 ## Team
 
