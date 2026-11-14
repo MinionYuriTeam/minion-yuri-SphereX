@@ -77,6 +77,11 @@ h1 {
     -webkit-user-drag: none;
 }
 
+.toolbar, .readout, .stage {
+    width: 92ww;
+    max-width: 1600px;
+}
+
 .lens {
     position: absolute;
     width: 180px;
