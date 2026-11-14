@@ -1,8 +1,22 @@
 // SAM — F8 test targets
-// Props it will get from App.js: targets, onPick(target)
-// What it shows: one button per test target
-function Presets() {
-  return <div className="box">Presets (SAM)</div>;
+// Props it gets from App.js: targets, current (the view), onPick(target)
+import "../styles/Presets.css";
+
+function Presets({ targets, current, onPick }) {
+  return (
+    <div className="presets">
+      <span>Try one of these</span>
+      {targets.map((t) => (
+        <button
+          key={t.name}
+          className={t.ra === current.ra && t.dec === current.dec ? "active" : ""}
+          onClick={() => onPick(t)}
+        >
+          {t.name}
+        </button>
+      ))}
+    </div>
+  );
 }
 
 export default Presets;

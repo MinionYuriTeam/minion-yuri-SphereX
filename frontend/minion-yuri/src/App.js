@@ -1,4 +1,8 @@
-import './App.css';
+import './styles/App.css';
+import './styles/buttons.css';
+import { useState, useEffect } from 'react';
+import { TARGETS } from './data/target';
+import { getFrames } from './api/frames';
 
 // SAM
 import SearchBar from './components/SearchBar';     // F1
@@ -14,35 +18,79 @@ import ViewToggle from './components/ViewToggle';         // F9
 import DifferenceView from './components/DifferenceView'; // F9
 
 function App() {
-  // TODO (Sam): shared state goes here
-  //   view  = { ra, dec, fov, array }   (also in the URL for F7)
-  //   data  = answer from getFrames(view)  -> src/api/frames.js (mock for now)
-  //   index = which frame is shown now (shared by player, loupe, difference)
-  //   mode  = 'normal' | 'difference'
+  const [view, setView] = useState({
+    ra: TARGETS[0].ra,
+    dec: TARGETS[0].dec,
+    fov: 5,
+    array: 3,
+  });
+
+  const [data, setData] = useState(null);         // the frames from the API (mock for now)
+  const [index, setIndex] = useState(0);          // which frame is showing
+  const [loadTime, setLoadTime] = useState(null); // seconds, shown next to Field of view
+
+  // every time the view changes (search, preset, FOV): load the frames
+  useEffect(() => {
+    const start = performance.now();
+    getFrames(view).then((json) => {
+      setData(json);
+      setIndex(0);
+      setLoadTime(((performance.now() - start) / 1000).toFixed(1));
+    });
+  }, [view]);
 
   return (
     <div className="app">
-      <h1>SPHEREx Blink</h1>
+      <header className="topbar">
+        <div>
+          <p className="eyebrow">NASA SPHEREx · Infrared sky explorer</p>
+          <h1>SPHEREx Blink</h1>
+        </div>
+
+        <nav className="nav">
+          <a href="#how">How it works</a>
+          <a href="#team">Team</a>
+          <a href="#data">About the data</a>
+        </nav>
+      </header>
+
+      <p>Type any position in the sky, or pick a famous object. We play NASA SPHEREx's infrared snapshots of
+      that spot as a loop, so anything that moves or changes jumps out.</p>
+
+      <p>Now looking at: {view.ra}, {view.dec} · FOV {view.fov}′</p>
 
       {/* 1. Find a patch of sky */}
       <section className="panel">
-        <SearchBar />
-        <Presets />
+        <SearchBar
+          targets={TARGETS}
+          onSearch={({ ra, dec }) => setView({ ...view, ra, dec })}
+        />
+        <Presets
+          targets={TARGETS}
+          current={view}
+          onPick={(t) => setView({ ...view, ra: t.ra, dec: t.dec })}
+        />
       </section>
 
       {/* 2. Look at it */}
       <section className="panel">
-        <div className="row">
-          <FovPicker />
-          <BandPicker />
-        </div>
+        {data && (
+          <BlinkPlayer
+            epochs={data.epochs}
+            index={index}
+            setIndex={setIndex}
+            fov={view.fov}
+            side={<><Loupe /><DifferenceView /></>}
+          >
+            <FovPicker
+              fov={view.fov}
+              onChange={(f) => setView({ ...view, fov: f })}
+              loadTime={loadTime}
+            />
+          </BlinkPlayer>
+        )}
 
-        <div className="row">
-          <BlinkPlayer />
-          <Loupe />
-          <DifferenceView />
-        </div>
-
+        <BandPicker />
         <ViewToggle />
       </section>
 
