@@ -15,10 +15,14 @@ h1 {
   animation: glitch 1s linear infinite;
 }
 
- ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
+.site-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.nav-bar {
+    border-bottom: 2px;
 }
 
 .toolbar {
@@ -78,7 +82,7 @@ h1 {
 }
 
 .toolbar, .readout, .stage {
-    width: 92ww;
+    width: 90ww;
     max-width: 1600px;
 }
 
@@ -86,6 +90,7 @@ h1 {
     position: absolute;
     width: 180px;
     height: 180px;
+    border: 3px solid #3b93ec;
     border-radius: 50%;
     box-shadow: 0 4px 20px rgba(0,0,0,0.5);
     background-repeat: no-repeat;
@@ -95,6 +100,16 @@ h1 {
 }
 
 .lens.visible { display: block; }
+.lens.locked { border-style: dashed;}
+.lens::before, .lens:after {
+    content: "";
+    position: absolute;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.lens::before { left: 50%; top: 6%; bottom: 6%; width: 1px;}
+.lens::after { top: 50%; left: 6%; right: 6%; height: 1px;}
+
 
 .modal-overlay {
     position: fixed;
@@ -119,12 +134,13 @@ h1 {
     box-shadow: 0 10px 40px rgba(0,0,0,0.6);
 }
 
-.modal h2 { font-size: 1.2rem; margin-bottom: 1rem; }
+.modal h2 { font-size: 1.2rem; margin-bottom: 1rem; color: aliceblue; }
 .modal h3 {
     font-size: 0.95rem;
     margin: 1rem 0 0.4rem;
     border-bottom: 1px solid #3a3745;
     padding-bottom: 0.25rem;
+    color: aliceblue;
 }
 
 .modal ul { list-style: none; }
@@ -135,6 +151,7 @@ h1 {
     justify-content: space-between;
     gap: 1rem;
     align-items: baseline;
+    color: aliceblue;
 }
 
 .modal li .what { flex: 1; }
@@ -145,6 +162,7 @@ h1 {
     font-size: 0.78rem;
     font-family: ui-monospace, monospace;
     white-space: nowrap;
+    color: aliceblue;
 }
 
 #closeModal {
@@ -155,6 +173,7 @@ h1 {
     border: none;
     font-size: 1.3rem;
     cursor: pointer;
+    color: aliceblue;
 }
 
 .footer-text {
