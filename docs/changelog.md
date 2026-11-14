@@ -2,6 +2,41 @@
 
 Newest first. One entry per piece of work, with the branch it landed on.
 
+## 14 Nov 2026: Built-in test targets + "run your own backend" (`frontendApiConnection`)
+
+Hugging Face paused our free Space (CPU quota) and Render isn't free, so the
+public site (stealingthemoon.earth, Vercel) now works without a hosted backend:
+
+- **`backend/bake.py`**: renders the 5 test targets into
+  `frontend/minion-yuri/public/baked/`: every array at 2/5/10′, the best array
+  also at 20/40′. It reads the targets from `src/data/target.js`.
+- **`backend/pipeline/fetch.py`**: a smaller field of view reuses squares
+  already downloaded for a bigger one (Barnard's Star at 3′: 0 downloads,
+  identical pixels). While baking, the 5′ and 2′ fields took 2–3 s each instead
+  of ~11 s.
+- **`backend/api.py`**: `allow_private_network=True`, so a public site may call
+  the backend on the visitor's own computer (Chrome's local-network check).
+- **`src/api/frames.js`**:
+  - built-in files first, otherwise the backend;
+  - "no backend" is its own error (`NO_BACKEND`);
+  - `?api=` picks another backend and is remembered in the browser.
+- **`src/components/RunBackendHelp.js`**: shown when no backend answers: the
+  clone/install/start commands with Copy buttons, a Chrome "Allow" tip, a
+  Safari warning, and Try again.
+- `SearchBar.js`: name lookups explain that they need the backend.
+
+## 14 Nov 2026: Deploy settings in `deploy/.env` (`frontendApiConnection`)
+
+- **`deploy/.env`** (git-ignored via `deploy/.gitignore`, file mode 600) holds
+  `HF_USERNAME`, `HF_SPACE`, `HF_TOKEN` and optional `BACKEND_URL`;
+  `deploy/.env.example` is the committed template.
+- `deploy.sh` and `precache.sh` read it. Empty values are skipped and terminal
+  settings win; the file is read as `KEY=value` lines, never run as code.
+- The token goes to git through a one-off credential helper: not in the URL,
+  git config or keychain, and never printed.
+- Tested with fake values: settings picked up, terminal and argument
+  overrides work, URL derived from `HF_SPACE`, token handed to git.
+
 ## 14 Nov 2026: Backend hosting on Hugging Face Spaces (`frontendApiConnection`)
 
 - **`deploy/huggingface/Dockerfile`**: Python 3.13 container for a Docker

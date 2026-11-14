@@ -18,8 +18,8 @@
 </div>
 
 <p align="center">
-  <img src="docs/images/five_targets.png" alt="The 5 test targets as the API serves them: one row per target, one frame per visit" width="800"/>
-  <br/><sub>The 5 test targets as the backend serves them: one row per target, one frame per SPHEREx visit.</sub>
+  <img src="docs/images/hero.png" alt="A NASA SPHEREx infrared image of a star field" width="700"/>
+  <br/><sub>A patch of sky as seen by NASA's SPHEREx in infrared. Data: NASA/IPAC Infrared Science Archive (IRSA).</sub>
 </p>
 
 # What is Minion Yuri?
@@ -45,6 +45,7 @@ Table of Contents
     - [1. Run the backend](#1-run-the-backend)
     - [2. Run the frontend](#2-run-the-frontend)
     - [3. Connect the frontend to the backend](#3-connect-the-frontend-to-the-backend)
+  - [The Public Site: Built-in Targets + Your Own Backend](#the-public-site-built-in-targets--your-own-backend)
   - [Deploy the Backend (Hugging Face)](#deploy-the-backend-hugging-face)
   - [How It Works](#how-it-works)
   - [API](#api)
@@ -59,13 +60,14 @@ Table of Contents
 - 🖥️ **Frontend:** React (Create React App), JavaScript, CSS
 - 🧠 **Backend:** Python, FastAPI, astropy, numpy, Pillow
 - 🛰️ **Data:** SPHEREx images from NASA/IPAC IRSA (search via SIA2, pixels from IRSA's AWS S3 copy), names via CDS Sesame, Gaia DR3 for proper motions
-- ☁️ **Hosting:** backend on a Hugging Face Space (Docker, free); frontend to be picked
+- ☁️ **Hosting:** frontend on Vercel (https://stealingthemoon.earth) with the 5 test targets built in; backend runs on the visitor's own computer
 - 📦 **Package management:** npm (frontend), pip + venv (backend)
 
 ## Repository Structure
 ```
 - backend/                  # Python: all the astronomy, served as JSON + PNGs
   - api.py                  # FastAPI app: /api/resolve, /api/frames
+  - bake.py                 # renders the 5 test targets into the frontend (public/baked/)
   - epochs.py               # command-line tool: PNG grid / GIF / FITS for a position
   - pipeline/               # the data pipeline, one file per step
     - search.py             # 1. find every SPHEREx exposure covering the position
@@ -81,6 +83,7 @@ Table of Contents
   - output/                 # downloads + generated images (not in git)
 
 - frontend/minion-yuri/     # React app
+  - public/baked/           # the 5 test targets, pre-rendered by backend/bake.py
   - public/mock/frames.json # fake /api/frames answer for working offline
   - src/
     - api/frames.js         # the ONLY file that talks to the backend
@@ -191,7 +194,59 @@ What the backend takes care of:
 > load slowly once more. Since PR #5 `output/` is ignored, so this only happens
 > when you go back to older commits.
 
+## The Public Site: Built-in Targets + Your Own Backend
+
+The frontend is live at **https://stealingthemoon.earth** (Vercel, built from
+GitHub). There is no hosted backend (free hosts paused or charged for it), so
+the site gets its data in two ways:
+
+```mermaid
+flowchart TD
+    S[Search / preset / array / FOV] --> Q{One of the 5 test targets,<br/>with a built-in array + FOV?}
+    Q -- yes --> B[Built-in files in the site<br/>public/baked/ — no backend needed]
+    Q -- no --> L{Backend answering at<br/>localhost:8000 on the visitor's computer?}
+    L -- yes --> R[Live frames from the visitor's own backend]
+    L -- no --> H[Help screen: how to start the backend]
+```
+
+**1. The 5 test targets are built in.** `backend/bake.py` renders them into
+`frontend/minion-yuri/public/baked/`, and they deploy with the site:
+- every detector array (1–6) at 2′, 5′ and 10′
+- each target's own (best) array also at 20′ and 40′
+
+```bash
+cd backend
+.venv/bin/python bake.py                # all 5; re-run when target.js changes
+.venv/bin/python bake.py "WISE 0855"    # just one
+```
+Then commit `frontend/minion-yuri/public/baked/` and push; Vercel redeploys.
+`bake.py` reads the targets from `src/data/target.js`, so the two can't drift.
+
+**2. Anything else needs the visitor's own backend.** The public page calls
+`http://localhost:8000` from the visitor's browser, so it reaches **their** computer.
+If nothing answers, the site shows the three commands to clone, install and
+start the backend, then a **Try again** button. This works because:
+- the backend allows any site to call it (CORS) and answers Chrome's
+  local-network check (`allow_private_network`), so Chrome may show a
+  "this site wants to access your local network" prompt: click **Allow**;
+- browsers treat `http://localhost` as safe, so an `https://` page may call it.
+  **Safari blocks this**; use Chrome or Firefox.
+
+**Use a different backend** (a teammate's laptop through a tunnel, a hosted one):
+open the site with `?api=` and it's remembered in that browser:
+```
+https://stealingthemoon.earth/?api=https://some-backend.example.com
+https://stealingthemoon.earth/?api=default        # back to localhost:8000
+```
+Or set `REACT_APP_API_URL` in Vercel's environment variables to change the
+default for everyone.
+
 ## Deploy the Backend (Hugging Face)
+
+> [!warning]
+> On our account, Hugging Face paused the Space: the free CPU quota was used
+> up. Kept here in case a teammate's account has quota left. The site works
+> without it (see above).
 
 The backend runs as a free **Hugging Face Space** using Docker. A Space is its
 own git repo on huggingface.co; `deploy.sh` copies just the backend into it,
@@ -204,12 +259,26 @@ and Hugging Face builds and runs the container.
 3. Create an access token with **Write** permission at
    https://huggingface.co/settings/tokens.
 
+**Once: your settings.** Fill in `deploy/.env` (copy
+[`deploy/.env.example`](deploy/.env.example) if it's missing):
+
+```
+HF_USERNAME=<your hf username>
+HF_SPACE=<your hf username>/minion-yuri-api
+HF_TOKEN=<your WRITE token>
+BACKEND_URL=            # leave empty for https://<user>-minion-yuri-api.hf.space
+```
+
+`deploy/.env` is **git-ignored**: never commit or share it. Hugging Face no
+longer accepts your account password for git, so the token is what logs you in.
+The scripts hand it to git without printing it or saving it anywhere else.
+
 **Every deploy**
 ```bash
-deploy/huggingface/deploy.sh <hf-user>/minion-yuri-api
+deploy/huggingface/deploy.sh
 ```
-When git asks, use your Hugging Face username and the **token** as password
-(or run `HF_TOKEN=<token> deploy/huggingface/deploy.sh ...` to skip the prompt).
+(or `deploy/huggingface/deploy.sh <hf-user>/<space>` to deploy somewhere else;
+without `HF_TOKEN`, git asks for your username and the token as password).
 The build takes a few minutes; follow it in the Space's **Logs** tab. The
 backend is then live at `https://<hf-user>-minion-yuri-api.hf.space`:
 - `/api/health` should answer `{"ok": true}`
@@ -217,7 +286,7 @@ backend is then live at `https://<hf-user>-minion-yuri-api.hf.space`:
 
 **After every deploy or wake-up: pre-cache the presets**
 ```bash
-deploy/precache.sh https://<hf-user>-minion-yuri-api.hf.space
+deploy/precache.sh            # backend URL comes from deploy/.env
 ```
 Run it twice; the second run should take a few seconds per preset (F8: under 10 s).
 
@@ -295,6 +364,11 @@ passes on the **deployed** site, not just locally.
 | Could | "Spot the mover" game | F15 | first free | |
 
 ## Test Targets
+
+<p align="center">
+  <img src="docs/images/five_targets.png" alt="The 5 test targets as the API serves them: one row per target, one frame per visit" width="800"/>
+  <br/><sub>The 5 test targets as the backend serves them: one row per target, one frame per SPHEREx visit.</sub>
+</p>
 
 Each target shows off a different feature. Fast-moving stars have moved since
 their catalogue (year 2000) position, so presets should use **today's position**

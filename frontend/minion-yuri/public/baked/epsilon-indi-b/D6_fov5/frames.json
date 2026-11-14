@@ -1,0 +1,84 @@
+{
+ "array": 6,
+ "wavelength_um": [
+  4.412,
+  5.01
+ ],
+ "epochs": [
+  {
+   "date": "2025-05-01",
+   "datetime": "2025-05-01T00:19:30.176",
+   "date_start": "2025-04-29T01:34:17.379",
+   "date_end": "2025-05-07T05:17:22.096",
+   "n_exposures": 20,
+   "png_url": "baked/epsilon-indi-b/D6_fov5/epoch_00.png",
+   "flags_png_url": null
+  },
+  {
+   "date": "2025-05-20",
+   "datetime": "2025-05-20T03:09:53.438",
+   "date_start": "2025-05-20T03:09:53.438",
+   "date_end": "2025-05-20T03:09:53.438",
+   "n_exposures": 1,
+   "png_url": "baked/epsilon-indi-b/D6_fov5/epoch_01.png",
+   "flags_png_url": "baked/epsilon-indi-b/D6_fov5/epoch_01_flags.png"
+  },
+  {
+   "date": "2025-06-10",
+   "datetime": "2025-06-10T04:32:08.353",
+   "date_start": "2025-06-10T04:29:59.423",
+   "date_end": "2025-06-10T04:34:17.284",
+   "n_exposures": 3,
+   "png_url": "baked/epsilon-indi-b/D6_fov5/epoch_02.png",
+   "flags_png_url": "baked/epsilon-indi-b/D6_fov5/epoch_02_flags.png"
+  },
+  {
+   "date": "2025-09-30",
+   "datetime": "2025-09-30T10:22:18.226",
+   "date_start": "2025-09-28T23:09:16.769",
+   "date_end": "2025-10-06T05:30:38.022",
+   "n_exposures": 18,
+   "png_url": "baked/epsilon-indi-b/D6_fov5/epoch_03.png",
+   "flags_png_url": null
+  },
+  {
+   "date": "2025-11-03",
+   "datetime": "2025-11-03T06:44:00.182",
+   "date_start": "2025-11-01T10:41:08.693",
+   "date_end": "2025-11-04T12:06:04.613",
+   "n_exposures": 4,
+   "png_url": "baked/epsilon-indi-b/D6_fov5/epoch_04.png",
+   "flags_png_url": "baked/epsilon-indi-b/D6_fov5/epoch_04_flags.png"
+  },
+  {
+   "date": "2026-04-29",
+   "datetime": "2026-04-29T23:10:49.028",
+   "date_start": "2026-04-29T03:54:48.723",
+   "date_end": "2026-05-04T02:49:22.016",
+   "n_exposures": 11,
+   "png_url": "baked/epsilon-indi-b/D6_fov5/epoch_05.png",
+   "flags_png_url": null
+  },
+  {
+   "date": "2026-09-25",
+   "datetime": "2026-09-25T15:37:47.837",
+   "date_start": "2026-09-22T05:27:42.246",
+   "date_end": "2026-09-28T08:05:41.878",
+   "n_exposures": 34,
+   "png_url": "baked/epsilon-indi-b/D6_fov5/epoch_06.png",
+   "flags_png_url": null
+  }
+ ],
+ "ra": 331.0984,
+ "dec": -56.801256,
+ "fov": 5,
+ "size_px": 49,
+ "pixel_scale_arcsec": 6.15,
+ "display_range": [
+  -0.03147569447755814,
+  1.022832129001599
+ ],
+ "n_skipped": 2,
+ "n_failed": 0,
+ "baked": true
+}

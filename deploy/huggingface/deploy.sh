@@ -1,38 +1,64 @@
 #!/usr/bin/env bash
 # Push the backend to a Hugging Face Space (Docker).
 #
-#   deploy/huggingface/deploy.sh <hf-user>/<space-name>
+#   deploy/huggingface/deploy.sh                       # uses deploy/.env
+#   deploy/huggingface/deploy.sh <hf-user>/<space>     # or name the Space here
 #
 # The Space is its own git repo on huggingface.co. This script clones it into a
 # temporary folder, replaces its contents with the backend (api.py, pipeline/,
 # requirements.txt) plus the Dockerfile and Space README from this folder,
 # commits and pushes. Hugging Face then builds and starts the container.
 #
-# Login: git asks for a username and password on push. Use your Hugging Face
-# username and an access token with WRITE permission as the password
-# (huggingface.co/settings/tokens). Or set HF_TOKEN before running to skip the prompt.
+# Login: put HF_USERNAME, HF_SPACE and HF_TOKEN (a WRITE token from
+# huggingface.co/settings/tokens) in deploy/.env (copy deploy/.env.example).
+# The token is handed to git by a one-off credential helper: it is not put in
+# the URL, in git's config or in your keychain, and is never printed.
+# Without HF_TOKEN, git asks for your username and the token as password.
 set -euo pipefail
-
-SPACE="${1:-}"
-if [[ ! "$SPACE" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]]; then
-  echo "usage: $0 <hf-user>/<space-name>   e.g. $0 raman/minion-yuri-api" >&2
-  exit 1
-fi
 
 HERE="$(cd "$(dirname "$0")" && pwd)"
 ROOT="$(cd "$HERE/../.." && pwd)"
 BACKEND="$ROOT/backend"
-WORK="$(mktemp -d)"
-trap 'rm -rf "$WORK"' EXIT
 
-if [[ -n "${HF_TOKEN:-}" ]]; then
-  REMOTE="https://user:${HF_TOKEN}@huggingface.co/spaces/$SPACE"
-else
-  REMOTE="https://huggingface.co/spaces/$SPACE"
+# settings from deploy/.env (git-ignored): KEY=value lines; empty values are
+# skipped and anything already set in your terminal wins
+load_env() {
+  [[ -f "$1" ]] || return 0
+  local key value
+  while IFS='=' read -r key value || [[ -n "$key" ]]; do
+    [[ "$key" =~ ^[A-Z_][A-Z0-9_]*$ ]] || continue
+    value="${value%\"}"; value="${value#\"}"
+    [[ -n "$value" && -z "${!key:-}" ]] && export "$key=$value"
+  done < "$1"
+  return 0
+}
+load_env "$ROOT/deploy/.env"
+
+SPACE="${1:-${HF_SPACE:-}}"
+if [[ ! "$SPACE" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]]; then
+  echo "No Space given. Set HF_SPACE=<hf-user>/<space-name> in deploy/.env," >&2
+  echo "or run: $0 <hf-user>/<space-name>" >&2
+  exit 1
 fi
 
+WORK="$(mktemp -d)"
+trap 'rm -rf "$WORK"' EXIT
+REMOTE="https://huggingface.co/spaces/$SPACE"
+
+# git <args>, logging in with HF_USERNAME / HF_TOKEN when the token is set
+git_hf() {
+  if [[ -n "${HF_TOKEN:-}" ]]; then
+    export HF_USERNAME="${HF_USERNAME:-${SPACE%%/*}}" HF_TOKEN
+    git -c credential.helper= \
+        -c credential.helper='!f() { echo "username=$HF_USERNAME"; echo "password=$HF_TOKEN"; }; f' \
+        "$@"
+  else
+    git "$@"
+  fi
+}
+
 echo "Cloning Space $SPACE ..."
-git clone --quiet --depth 1 "$REMOTE" "$WORK/space"
+git_hf clone --quiet --depth 1 "$REMOTE" "$WORK/space"
 
 echo "Copying backend ..."
 find "$WORK/space" -mindepth 1 -maxdepth 1 ! -name .git ! -name .gitattributes -exec rm -rf {} +
@@ -51,7 +77,7 @@ SOURCE="$(git -C "$ROOT" rev-parse --short HEAD)"
 git -c user.name="minion-yuri deploy" -c user.email="deploy@localhost" \
   commit --quiet -m "Deploy backend from minion-yuri-SphereX@$SOURCE"
 echo "Pushing ..."
-git push --quiet
+git_hf push --quiet
 
 HOST="$(echo "${SPACE/\//-}" | tr 'A-Z_.' 'a-z--')"
 cat <<EOF
@@ -62,5 +88,5 @@ Pushed. Hugging Face is now building the container (a few minutes).
   Check:       https://$HOST.hf.space/api/health
 
 Next: pre-cache the presets with
-  deploy/precache.sh https://$HOST.hf.space
+  deploy/precache.sh
 EOF
