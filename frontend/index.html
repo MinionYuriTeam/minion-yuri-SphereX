@@ -69,7 +69,16 @@
         </div>
 
         <div class="tool-group">
-            <input type="file" id="fileInput" accept="image/*">
+            <input type="file" id="fileInput" accept="image/*,video/*">
+        </div>
+
+        <div class="tool-group">
+            <button class="step-btn motion-toggle" id="motionBtn" aria-pressed="false"
+                    title="Highlight pixels that change over time" disabled>Motion View</button>
+            <label>Sensitivity
+                <input type="range" id="motionSens" min="0" max="100" value="100">
+                <span class="badge" id="motionBadge">100%</span>
+            </label>
         </div>
     </div>
 
@@ -79,11 +88,15 @@
         <span><span class="swatch" id="swatch"></span><span id="hexVal">—</span></span>
         <span>source: <strong id="dimVal">—</strong></span>
     </div>
-    <button id="helpBtn" title="Help — all features">?</button>
+
     <div class="stage" id="stage">
-    <img id="image" src="image.webp">
-    <div class="lens" id="lens"></div>
+        <img id="image" src="image.webp" alt="Image to magnify">
+        <video id="video" style="display:none" muted loop playsinline></video>
+        <canvas id="motionView" width="640" height="360"></canvas>
+        <canvas class="lens" id="lens" width="180" height="180"></canvas>
     </div>
+
+    <button id="helpBtn" title="Help — all features">?</button>
 
     <div class="modal-overlay" id="helpModal">
         <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
@@ -95,6 +108,11 @@
             <li><span class="what">Show the magnifier and inspect the image</span><kbd>hover</kbd></li>
             <li><span class="what">Pan the view inside the lens</span><kbd>move mouse</kbd></li>
             <li><span class="what">Freeze / unfreeze the loupe in place</span><kbd>double-click</kbd> or <kbd>P</kbd></li>
+            </ul>
+
+            <h3>Motion View basics</h3>
+            <ul>
+            <li><span class="what">Highlight the moving pixels</span><kbd>M</kbd></li>
             </ul>
 
             <h3>Zoom</h3>
@@ -119,7 +137,7 @@
 
             <h3>Your own image</h3>
             <ul>
-            <li><span class="what">Load any local image — the magnifier, sampler, and coordinate fields all work on it</span><kbd>file picker</kbd></li>
+            <li><span class="what">Load any local image or video — the magnifier, sampler, and coordinate fields all work on it</span><kbd>file picker</kbd></li>
             </ul>
 
             <h3>Tips</h3>

@@ -1,12 +1,10 @@
-
-
 body {
   width: 100%;
   margin: 0;
-  font-family: 'Cantarell';
+  font-family: 'Cantarell', system-ui, sans-serif;
   background-color: #262626;
+  color: aliceblue;
   box-sizing: border-box;
-  position: absolute;
 }
 
 h1 {
@@ -15,167 +13,442 @@ h1 {
   animation: glitch 1s linear infinite;
 }
 
-.site-title {
-    font-size: 1.2rem;
-    font-weight: bold;
-    display: inline-block;
+nav h1 { animation: none; }
+
+@keyframes glitch {
+  0%   { transform: translate(0); }
+  20%  { transform: translate(-2px, 1px); }
+  40%  { transform: translate(2px, -1px); }
+  60%  { transform: translate(-1px, 2px); }
+  80%  { transform: translate(1px, -2px); }
+  100% { transform: translate(0); }
 }
 
+/* ---------- Navbar ---------- */
 .nav-bar {
-    border-bottom: 2px;
+  background: #1e1e1e;
+  border-bottom: 2px solid #444;
 }
 
+.nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+  flex-wrap: wrap;
+}
+
+.site-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  display: inline-block;
+  margin: 0;
+}
+.site-title a { color: inherit; text-decoration: none; }
+
+.nav-bar ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.75rem;
+  border-radius: 8px;
+}
+.menu-toggle:focus-visible { outline: 2px solid #3b93ec; }
+.menu-toggle .bar {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: aliceblue;
+  margin: 5px 0;
+  transition: transform 0.2s, opacity 0.2s;
+}
+.menu-toggle[aria-expanded="true"] .bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.menu-toggle[aria-expanded="true"] .bar:nth-child(2) { opacity: 0; }
+.menu-toggle[aria-expanded="true"] .bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.nav-list {
+  display: flex;
+  align-items: stretch;
+}
+.nav-list > li { position: relative; }
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: aliceblue;
+  text-decoration: none;
+  padding: 1rem;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+  white-space: nowrap;
+  width: 100%;
+}
+.nav-link:hover { color: #ffffff; }
+.nav-link:focus-visible { outline: 2px solid #3b93ec; outline-offset: -2px; }
+
+.caret {
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid currentColor;
+}
+
+.dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 220px;
+  background: #1e1e1e;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 0.25rem 0;
+  z-index: 50;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+.dropdown.open { display: block; }
+.dropdown a {
+  display: block;
+  padding: 0.55rem 1rem;
+  color: aliceblue;
+  text-decoration: none;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+.dropdown a:hover { background: #2a2733; color: #ffffff; }
+.dropdown a:focus-visible { outline: 2px solid #3b93ec; outline-offset: -2px; }
+
+/* ---------- Toolbar / readout ---------- */
 .toolbar {
-    color: aqua;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.25rem;
-    padding: 1rem 1.5rem;
-    border-radius: 12px;
-    margin-bottom: 0.75rem;
-    width: 100%;
-    max-width: 760px;
+  color: aqua;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  margin: 0.75rem auto 0.75rem;
 }
 
 .tool-group {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.9rem;
 }
 
 .tool-group .badge {
-    color: aqua;
-    font-size: 0.85rem;
-    border: 1px solid #444;
-    border-radius: 6px;
-    padding: 3px 8px;
-    min-width: 74px;
+  color: aqua;
+  font-size: 0.85rem;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 3px 8px;
+  min-width: 74px;
+  text-align: center;
+}
+
+.stepper { display: flex; gap: 0.3rem; }
+.step-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #444;
+  border-radius: 8px;
+  background: #2a2733;
+  color: aliceblue;
+  font-size: 1.05rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.step-btn:hover { background: #35313f; }
+.step-btn:active { transform: scale(0.94); }
+.step-btn:focus-visible { outline: 2px solid #3b93ec; }
+
+input[type="range"] { accent-color: #3b93ec; }
+input[type="file"] { color: aliceblue; font-size: 0.85rem; }
+input[type="file"]::file-selector-button {
+  background: #3b93ec;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-right: 0.5rem;
 }
 
 .readout {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    font-size: 0.85rem;
-    color: aqua;
-    border-radius: 8px;
-    padding: 0.5rem 1rem;
-    width: 100%;
-    max-width: 760px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  font-size: 0.85rem;
+  color: aqua;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  margin: 0 auto 0.75rem;
 }
 
-.stage {
-    position: relative;
-    max-width: 720px;
-    width: 100%;
-    border-radius: 12px;
-    overflow: hidden;
-    cursor: none; /* the lens replaces the cursor */
+.readout input[type="number"] {
+  width: 70px;
+  background: #2a2733;
+  color: aqua;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 2px 6px;
 }
-.stage img {
-    display: block;
+
+.swatch {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  border: 1px solid #555;
+  vertical-align: -2px;
+  margin-right: 6px;
+}
+
+/* ---------- Stage & lens ---------- */
+.stage {
+  position: relative;
+  margin: 0 auto;
+  width: 92vw;                 /* was 90ww — invalid unit, declaration discarded */
+  max-width: 1600px;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: none; /* the lens replaces the cursor */
+  background: #2a2733;
+}
+
+/* Both media types must fill the stage — video had no styling before */
+.stage img,
+.stage video {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.lens {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  border: 3px solid #3b93ec;
+  border-radius: 50%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  display: none;
+  z-index: 10;
+}
+
+.lens.visible { display: block; }
+.lens.locked { border-style: dashed; }
+
+/* Hollow-center crosshair.
+   FIX 1: double colon on ::after (single colon meant no horizontal line).
+   FIX 2: white instead of rgba(0,0,0,.2) — black was invisible on this theme. */
+.lens::before, .lens::after {
+  content: "";
+  position: absolute;
+}
+
+.lens::before {
+  left: 50%;
+  top: 6%;
+  bottom: 6%;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.35) 0%,
+    rgba(255, 255, 255, 0.35) 42%,
+    transparent 42%,
+    transparent 58%,
+    rgba(255, 255, 255, 0.35) 58%,
+    rgba(255, 255, 255, 0.35) 100%
+  );
+}
+
+.lens::after {
+  top: 50%;
+  left: 6%;
+  right: 6%;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.35) 0%,
+    rgba(255, 255, 255, 0.35) 42%,
+    transparent 42%,
+    transparent 58%,
+    rgba(255, 255, 255, 0.35) 58%,
+    rgba(255, 255, 255, 0.35) 100%
+  );
+}
+
+#motionView {
+    display: none;           /* JS toggles to block in Motion View */
     width: 100%;
     height: auto;
     user-select: none;
     -webkit-user-drag: none;
 }
 
-.toolbar, .readout, .stage {
-    width: 90ww;
-    max-width: 1600px;
+.motion-toggle {
+    width: auto;
+    padding: 0 0.9rem;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+.motion-toggle.active { background: #3b93ec; border-color: #3b93ec; color: #fff; }
+.motion-toggle:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ---------- Help button & modal ---------- */
+.help-row {
+  text-align: center;
+  margin: 0.75rem 0;
 }
 
-.lens {
-    position: absolute;
-    width: 180px;
-    height: 180px;
-    border: 3px solid #3b93ec;
-    border-radius: 50%;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-    background-repeat: no-repeat;
-    pointer-events: none;
-    display: none;
-    z-index: 10;
+#helpBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #444;
+  background: #2a2733;
+  color: aliceblue;
+  font-size: 1.1rem;
+  cursor: pointer;
 }
-
-.lens.visible { display: block; }
-.lens.locked { border-style: dashed;}
-.lens::before, .lens:after {
-    content: "";
-    position: absolute;
-    background: rgba(0, 0, 0, 0.2);
-}
-
-.lens::before { left: 50%; top: 6%; bottom: 6%; width: 1px;}
-.lens::after { top: 50%; left: 6%; right: 6%; height: 1px;}
-
+#helpBtn:hover { background: #35313f; }
+#helpBtn:focus-visible { outline: 2px solid #3b93ec; }
 
 .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.65);
-    display: none;
-    z-index: 100;
-    padding: 1rem;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: none;
+  align-items: center;      /* was missing — modal sat at the top-left */
+  justify-content: center;
+  z-index: 100;
+  padding: 1rem;
 }
 
 .modal-overlay.open { display: flex; }
+
 .modal {
-    background: #2a2733;
-    border: 1px solid #444;
-    border-radius: 14px;
-    max-width: 520px;
-    width: 100%;
-    max-height: 85vh;
-    overflow-y: auto;
-    padding: 1.5rem 1.75rem;
-    position: relative;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+  background: #2a2733;
+  border: 1px solid #444;
+  border-radius: 14px;
+  max-width: 520px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 1.5rem 1.75rem;
+  position: relative;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
 }
 
 .modal h2 { font-size: 1.2rem; margin-bottom: 1rem; color: aliceblue; }
 .modal h3 {
-    font-size: 0.95rem;
-    margin: 1rem 0 0.4rem;
-    border-bottom: 1px solid #3a3745;
-    padding-bottom: 0.25rem;
-    color: aliceblue;
+  font-size: 0.95rem;
+  margin: 1rem 0 0.4rem;
+  border-bottom: 1px solid #3a3745;
+  padding-bottom: 0.25rem;
+  color: aliceblue;
 }
 
 .modal ul { list-style: none; }
 .modal li {
-    font-size: 0.88rem;
-    padding: 0.25rem 0;
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    align-items: baseline;
-    color: aliceblue;
+  font-size: 0.88rem;
+  padding: 0.25rem 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: baseline;
+  color: aliceblue;
 }
 
 .modal li .what { flex: 1; }
 .modal li kbd {
-    border: 1px solid #444;
-    border-radius: 4px;
-    padding: 1px 6px;
-    font-size: 0.78rem;
-    font-family: ui-monospace, monospace;
-    white-space: nowrap;
-    color: aliceblue;
+  border: 1px solid #444;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 0.78rem;
+  font-family: ui-monospace, monospace;
+  white-space: nowrap;
+  color: aliceblue;
 }
 
 #closeModal {
-    position: absolute;
-    top: 10px;
-    right: 12px;
-    background: none;
-    border: none;
-    font-size: 1.3rem;
-    cursor: pointer;
-    color: aliceblue;
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+  color: aliceblue;
 }
 
-.footer-text {
-    color:aliceblue;
+/* ---------- Footer ---------- */
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 2rem 1rem;
+  border-top: 1px solid #3a3745;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.github-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: aliceblue;
+  text-decoration: none;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+}
+.github-button:hover { background: #2a2733; }
+.github-button:focus-visible { outline: 2px solid #3b93ec; }
+
+.footer-text { color: aliceblue; }
+
+/* ---------- Mobile ---------- */
+@media (max-width: 760px) {
+  .menu-toggle { display: block; }
+
+  .nav-list {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+  }
+  .nav-list.open { display: flex; }
+
+  .nav-list > li { position: static; }
+
+  .dropdown {
+    position: static;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    background: #232323;
+  }
+  .dropdown.open { display: block; }
+  .dropdown a { padding-left: 2rem; }
+
+  .stage, .toolbar, .readout { width: 96vw; }
 }
