@@ -103,7 +103,7 @@ def _move_to_today(ra, dec, pm_ra, pm_dec, catalogue_year=2000.0):
     decades). pm_ra is already multiplied by cos(dec), as catalogues give it."""
     if pm_ra is None or pm_dec is None:
         return round(ra, 6), round(dec, 6)
-    years = Time.now().jyear - catalogue_year
+    years = round((Time.now().jyear - catalogue_year) * 4) / 4   # 3-month steps
     dec_now = dec + pm_dec * years / 3.6e6
     ra_now = ra + pm_ra * years / 3.6e6 / math.cos(math.radians(dec))
     return round(ra_now % 360, 6), round(dec_now, 6)
