@@ -1,0 +1,21 @@
+{
+ "arrays": [
+  6,
+  4,
+  2
+ ],
+ "ra": 248.167611,
+ "dec": 66.754979,
+ "fov": 40,
+ "epochs": [
+  {
+   "date": "2025-06-02",
+   "png_url": "baked/r-draconis/rgb642_fov40/rgb_00.png"
+  },
+  {
+   "date": "2025-06-12",
+   "png_url": "baked/r-draconis/rgb642_fov40/rgb_01.png"
+  }
+ ],
+ "baked": true
+}

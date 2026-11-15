@@ -62,7 +62,9 @@ function BlinkPlayer({ epochs, index, setIndex, side, children, gifTitle = "SPHE
           </button>
           <div className="hud">
             <span data-tip="The date SPHEREx took this picture">{frame.date}</span>
-            <span data-tip="How many SPHEREx photos were stacked to make this picture">{frame.n_exposures} exposures</span>
+            {frame.n_exposures != null && (
+              <span data-tip="How many SPHEREx photos were stacked to make this picture">{frame.n_exposures} exposures</span>
+            )}
           </div>
         </div>
         <div className="side">{side}</div>

@@ -1,0 +1,39 @@
+{
+ "array": 4,
+ "wavelength_um": [
+  2.403,
+  3.847
+ ],
+ "epochs": [
+  {
+   "date": "2026-03-07",
+   "datetime": "2026-03-07T14:04:07.318",
+   "date_start": "2026-03-04T07:55:35.564",
+   "date_end": "2026-03-12T00:03:57.874",
+   "n_exposures": 15,
+   "png_url": "baked/rw-aurigae/D4_fov40/epoch_00.png",
+   "flags_png_url": "baked/rw-aurigae/D4_fov40/epoch_00_flags.png"
+  },
+  {
+   "date": "2026-09-07",
+   "datetime": "2026-09-07T01:59:12.446",
+   "date_start": "2026-09-02T02:20:52.989",
+   "date_end": "2026-09-09T21:43:11.435",
+   "n_exposures": 15,
+   "png_url": "baked/rw-aurigae/D4_fov40/epoch_01.png",
+   "flags_png_url": "baked/rw-aurigae/D4_fov40/epoch_01_flags.png"
+  }
+ ],
+ "ra": 76.956526,
+ "dec": 30.401438,
+ "fov": 40,
+ "size_px": 391,
+ "pixel_scale_arcsec": 6.15,
+ "display_range": [
+  -0.02623862251639366,
+  4.109404640197763
+ ],
+ "n_skipped": 26,
+ "n_failed": 0,
+ "baked": true
+}

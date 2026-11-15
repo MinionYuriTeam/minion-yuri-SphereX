@@ -5,10 +5,12 @@ without any backend running.
     cd backend
     .venv/bin/python bake.py                 # all 5 targets
     .venv/bin/python bake.py "WISE 0855"     # just one (name as in target.js)
+    .venv/bin/python bake.py --spectra       # only the spectra (all, or the names given)
 
 What it makes, for each target in frontend/minion-yuri/src/data/target.js:
-  - all 6 detector arrays at 2', 5' and 10'
-  - the target's own (best) array also at 20' and 40'
+  - all 6 detector arrays at every field of view the site offers (2', 5', 10', 20', 40')
+  - false colour (arrays 6/4/2 as red/green/blue) at the same 5 fields of view
+  - the spectrum (all arrays)
 
 Output goes to frontend/minion-yuri/public/baked/:
     index.json                          which target / array / FOV is baked
@@ -34,15 +36,13 @@ from pipeline.render import save_epoch_pngs
 from pipeline.spectrum import get_spectrum
 from pipeline.rgb import save_rgb_pngs
 
-RGB_ARRAYS = (6, 4, 2)     # red, green, blue
-RGB_FOVS = [10, 5, 2]
-
 FRONTEND = Path(__file__).resolve().parent.parent / "frontend" / "minion-yuri"
 TARGETS_JS = FRONTEND / "src" / "data" / "target.js"
 BAKED = FRONTEND / "public" / "baked"
 
-ALL_ARRAYS_FOVS = [10, 5, 2]   # every array (largest first: smaller ones reuse downloads)
-BEST_ARRAY_FOVS = [40, 20]     # extra fields of view for the target's own array
+# the FOV buttons in FovPicker.js, largest first: smaller ones reuse the downloads
+FOVS = [40, 20, 10, 5, 2]
+RGB_ARRAYS = (6, 4, 2)     # red, green, blue
 
 
 def read_targets():
@@ -111,9 +111,27 @@ def bake_rgb(target, fov, arrays=RGB_ARRAYS):
     return {"arrays": list(arrays), "fov": fov, "path": rel(folder / "frames.json"),
             "epochs": len(frames)}
 
+def bake_spectrum(target, entry):
+    """spectrum.json for one target (same JSON as GET /api/spectrum); records it in entry."""
+    t0 = time.time()
+    try:
+        spectrum = get_spectrum(target["ra"], target["dec"])
+    except Exception as exc:
+        print(f"  spectrum failed, frames are still baked: {exc}")
+        return
+    path = BAKED / slug(target["name"]) / "spectrum.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(spectrum))
+    entry["spectrum"] = path.relative_to(FRONTEND / "public").as_posix()
+    print(f"  spectrum: {len(spectrum['points'])} points, {spectrum['n_dropped']} dropped  "
+          f"{time.time() - t0:5.1f}s", flush=True)
+
+
 def main():
     targets = read_targets()
-    only = sys.argv[1:]
+    args = sys.argv[1:]
+    spectra_only = "--spectra" in args          # bake.py --spectra [name ...]: only spectrum.json
+    only = [a for a in args if a != "--spectra"]
     BAKED.mkdir(parents=True, exist_ok=True)
     index_path = BAKED / "index.json"
     index = json.loads(index_path.read_text()) if index_path.exists() else {"targets": []}
@@ -122,27 +140,27 @@ def main():
     for target in targets:
         if only and target["name"] not in only:
             continue
+        if spectra_only:
+            print(f"{target['name']}  ({target['ra']}, {target['dec']})")
+            entry = by_name.setdefault(target["name"], {**target, "slug": slug(target["name"]), "baked": []})
+            bake_spectrum(target, entry)
+            continue
         print(f"{target['name']}  ({target['ra']}, {target['dec']}), best array D{target['array']}")
         combos = []
         best_first = [target["array"]] + [a for a in range(1, 7) if a != target["array"]]
         for array in best_first:
-            fovs = (BEST_ARRAY_FOVS if array == target["array"] else []) + ALL_ARRAYS_FOVS
-            for fov in fovs:
+            for fov in FOVS:
                 combos.append(bake_one(target, array, fov))
         by_name[target["name"]] = {**target, "slug": slug(target["name"]), "baked": combos}
         
-        try:                                              # new: bake the spectrum too
-            spectrum = get_spectrum(target["ra"], target["dec"])
-            path = BAKED / slug(target["name"]) / "spectrum.json"
-            path.write_text(json.dumps(spectrum))
-            by_name[target["name"]]["spectrum"] = path.relative_to(FRONTEND / "public").as_posix()
-            print(f"  spectrum: {len(spectrum['points'])} points, {spectrum['n_dropped']} dropped")
-        except Exception as exc:
-            print(f"  spectrum failed, frames are still baked: {exc}")
-        try:                                              # new: bake false colour too
-            by_name[target["name"]]["rgb"] = [bake_rgb(target, fov) for fov in RGB_FOVS]
-        except Exception as exc:
-            print(f"  false colour failed, frames are still baked: {exc}")
+        bake_spectrum(target, by_name[target["name"]])
+        rgb = []                                         # false colour, one FOV at a time
+        for fov in FOVS:
+            try:
+                rgb.append(bake_rgb(target, fov))
+            except Exception as exc:
+                print(f"  false colour {fov}' failed, frames are still baked: {exc}")
+        by_name[target["name"]]["rgb"] = rgb
 
     index = {
         "generated": datetime.now(timezone.utc).isoformat(timespec="seconds"),
