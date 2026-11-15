@@ -139,6 +139,7 @@ function SkyMap() {
             {colour
               ? "Colour: 4.6 µm red · 3.3 µm green · 1.25 µm blue"
               : `Wavelength ${WAVELENGTHS[frame].toFixed(2)} µm · detector array ${arrayOfFrame(frame)}`}
+            {status === "loading" && <span className="sky-label-loading"> · loading…</span>}
           </span>
           <input
             type="range" min="0" max={FRAMES.length - 1} value={slot} disabled={colour}
@@ -167,13 +168,20 @@ function SkyMap() {
           ref={canvasRef}
           width={W}
           height={H}
-          className="sky-canvas"
+          className={`sky-canvas ${status === "loading" ? "is-loading" : ""}`}
           onMouseMove={(e) => setHover(skyAt(e))}
           onMouseLeave={() => setHover(null)}
           onClick={(e) => { const s = skyAt(e); if (s) openPlayer(s.ra, s.dec, array); }}
           aria-label="All-sky map. Click a spot to open it in the blink player"
         />
-        {status === "loading" && <div className="sky-status">Loading the sky map from IRSA…</div>}
+        {status === "loading" && (
+          <div className="sky-status" role="status">
+            <div className="sky-loading">
+              <span className="sky-spinner" aria-hidden="true" />
+              Loading {colour ? "the colour map" : `${WAVELENGTHS[frame].toFixed(2)} µm`} from IRSA…
+            </div>
+          </div>
+        )}
         {status === "error" && (
           <div className="sky-status sky-error">
             <p>{error}</p>

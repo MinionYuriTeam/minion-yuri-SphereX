@@ -2,6 +2,19 @@
 
 Newest first. One entry per piece of work, with the branch it landed on.
 
+## 15 Nov 2026: Sky map: visible loading state (`raman-skymap-loading`)
+
+- **`src/pages/SkyMap.js`** + **`styles/SkyMap.css`**: changing wavelength
+  kept the old map at full brightness with grey "Loading…" text on top, so
+  you couldn't tell it was loading. Now while a map loads:
+  - the old map dims;
+  - a dark pill with a spinner says what's loading ("Loading 1.59 µm from
+    IRSA…", "Loading the colour map from IRSA…"), above the target dots;
+  - the wavelength label gets an orange "· loading…".
+- Tested in the browser (map downloads slowed down so the state could be
+  seen): shows on every wavelength and Colour change, clears once the map is
+  drawn, works at phone width, no console errors.
+
 ## 15 Nov 2026: F13 flags overlay + lens fixes (`raman-f13-flags`)
 
 - **`src/components/FlagsOverlay.js`** (+ `styles/FlagsOverlay.css`): a flag
