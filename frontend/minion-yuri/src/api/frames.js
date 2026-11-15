@@ -117,7 +117,7 @@ export async function hasBakedSpectrum(ra, dec) {
 // -> { points: [ { wavelength_um, bandwidth_um, flux_mjy, error_mjy, array, array_range_um,
 //                  date, visit, quality } ], n_exposures, n_dropped, source }
 // Always unbinned: SpectrumChart bins on the client (same rule as the backend's binned=true).
-export async function getSpectrum({ ra, dec, pm_ra = 0, pm_dec = 0 }, { signal } = {}) {
+export async function getSpectrum({ ra, dec, pm_ra = 0, pm_dec = 0 }, { signal, job } = {}) {
   const target = await findBakedTarget(ra, dec);
   if (target?.spectrum) {
     const json = await getJson(`${PUBLIC}/${target.spectrum}`, signal, 'Could not load the built-in spectrum.');
@@ -125,7 +125,7 @@ export async function getSpectrum({ ra, dec, pm_ra = 0, pm_dec = 0 }, { signal }
   }
   const api = getApiUrl();
   const json = await getJson(
-    `${api}/api/spectrum?${new URLSearchParams({ ra, dec, pm_ra, pm_dec })}`,
+    `${api}/api/spectrum?${new URLSearchParams({ ra, dec, pm_ra, pm_dec, ...(job ? { job } : {}) })}`,
     signal,
     'Could not measure the spectrum.',
     api
