@@ -10,12 +10,13 @@ const FOVS = [2, 5, 10, 20, 40];
 function FovPicker({ fov, onChange, loadTime }) {
   return (
     <div className="fov">
-      <span className="fov-label">
+      <span className="fov-label" data-tip="How much sky you see. Small = zoomed in, big = wide (the full Moon is 30′)">
         Field of view{loadTime && ` · loaded in ${loadTime} s`}
       </span>
       <div className="fov-buttons">
         {FOVS.map((f) => (
-          <button key={f} className={f === fov ? "active" : ""} onClick={() => onChange(f)}>
+          <button key={f} className={f === fov ? "active" : ""} onClick={() => onChange(f)}
+            data-tip={`Show a patch ${f} arcminutes wide${f >= 20 ? " (takes longer the first time)" : ""}`}>
             {f}′
           </button>
         ))}

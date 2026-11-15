@@ -20,8 +20,8 @@ function ShareLink({ view }) {
     <div className="share">
       <h3 className="share-title">Share this view</h3>
       <div className="share-row">
-        <code className="share-url"><span>{url}</span></code>
-        <button onClick={copy}>{copied ? "Copied" : "Copy"}</button>
+        <code className="share-url" data-tip="This link opens exactly what you see now"><span>{url}</span></code>
+        <button onClick={copy} data-tip="Copy the link to send to someone">{copied ? "Copied" : "Copy"}</button>
       </div>
     </div>
   );
