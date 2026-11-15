@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-14T19:00:28+00:00",
+ "generated": "2026-11-15T01:06:18+00:00",
  "targets": [
   {
    "name": "Barnard's Star",
@@ -595,7 +595,8 @@
      "epochs": 3,
      "complete": true
     }
-   ]
+   ],
+   "spectrum": "baked/rw-aurigae/spectrum.json"
   },
   {
    "name": "R Draconis",

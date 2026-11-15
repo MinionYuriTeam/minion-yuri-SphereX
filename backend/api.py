@@ -130,9 +130,11 @@ def api_frames(
 def api_spectrum(
     ra: float = Query(..., ge=0, lt=360), dec: float = Query(..., ge=-90, le=90),
     binned: bool = Query(False, description="Median per visit and wavelength bin"),
+    pm_ra: float = Query(0.0, description="Proper motion in RA, mas/yr (from /api/resolve)"),
+    pm_dec: float = Query(0.0, description="Proper motion in Dec, mas/yr"),
 ):
     try:
-        s = get_spectrum(ra, dec)
+        s = get_spectrum(ra, dec, pm_ra, pm_dec)
     except SearchUnavailable as exc:
         raise HTTPException(503, str(exc))
     if binned:

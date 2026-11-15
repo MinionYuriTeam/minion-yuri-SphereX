@@ -31,6 +31,7 @@ from pathlib import Path
 
 from pipeline import get_stacks
 from pipeline.render import save_epoch_pngs
+from pipeline.spectrum import get_spectrum
 
 FRONTEND = Path(__file__).resolve().parent.parent / "frontend" / "minion-yuri"
 TARGETS_JS = FRONTEND / "src" / "data" / "target.js"
@@ -108,6 +109,15 @@ def main():
             for fov in fovs:
                 combos.append(bake_one(target, array, fov))
         by_name[target["name"]] = {**target, "slug": slug(target["name"]), "baked": combos}
+        
+        try:                                              # new: bake the spectrum too
+            spectrum = get_spectrum(target["ra"], target["dec"])
+            path = BAKED / slug(target["name"]) / "spectrum.json"
+            path.write_text(json.dumps(spectrum))
+            by_name[target["name"]]["spectrum"] = path.relative_to(FRONTEND / "public").as_posix()
+            print(f"  spectrum: {len(spectrum['points'])} points, {spectrum['n_dropped']} dropped")
+        except Exception as exc:
+            print(f"  spectrum failed, frames are still baked: {exc}")
 
     index = {
         "generated": datetime.now(timezone.utc).isoformat(timespec="seconds"),
