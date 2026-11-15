@@ -7,6 +7,7 @@
 // (every exposure is downloaded), so it only starts when you press the button.
 import { useEffect, useMemo, useState } from "react";
 import { getSpectrum, hasBakedSpectrum } from "../api/frames";
+import { GAS_BANDS, ICE_BANDS } from "../data/molecules";
 import "../styles/SpectrumChart.css";
 
 // short -> long wavelength, blue -> red
@@ -53,7 +54,28 @@ function niceLinearTicks(lo, hi, count = 8) { // gives 4–8 ticks
 
 const fmtFlux = (v) => (Math.abs(v) >= 1000 ? `${+(v / 1000).toPrecision(3)}k` : `${+v.toPrecision(3)}`);
 
-function Chart({ points, array }) {
+const LABEL_MODES = [
+  { key: "gas", label: "Atmosphere", bands: GAS_BANDS,
+    tip: "Molecules in the air of brown dwarfs and cool stars (our targets)" },
+  { key: "ice", label: "Ice", bands: ICE_BANDS,
+    tip: "Frozen molecules on dust in cold clouds (what SPHEREx's ice survey looks for)" },
+  { key: "off", label: "Off", bands: [], tip: "Hide the molecule labels" },
+];
+
+// Put each band's name in the first row where it doesn't overlap a name already there
+function layoutBands(bands, sx) {
+  const rowsEnd = [];
+  return bands.map((b) => {
+    const x0 = sx(b.lo), x1 = sx(b.hi), mid = (x0 + x1) / 2;
+    const half = (b.name.length * 6.4) / 2 + 3;
+    let row = rowsEnd.findIndex((end) => mid - half > end);
+    if (row === -1) row = rowsEnd.length;
+    rowsEnd[row] = mid + half;
+    return { ...b, x0, x1, mid, row };
+  });
+}
+
+function Chart({ points, array, bands }) {
   const [hover, setHover] = useState(null);
   const x0 = M.left, x1 = W - M.right, y0 = H - M.bottom, y1 = M.top;
   const sx = (um) => x0 + ((um - X_DOMAIN[0]) / (X_DOMAIN[1] - X_DOMAIN[0])) * (x1 - x0);
@@ -87,6 +109,14 @@ function Chart({ points, array }) {
             <rect x={sx(a)} y={y1} width={sx(b) - sx(a)} height={y0 - y1}
               className={`band ${Number(n) === array ? "band-now" : ""}`} />
             <text x={(sx(a) + sx(b)) / 2} y={y1 + 12} className="band-label" fill={ARRAY_COLOURS[n]}>{n}</text>
+          </g>
+        ))}
+
+        {/* molecule bands: where each molecule absorbs light (dips in the spectrum) */}
+        {layoutBands(bands, sx).map((b, i) => (
+          <g key={`${b.name}-${i}`} data-tip={`${b.name}: absorbs around ${b.lo}–${b.hi} µm`}>
+            <rect x={b.x0} y={y1} width={b.x1 - b.x0} height={y0 - y1} className="molecule" />
+            <text x={b.mid} y={y1 + 28 + b.row * 13} className="molecule-label">{b.name}</text>
           </g>
         ))}
 
@@ -138,6 +168,7 @@ function SpectrumChart({ ra, dec, array }) {
   const [loading, setLoading] = useState(false);
   const [binned, setBinned] = useState(false);
   const [retry, setRetry] = useState(0);
+  const [labels, setLabels] = useState("gas");
 
   // new spot: forget the old spectrum, check if this one is baked
   useEffect(() => {
@@ -172,11 +203,19 @@ function SpectrumChart({ ra, dec, array }) {
           Spectrum
         </h3>
         {data?.points.length > 0 && (
+          <div className="spectrum-controls">
+          <div className="fov-buttons spectrum-mode" aria-label="Molecule labels">
+            {LABEL_MODES.map((m) => (
+              <button key={m.key} className={labels === m.key ? "active" : ""} onClick={() => setLabels(m.key)}
+                data-tip={m.tip}>{m.label}</button>
+            ))}
+          </div>
           <div className="fov-buttons spectrum-mode">
             <button className={binned ? "" : "active"} onClick={() => setBinned(false)}
               data-tip="One dot per SPHEREx exposure">Every exposure</button>
             <button className={binned ? "active" : ""} onClick={() => setBinned(true)}
               data-tip="Median of nearby wavelengths per visit: steadier dots for faint targets">Averaged</button>
+          </div>
           </div>
         )}
       </div>
@@ -207,7 +246,8 @@ function SpectrumChart({ ra, dec, array }) {
 
       {data && points.length > 0 && (
         <>
-          <Chart points={points} array={array} />
+          <Chart points={points} array={array}
+            bands={LABEL_MODES.find((m) => m.key === labels).bands} />
           <p className="spectrum-meta">
             {data.points.length} of {data.n_exposures} exposures measured
             {data.n_dropped > 0 && ` (${data.n_dropped} skipped: target off the edge, flagged pixels or cosmic rays)`}

@@ -11,6 +11,18 @@
 .spectrum-title { margin: 0; font-size: 18px; }
 
 .spectrum-mode button { height: 30px; font-size: 12px; }
+.spectrum-controls { display: flex; flex-wrap: wrap; gap: 8px; }
+/* size to the words, not equal widths (FovPicker.css squeezes buttons on a phone) */
+.spectrum-mode button { flex: 0 0 auto; }
+
+.spectrum-svg .molecule { fill: #c9a7ff; opacity: 0.08; }
+.spectrum-svg g:hover > .molecule { opacity: 0.18; }
+.spectrum-svg .molecule-label {
+  fill: #c9a7ff;
+  font-size: 10.5px;
+  font-weight: 600;
+  text-anchor: middle;
+}
 
 .spectrum-svg {
   width: 100%;
