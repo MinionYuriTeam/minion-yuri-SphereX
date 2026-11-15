@@ -28,10 +28,17 @@ function HowItWorks() {
       <dl className="terms">
         <dt>Field of view</dt><dd>How big the patch is: 2, 5, 10, 20 or 40 arcminutes. The full Moon is about 30.</dd>
         <dt>Detector array</dt><dd>SPHEREx has 6 detector arrays, each seeing a different infrared wavelength range (1 = shortest, 0.75 µm; 6 = longest, 5 µm). Cold objects like brown dwarfs only show up on arrays 5–6.</dd>
+        <dt>False colour</dt><dd>The last button in the detector array row. Instead of one array, it mixes three into
+        one colour picture: array 6 (longest wavelength) as red, array 4 as green and array 2 as blue. Our eyes
+        can't see infrared, so these colours are made up, but they keep the order: cold objects like brown dwarfs
+        look red, hot stars look blue. Click any array number to go back to a single array.</dd>
         <dt>Crosshair</dt><dd>Marks the centre of the image, where your target is. Turn it off with the button in the corner of the image.</dd>
         <dt>Loupe</dt><dd>Hover the image to magnify it. Double-click to pin the lens on one spot.</dd>
         <dt>Difference</dt><dd>Shows the current picture minus the first picture. Stars that stay the same cancel out; anything that moved or changed brightness is left over.</dd>
         <dt>Share</dt><dd>Copies a link that opens exactly what you are looking at.</dd>
+        <dt>GIF</dt><dd>The ⬇ GIF button next to the frame slider saves the loop as an animated GIF, at the
+        speed you picked. Each frame shows the target, array (or false colour), field of view and date, so it
+        makes sense on its own when you post or send it.</dd>
       </dl>
 
       <h3>The spectrum</h3>

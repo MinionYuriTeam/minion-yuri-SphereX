@@ -14,6 +14,7 @@
 .viewer {
   position: relative;
   flex: 999 1 360px;
+  align-self: flex-start; /* stay square: don't stretch to the side column's height (loupe + difference) */
   aspect-ratio: 1;
   max-width: 560px;
   background: #000;
