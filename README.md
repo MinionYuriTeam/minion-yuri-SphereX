@@ -490,3 +490,10 @@ box) and see what happens. Esc to get back to work.
 ## Changelog
 
 What changed and when: [docs/changelog.md](docs/changelog.md).
+
+
+AI (SI) was used to accelerate development progress in the following subjects:
+* Ideation/Brainstorming
+* Coding, Debugging or Troubleshooting
+* Writing, Editing, or Translation  
+Claude Opus 5.5 and Fable 5.1/5.2 were used.
