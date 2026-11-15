@@ -19,9 +19,9 @@ export const GAS_BANDS = [
 
 // Ices on dust grains: what SPHEREx's ice survey looks for in cold clouds
 export const ICE_BANDS = [
-  { name: "solid H₂O", lo: 2.9, hi: 3.2 },
-  { name: "solid CH₄", lo: 3.27, hi: 3.37 },
-  { name: "solid CH₃OH", lo: 3.47, hi: 3.59 },
-  { name: "solid CO₂", lo: 4.22, hi: 4.32 },
-  { name: "solid CO", lo: 4.63, hi: 4.71 },
+  { name: "Solid H₂O", lo: 2.9, hi: 3.2 },
+  { name: "Solid CH₄", lo: 3.27, hi: 3.37 },
+  { name: "Solid CH₃OH", lo: 3.47, hi: 3.59 },
+  { name: "Solid CO₂", lo: 4.22, hi: 4.32 },
+  { name: "Solid CO", lo: 4.63, hi: 4.71 },
 ];
