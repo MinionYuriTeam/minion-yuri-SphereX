@@ -22,7 +22,13 @@ function BlinkPlayer({ epochs, index, setIndex, side, children, gifTitle = "SPHE
   }, [playing, fps, epochs.length, setIndex]);
 
   if (epochs.length === 0) {
-    return <p>No SPHEREx images for this patch on this detector array. Try another array or position.</p>;
+    // keep the controls (FOV, arrays, false colour) so the visitor can switch away
+    return (
+      <div className="player">
+        <p>No SPHEREx images for this patch with these settings. Try another detector array, field of view or position.</p>
+        <div className="controls-grid">{children}</div>
+      </div>
+    );
   }
   const frame = epochs[Math.min(index, epochs.length - 1)];
 
