@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-14T19:00:28+00:00",
+ "generated": "2026-11-15T08:50:18+00:00",
  "targets": [
   {
    "name": "Barnard's Star",
@@ -147,6 +147,39 @@
      "path": "baked/barnard-s-star/D6_fov2/frames.json",
      "epochs": 5,
      "complete": true
+    }
+   ],
+   "spectrum": "baked/barnard-s-star/spectrum.json",
+   "rgb": [
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 10,
+     "path": "baked/barnard-s-star/rgb642_fov10/frames.json",
+     "epochs": 4
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 5,
+     "path": "baked/barnard-s-star/rgb642_fov5/frames.json",
+     "epochs": 4
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 2,
+     "path": "baked/barnard-s-star/rgb642_fov2/frames.json",
+     "epochs": 4
     }
    ]
   },
@@ -297,6 +330,39 @@
      "epochs": 5,
      "complete": true
     }
+   ],
+   "spectrum": "baked/wise-0855/spectrum.json",
+   "rgb": [
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 10,
+     "path": "baked/wise-0855/rgb642_fov10/frames.json",
+     "epochs": 4
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 5,
+     "path": "baked/wise-0855/rgb642_fov5/frames.json",
+     "epochs": 4
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 2,
+     "path": "baked/wise-0855/rgb642_fov2/frames.json",
+     "epochs": 4
+    }
    ]
   },
   {
@@ -345,63 +411,63 @@
      "array": 1,
      "fov": 10,
      "path": "baked/epsilon-indi-b/D1_fov10/frames.json",
-     "epochs": 4,
+     "epochs": 6,
      "complete": true
     },
     {
      "array": 1,
      "fov": 5,
      "path": "baked/epsilon-indi-b/D1_fov5/frames.json",
-     "epochs": 4,
+     "epochs": 6,
      "complete": true
     },
     {
      "array": 1,
      "fov": 2,
      "path": "baked/epsilon-indi-b/D1_fov2/frames.json",
-     "epochs": 4,
+     "epochs": 6,
      "complete": true
     },
     {
      "array": 2,
      "fov": 10,
      "path": "baked/epsilon-indi-b/D2_fov10/frames.json",
-     "epochs": 6,
+     "epochs": 7,
      "complete": true
     },
     {
      "array": 2,
      "fov": 5,
      "path": "baked/epsilon-indi-b/D2_fov5/frames.json",
-     "epochs": 6,
+     "epochs": 7,
      "complete": true
     },
     {
      "array": 2,
      "fov": 2,
      "path": "baked/epsilon-indi-b/D2_fov2/frames.json",
-     "epochs": 6,
+     "epochs": 7,
      "complete": true
     },
     {
      "array": 4,
      "fov": 10,
      "path": "baked/epsilon-indi-b/D4_fov10/frames.json",
-     "epochs": 4,
+     "epochs": 6,
      "complete": true
     },
     {
      "array": 4,
      "fov": 5,
      "path": "baked/epsilon-indi-b/D4_fov5/frames.json",
-     "epochs": 4,
+     "epochs": 6,
      "complete": true
     },
     {
      "array": 4,
      "fov": 2,
      "path": "baked/epsilon-indi-b/D4_fov2/frames.json",
-     "epochs": 4,
+     "epochs": 6,
      "complete": true
     },
     {
@@ -445,6 +511,39 @@
      "path": "baked/epsilon-indi-b/D6_fov2/frames.json",
      "epochs": 7,
      "complete": true
+    }
+   ],
+   "spectrum": "baked/epsilon-indi-b/spectrum.json",
+   "rgb": [
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 10,
+     "path": "baked/epsilon-indi-b/rgb642_fov10/frames.json",
+     "epochs": 5
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 5,
+     "path": "baked/epsilon-indi-b/rgb642_fov5/frames.json",
+     "epochs": 5
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 2,
+     "path": "baked/epsilon-indi-b/rgb642_fov2/frames.json",
+     "epochs": 5
     }
    ]
   },
@@ -595,6 +694,39 @@
      "epochs": 3,
      "complete": true
     }
+   ],
+   "spectrum": "baked/rw-aurigae/spectrum.json",
+   "rgb": [
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 10,
+     "path": "baked/rw-aurigae/rgb642_fov10/frames.json",
+     "epochs": 3
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 5,
+     "path": "baked/rw-aurigae/rgb642_fov5/frames.json",
+     "epochs": 3
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 2,
+     "path": "baked/rw-aurigae/rgb642_fov2/frames.json",
+     "epochs": 3
+    }
    ]
   },
   {
@@ -615,28 +747,28 @@
      "array": 3,
      "fov": 20,
      "path": "baked/r-draconis/D3_fov20/frames.json",
-     "epochs": 7,
+     "epochs": 8,
      "complete": true
     },
     {
      "array": 3,
      "fov": 10,
      "path": "baked/r-draconis/D3_fov10/frames.json",
-     "epochs": 7,
+     "epochs": 8,
      "complete": true
     },
     {
      "array": 3,
      "fov": 5,
      "path": "baked/r-draconis/D3_fov5/frames.json",
-     "epochs": 7,
+     "epochs": 8,
      "complete": true
     },
     {
      "array": 3,
      "fov": 2,
      "path": "baked/r-draconis/D3_fov2/frames.json",
-     "epochs": 7,
+     "epochs": 8,
      "complete": true
     },
     {
@@ -657,7 +789,7 @@
      "array": 1,
      "fov": 2,
      "path": "baked/r-draconis/D1_fov2/frames.json",
-     "epochs": 6,
+     "epochs": 7,
      "complete": true
     },
     {
@@ -699,7 +831,7 @@
      "array": 4,
      "fov": 2,
      "path": "baked/r-draconis/D4_fov2/frames.json",
-     "epochs": 6,
+     "epochs": 7,
      "complete": true
     },
     {
@@ -727,22 +859,55 @@
      "array": 6,
      "fov": 10,
      "path": "baked/r-draconis/D6_fov10/frames.json",
-     "epochs": 7,
+     "epochs": 8,
      "complete": true
     },
     {
      "array": 6,
      "fov": 5,
      "path": "baked/r-draconis/D6_fov5/frames.json",
-     "epochs": 7,
+     "epochs": 8,
      "complete": true
     },
     {
      "array": 6,
      "fov": 2,
      "path": "baked/r-draconis/D6_fov2/frames.json",
-     "epochs": 7,
+     "epochs": 8,
      "complete": true
+    }
+   ],
+   "spectrum": "baked/r-draconis/spectrum.json",
+   "rgb": [
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 10,
+     "path": "baked/r-draconis/rgb642_fov10/frames.json",
+     "epochs": 2
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 5,
+     "path": "baked/r-draconis/rgb642_fov5/frames.json",
+     "epochs": 2
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 2,
+     "path": "baked/r-draconis/rgb642_fov2/frames.json",
+     "epochs": 2
     }
    ]
   }

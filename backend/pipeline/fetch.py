@@ -109,6 +109,7 @@ def read_cutout(url, coord, box_arcmin):
     header["NAXIS1"], header["NAXIS2"] = x1 - x0, y1 - y0
     header["CRPIX1"] -= x0
     header["CRPIX2"] -= y0
+    header["X0"], header["Y0"] = x0, y0  # the cutout's corner on the full detector
     return Cutout(image, flags, header)
 
 

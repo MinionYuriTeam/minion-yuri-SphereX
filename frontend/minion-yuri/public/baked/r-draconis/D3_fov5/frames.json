@@ -51,13 +51,22 @@
    "flags_png_url": "baked/r-draconis/D3_fov5/epoch_04_flags.png"
   },
   {
-   "date": "2026-05-15",
-   "datetime": "2026-05-15T09:23:47.630",
+   "date": "2026-05-11",
+   "datetime": "2026-05-11T18:58:23.303",
    "date_start": "2026-05-06T06:05:34.155",
-   "date_end": "2026-05-23T11:53:43.991",
-   "n_exposures": 24,
+   "date_end": "2026-05-16T08:49:02.889",
+   "n_exposures": 16,
    "png_url": "baked/r-draconis/D3_fov5/epoch_05.png",
    "flags_png_url": "baked/r-draconis/D3_fov5/epoch_05_flags.png"
+  },
+  {
+   "date": "2026-05-22",
+   "datetime": "2026-05-22T14:14:36.283",
+   "date_start": "2026-05-21T17:26:08.811",
+   "date_end": "2026-05-23T11:53:43.991",
+   "n_exposures": 8,
+   "png_url": "baked/r-draconis/D3_fov5/epoch_06.png",
+   "flags_png_url": "baked/r-draconis/D3_fov5/epoch_06_flags.png"
   },
   {
    "date": "2026-06-10",
@@ -65,8 +74,8 @@
    "date_start": "2026-06-08T13:55:44.836",
    "date_end": "2026-06-12T20:40:39.719",
    "n_exposures": 8,
-   "png_url": "baked/r-draconis/D3_fov5/epoch_06.png",
-   "flags_png_url": "baked/r-draconis/D3_fov5/epoch_06_flags.png"
+   "png_url": "baked/r-draconis/D3_fov5/epoch_07.png",
+   "flags_png_url": "baked/r-draconis/D3_fov5/epoch_07_flags.png"
   }
  ],
  "ra": 248.167611,
@@ -75,8 +84,8 @@
  "size_px": 49,
  "pixel_scale_arcsec": 6.15,
  "display_range": [
-  -0.8967435598373413,
-  609.6293481445335
+  -0.8688200175762176,
+  602.5297222900344
  ],
  "n_skipped": 3,
  "n_failed": 0,

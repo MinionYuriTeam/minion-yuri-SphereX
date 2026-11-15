@@ -1,0 +1,29 @@
+{
+ "arrays": [
+  6,
+  4,
+  2
+ ],
+ "ra": 133.757786,
+ "dec": -7.242023,
+ "fov": 2,
+ "epochs": [
+  {
+   "date": "2025-05-05",
+   "png_url": "baked/wise-0855/rgb642_fov2/rgb_00.png"
+  },
+  {
+   "date": "2025-11-12",
+   "png_url": "baked/wise-0855/rgb642_fov2/rgb_01.png"
+  },
+  {
+   "date": "2026-04-24",
+   "png_url": "baked/wise-0855/rgb642_fov2/rgb_02.png"
+  },
+  {
+   "date": "2026-05-09",
+   "png_url": "baked/wise-0855/rgb642_fov2/rgb_03.png"
+  }
+ ],
+ "baked": true
+}

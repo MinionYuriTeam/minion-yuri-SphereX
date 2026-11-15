@@ -28,7 +28,7 @@ from .settings import COLLECTIONS
 SIA_URL = "https://irsa.ipac.caltech.edu/SIA"
 SEARCH_ATTEMPTS = 12
 CSV_NAME = "exposures.csv"
-REUSE_HOURS = 6
+REUSE_HOURS = 72
 CSV_COLUMNS = ["array", "date", "mjd", "wavelength_min_um", "wavelength_max_um",
                "obs_id", "collection", "aws_url"]
 
