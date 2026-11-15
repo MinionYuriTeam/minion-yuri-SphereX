@@ -30,42 +30,172 @@
   let pinned = false;
   let lastPoint = null;
   let mode = 'image';     // 'image' | 'video'
-  let rafId = null;       // keeps the lens / motion view live during playback
+  let rafId = null;
 
   const frameCanvas = document.createElement('canvas');
   const fctx = frameCanvas.getContext('2d', { willReadFrequently: true });
   let samplerReady = false;
 
   // ---- Motion View analysis buffers ----
-  const ACAP = 512;                       // analysis resolution (downscaled)
+  const ACAP = 512;                       // VIDEO analysis resolution
+  const IMG_CAP = 2048;                   // IMAGE analysis resolution (one-shot)
   const analCanvas = document.createElement('canvas');
   const actx = analCanvas.getContext('2d', { willReadFrequently: true });
-  const visCanvas = document.createElement('canvas');   // small visualization
+  const bgSmall = document.createElement('canvas');
+  const bsctx = bgSmall.getContext('2d', { willReadFrequently: true });
+  const bgBig = document.createElement('canvas');
+  const bbctx = bgBig.getContext('2d', { willReadFrequently: true });
+  const visCanvas = document.createElement('canvas');
   const vctx = visCanvas.getContext('2d');
-  const mctx = motionView.getContext('2d');             // upscaled output
+  const mctx = motionView.getContext('2d');
   let aw = 0, ah = 0;
-  let prevFrame = null;                   // previous downscaled frame (raw RGBA)
-  let grayCur = null;                     // current frame luminance (Float32)
-  let grayPrev = null;                    // PREVIOUS frame luminance (Float32)
-  let prevDil = null;                     // 3x3 max-dilation of grayPrev
-  let motionBuf = null;                   // per-pixel persistence score
+  let prevFrame = null;
+  let grayCur = null;
+  let grayPrev = null;
+  let prevDil = null;
+  let motionBuf = null;
   let motionOn = false;
   let motionSensitivity = 100;
 
-  // Motion tuning constants:
-  //  MOVE_LEVEL  score needed to render a pixel as "moving".
-  //              1.0 = INSTANT: one qualifying frame lights it up.
-  //  HIT_GAIN    score a qualifying frame contributes.
-  //  WEAK_FRAC   a diff above threshold*WEAK_FRAC (but below threshold)
-  //              counts as SUBTLE change and gets WEAK_GAIN — lets sustained
-  //              low-amplitude motion (skin, hair, slow drift) accumulate
-  //              and stay lit instead of being decayed away.
-  //  DECAY       score lost per non-qualifying frame.
-  //  SPILL       score given to the 4 neighbours of a hit. MUST be >=
-  //              MOVE_LEVEL so spilled pixels actually render lit — the
-  //              earlier value 0.9 < 1.0 made the "fill" invisible and
-  //              left dead holes inside moving objects.
-  //  CHROMA_W    weight of the color-change term relative to luminance.
+  // ---- ============================================================
+  // ---- ANALYSIS CACHE — designed to NEVER touch the playback path
+  // ---- ============================================================
+  // PERFORMANCE RULE learned from profiling: the hot loop must not
+  // allocate. The old (fast) version had zero allocations per frame; the
+  // slow regressions came from per-frame cloneCanvas + Float32Array.copy
+  // + queued toBlob PNG encodes firing in bursts.
+  //
+  //  * VIDEO buckets: RAM-only, and each snapshot is drawn into ONE OF TWO
+  //    ROTATING, pre-allocated canvases (snapPool) — no canvas creation,
+  //    no buffer allocation beyond one small Float32Array copy per bucket
+  //    change (~5/sec). Snapshots happen at most every 0.2s, never per
+  //    frame. Eviction drops refs only — free.
+  //  * IMAGE analyses: computed once, cached in RAM + persisted to
+  //    IndexedDB ('motion-view-cache'). One-shot work is inherently off
+  //    the playback path, so PNG encoding there is harmless.
+  //  * Nothing in the cache layer runs while a video frame is being
+  //    processed except the rotation draw described above.
+  const CACHE_MAX = 40;
+  const VID_CACHE_MAX = 24;
+  const IDB_NAME = 'motion-view-cache';
+  const IDB_STORE = 'analysis';
+  const analysisCache = new Map();   // image entries: { vis, aw, ah }
+  const vidCache = new Map();        // video entries: { snap, buf, aw, ah }
+
+  // Two reusable snapshot canvases, alternated so no allocation per snapshot
+  const snapPool = [document.createElement('canvas'),
+                    document.createElement('canvas')];
+  let snapIdx = 0;
+
+  const idb = (() => {
+    let dbp = null;
+    function open() {
+      if (!('indexedDB' in window)) return Promise.resolve(null);
+      if (!dbp) {
+        dbp = new Promise((resolve) => {
+          const req = indexedDB.open(IDB_NAME, 1);
+          req.onupgradeneeded = () => req.result.createObjectStore(IDB_STORE);
+          req.onsuccess = () => resolve(req.result);
+          req.onerror = () => resolve(null);   // private mode → RAM-only
+        }).catch(() => null);
+      }
+      return dbp;
+    }
+    return {
+      get(key) {
+        return open().then((db) => {
+          if (!db) return null;
+          return new Promise((res) => {
+            const t = db.transaction(IDB_STORE, 'readonly')
+              .objectStore(IDB_STORE).get(key);
+            t.onsuccess = () => res(t.result || null);
+            t.onerror = () => res(null);
+          });
+        });
+      },
+      put(key, val) {
+        return open().then((db) => {
+          if (!db) return;
+          return new Promise((res) => {
+            const t = db.transaction(IDB_STORE, 'readwrite')
+              .objectStore(IDB_STORE).put(val, key);
+            t.onsuccess = () => res(true);
+            t.onerror = () => res(false);
+          });
+        });
+      },
+    };
+  })();
+
+  function cacheGet(key) {
+    const v = analysisCache.get(key) || vidCache.get(key);
+    if (v) {
+      const src = analysisCache.has(key) ? analysisCache : vidCache;
+      src.delete(key); src.set(key, v);   // refresh LRU order
+    }
+    return v;
+  }
+  function cachePutImage(key, val) {
+    if (analysisCache.has(key)) analysisCache.delete(key);
+    analysisCache.set(key, val);
+    while (analysisCache.size + vidCache.size > CACHE_MAX) {
+      // evict video entries first — image analyses are precious (slow to
+      // compute); video snapshots regenerate passively during playback.
+      let evicted = false;
+      for (const k of vidCache.keys()) { vidCache.delete(k); evicted = true; break; }
+      if (!evicted) analysisCache.delete(analysisCache.keys().next().value);
+    }
+  }
+  function cachePutVideo(key, snap, buf, aw_, ah_) {
+    if (vidCache.has(key)) vidCache.delete(key);
+    vidCache.set(key, { snap, buf, aw: aw_, ah: ah_ });
+    while (vidCache.size > VID_CACHE_MAX) {
+      vidCache.delete(vidCache.keys().next().value);
+    }
+  }
+  function cloneCanvas(c) {
+    const n = document.createElement('canvas');
+    n.width = c.width; n.height = c.height;
+    n.getContext('2d').drawImage(c, 0, 0);
+    return n;
+  }
+  function persistImage(key, entry) {
+    entry.vis.toBlob((blob) => {
+      if (!blob) return;
+      idb.put(key, { aw: entry.aw, ah: entry.ah, visBlob: blob });
+    }, 'image/png');
+  }
+  window.addEventListener('pagehide', function () {
+    // flush any freshly computed (not yet persisted) image entries
+    for (const [key, entry] of analysisCache) {
+      if (!entry.persisted) { entry.persisted = true; persistImage(key, entry); }
+    }
+  });
+  function restoreVis(rec) {
+    if (!rec || !rec.visBlob) return Promise.resolve(false);
+    return createImageBitmap(rec.visBlob)
+      .then((bmp) => {
+        vctx.clearRect(0, 0, aw, ah);
+        vctx.drawImage(bmp, 0, 0);
+        bmp.close && bmp.close();
+        upscaleToMotionView();
+        return true;
+      })
+      .catch(() => false);
+  }
+
+  function computeMediaKey(file) {
+    if (file) return file.name + ':' + file.size;
+    return (mode === 'video' ? vid.currentSrc : img.currentSrc) || 'unknown';
+  }
+  let mediaKey = 'unknown';
+  function sensBucket() { return Math.round(motionSensitivity / 5) * 5; }
+  function videoBucketKey(t) {
+    const tb = (Math.floor(t * 5) / 5).toFixed(2);
+    return 'vid|' + mediaKey + '|' + tb + '|' + sensBucket();
+  }
+
+  // Motion tuning constants (VIDEO mode):
   const MOVE_LEVEL = 1.0;
   const HIT_GAIN = 1.0;
   const WEAK_FRAC = 0.45;
@@ -74,13 +204,22 @@
   const SPILL = 0;
   const CHROMA_W = 0.5;
 
+  // IMAGE mode tuning
+  const IMG_THR_LO = 25;
+  const IMG_THR_HI = 170;
+  const BG_DIVISOR = 24;
+
   function activeMedia() { return mode === 'video' ? vid : img; }
-  // What is actually shown in the stage (Motion View replaces the video element)
-  function displayMedia() {
-    return (mode === 'video' && motionOn) ? motionView : activeMedia();
-  }
+  function displayMedia() { return motionOn ? motionView : activeMedia(); }
   function natW() { return mode === 'video' ? vid.videoWidth : img.naturalWidth; }
   function natH() { return mode === 'video' ? vid.videoHeight : img.naturalHeight; }
+
+  // EXACTLY ONE element visible at a time — single source of truth.
+  function updateStageVisibility() {
+    img.style.display = (!motionOn && mode === 'image') ? 'block' : 'none';
+    vid.style.display = (!motionOn && mode === 'video') ? 'block' : 'none';
+    motionView.style.display = motionOn ? 'block' : 'none';
+  }
 
   function prepareSampler() {
     const w = natW(), h = natH();
@@ -91,7 +230,7 @@
       fctx.drawImage(activeMedia(), 0, 0);
       samplerReady = true;
     } catch (err) {
-      samplerReady = false; // tainted source (no CORS) — coords still work
+      samplerReady = false;
     }
     dimVal.textContent = w + ' × ' + h;
     coordX.max = w - 1;
@@ -109,9 +248,6 @@
     }
   }
 
-  // Samples a lensSize/zoom-wide region of the CURRENT frame, centered on
-  // the point, drawn scaled up inside a circular clip. In Motion View the
-  // lens shows the motion visualization, at identical coordinates.
   function drawLens(nx, ny) {
     const half = lensSize / 2;
     const sw = lensSize / zoom;
@@ -125,14 +261,14 @@
     lctx.arc(half, half, half - 2, 0, Math.PI * 2);
     lctx.clip();
     try {
-      const src = (mode === 'video' && motionOn) ? motionView : activeMedia();
+      const src = motionOn ? motionView : activeMedia();
       lctx.drawImage(src, sx, sy, sw, sh, 0, 0, lensSize, lensSize);
     } catch (err) { /* tainted source */ }
     lctx.restore();
   }
 
-  // ================= Motion View =================
-  function setupAnalysis() {
+  // ================= Motion View — VIDEO mode =================
+  function setupVideoAnalysis() {
     const w = vid.videoWidth, h = vid.videoHeight;
     if (!w || !h) return;
     const scale = Math.min(1, ACAP / w);
@@ -142,7 +278,8 @@
     analCanvas.height = ah;
     visCanvas.width = aw;
     visCanvas.height = ah;
-    motionView.width = w;   // output at native resolution
+    snapPool.forEach(s => { s.width = aw; s.height = ah; });
+    motionView.width = w;
     motionView.height = h;
     prevFrame = null;
     prevDil = new Float32Array(aw * ah);
@@ -151,11 +288,6 @@
     motionBuf = new Float32Array(aw * ah);
   }
 
-  // Max-dilate `src` into `dst`: each cell becomes the brightest value in
-  // its 3x3 neighborhood. We dilate the PREVIOUS frame's luminance, so the
-  // comparison "current pixel vs brightest previous value nearby" is a true
-  // TEMPORAL diff — a background that flashes uniformly changes everywhere,
-  // not just at edges.
   function dilate(src, dst) {
     const W = aw, H = ah;
     if (!dst) return;
@@ -179,21 +311,13 @@
     }
   }
 
-  // Exponential sensitivity mapping — visible changes even at 1%-2% steps.
-  // NOTE: the luminance diff ranges 0..255, so thresholds are ~23.3 at 0%
-  // .. ~1.7 at 100%. The chroma term is halved (CHROMA_W), so it stays
-  // below the luminance range too.
   function currentThreshold() {
     return 23.3 * Math.pow(1.7 / 23.3, motionSensitivity / 100);
   }
 
-  // Detects a DUPLICATE frame: rAF typically fires at 60–144Hz while the
-  // video is 24–30fps, so ~half the analysis ticks re-sample the SAME
-  // video frame. A duplicated frame yields zero diff everywhere, and
-  // letting the decay run on it erodes the highlights into flickering
-  // dead patches. If the frame is identical to the previous one we FREEZE
-  // the motion buffer instead of updating it. Compares a strided sample
-  // of the two luminance buffers — identical frames are exactly equal.
+  // Duplicate-frame freeze (cheap strided check): at rAF cadence ~half the
+  // ticks sample the same video frame; freezing instead of decaying keeps
+  // highlights steady. This runs on the OLD fast path, analysis-only.
   function isDuplicateFrame(N) {
     for (let i = 0; i < N; i += 3) {
       if (Math.abs(grayCur[i] - grayPrev[i]) > 0.5) return false;
@@ -207,16 +331,14 @@
     let cur;
     try {
       cur = actx.getImageData(0, 0, aw, ah);
-    } catch (err) { return; }  // tainted source
+    } catch (err) { return; }
     const cd = cur.data;
     const N = aw * ah;
 
-    // Luminance (BT.601) for every pixel
     for (let i = 0, p = 0; i < N; i++, p += 4) {
       grayCur[i] = 0.299 * cd[p] + 0.587 * cd[p + 1] + 0.114 * cd[p + 2];
     }
 
-    // Advance the "previous" bookkeeping regardless of what we do below
     function commit() {
       prevFrame = cd;
       const tmp = grayPrev;
@@ -225,27 +347,19 @@
     }
 
     if (prevFrame && motionBuf) {
-      // Duplicate frame → freeze: don't decay, don't add, just keep the
-      // current visualization and wait for the next real frame.
-      if (isDuplicateFrame(N)) { commit(); return; }
-
-      // dilate the PREVIOUS frame's luminance (true temporal comparison)
+      if (isDuplicateFrame(N)) { commit(); return; }   // freeze, don't decay
       dilate(grayPrev, prevDil);
       const buf = motionBuf;
       const W = aw, H = ah;
       const gc = grayCur;
-      const gp = grayPrev;  // raw previous luminance (for the weak tier)
-      const pd = prevDil;   // dilated PREVIOUS luminance
-      const pf = prevFrame; // raw previous frame (for the chroma term)
+      const pd = prevDil;
+      const pf = prevFrame;
       const thr = currentThreshold();
       const CW = CHROMA_W;
       const weakThr = thr * WEAK_FRAC;
       for (let y = 0, i = 0, p = 0; y < H; y++) {
         for (let x = 0; x < W; x++, i++, p += 4) {
-          // --- luminance change (primary signal, perceptually weighted) ---
           const dl = Math.abs(gc[i] - pd[i]);
-
-          // --- chroma change (catches hue shifts at constant brightness) ---
           const dcR = cd[p] - pf[p];
           const dcG = cd[p + 1] - pf[p + 1];
           const dcB = cd[p + 2] - pf[p + 2];
@@ -255,18 +369,14 @@
           const d = Math.max(dl, dcMax * CW);
 
           if (d > thr) {
-            // strong change: instant capture
             buf[i] = Math.min(buf[i] + HIT_GAIN, 3);
-            // neighbor spill: fill in the body of the moving object.
-            // SPILL >= MOVE_LEVEL so these render LIT.
-            if (x > 0 && buf[i - 1] < SPILL) buf[i - 1] = SPILL;
-            if (x < W - 1 && buf[i + 1] < SPILL) buf[i + 1] = SPILL;
-            if (y > 0 && buf[i - W] < SPILL) buf[i - W] = SPILL;
-            if (y < H - 1 && buf[i + W] < SPILL) buf[i + W] = SPILL;
+            if (SPILL > 0) {
+              if (x > 0 && buf[i - 1] < SPILL) buf[i - 1] = SPILL;
+              if (x < W - 1 && buf[i + 1] < SPILL) buf[i + 1] = SPILL;
+              if (y > 0 && buf[i - W] < SPILL) buf[i - W] = SPILL;
+              if (y < H - 1 && buf[i + W] < SPILL) buf[i + W] = SPILL;
+            }
           } else if (d > weakThr) {
-            // subtle but real change (skin texture, hair, slow drift):
-            // accumulate half-gain so sustained motion stays lit instead
-            // of being decayed to a dead hole.
             buf[i] = Math.min(buf[i] + WEAK_GAIN, 3);
           } else {
             buf[i] = Math.max(buf[i] - DECAY, 0);
@@ -277,43 +387,158 @@
     commit();
   }
 
-  function renderMotionView() {
-    if (!prevFrame || !motionBuf) return;
-    const pf = prevFrame;
-    const out = vctx.createImageData(aw, ah);
-    const od = out.data;
-    for (let i = 0, p = 0; i < motionBuf.length; i++, p += 4) {
-      if (motionBuf[i] >= MOVE_LEVEL) {
-        // moving pixel: full brightness of the original
-        od[p] = pf[p];
-        od[p + 1] = pf[p + 1];
-        od[p + 2] = pf[p + 2];
+  function paintVis(sourceData, buf) {
+    const od = vctx.createImageData(aw, ah).data;
+    const sd = sourceData;
+    for (let i = 0, p = 0; i < buf.length; i++, p += 4) {
+      if (buf[i] >= MOVE_LEVEL) {
+        od[p] = sd[p]; od[p + 1] = sd[p + 1]; od[p + 2] = sd[p + 2];
       } else {
-        // static pixel: darkened so the moving ones stand out
-        od[p] = pf[p] * 0.18;
-        od[p + 1] = pf[p + 1] * 0.18;
-        od[p + 2] = pf[p + 2] * 0.18;
+        od[p] = sd[p] * 0.18; od[p + 1] = sd[p + 1] * 0.18; od[p + 2] = sd[p + 2] * 0.18;
       }
       od[p + 3] = 255;
     }
-    vctx.putImageData(out, 0, 0);
+    vctx.putImageData(new ImageData(od, aw, ah), 0, 0);
+  }
+
+  function upscaleToMotionView() {
     mctx.imageSmoothingEnabled = true;
     mctx.clearRect(0, 0, motionView.width, motionView.height);
     mctx.drawImage(visCanvas, 0, 0, motionView.width, motionView.height);
   }
 
-  // While a video is playing, keep both the motion view and the lens live
-  // every animation frame — even when the mouse is not moving. The try/catch
-  // guarantees an unexpected error can never terminate the rAF loop.
+  function renderMotionView() {
+    if (!prevFrame || !motionBuf) return;
+    paintVis(prevFrame, motionBuf);
+    upscaleToMotionView();
+  }
+
+  // ================= Motion View — IMAGE mode =================
+  let imageAnalysisToken = 0;
+  function runImageAnalysis() {
+    const w = img.naturalWidth, h = img.naturalHeight;
+    if (!w || !h) return;
+    const scale = Math.min(1, IMG_CAP / Math.max(w, h));
+    aw = Math.max(2, Math.round(w * scale));
+    ah = Math.max(2, Math.round(h * scale));
+    analCanvas.width = aw; analCanvas.height = ah;
+    visCanvas.width = aw; visCanvas.height = ah;
+    motionView.width = w;
+    motionView.height = h;
+    prevFrame = null;
+    const token = ++imageAnalysisToken;
+
+    const key = 'img|' + mediaKey + '|' + sensBucket();
+    const mem = cacheGet(key);
+    if (mem && mem.vis) {
+      vctx.clearRect(0, 0, aw, ah);
+      vctx.drawImage(mem.vis, 0, 0);
+      upscaleToMotionView();
+      return;
+    }
+
+    idb.get(key).then((rec) => {
+      if (token !== imageAnalysisToken || !motionOn) return;
+      if (rec && rec.aw === aw && rec.ah === ah) {
+        restoreVis(rec).then((ok) => {
+          if (ok) {
+            const e = { vis: cloneCanvas(visCanvas), aw, ah, persisted: true };
+            cachePutImage(key, e);
+          } else {
+            computeImageAnalysis(key, token);
+          }
+        });
+        return;
+      }
+      computeImageAnalysis(key, token);
+    });
+  }
+
+  function computeImageAnalysis(key, token) {
+    const w = img.naturalWidth, h = img.naturalHeight;
+    if (!w || !h) return;
+    actx.drawImage(img, 0, 0, aw, ah);
+    let src;
+    try { src = actx.getImageData(0, 0, aw, ah); } catch (err) { return; }
+    const sd = src.data;
+
+    const bw = Math.max(2, Math.round(aw / BG_DIVISOR));
+    const bh = Math.max(2, Math.round(ah / BG_DIVISOR));
+    bgSmall.width = bw; bgSmall.height = bh;
+    bsctx.imageSmoothingEnabled = true;
+    bsctx.drawImage(analCanvas, 0, 0, bw, bh);
+    bgBig.width = aw; bgBig.height = ah;
+    bbctx.imageSmoothingEnabled = true;
+    bbctx.drawImage(bgSmall, 0, 0, aw, ah);
+    let bg;
+    try { bg = bbctx.getImageData(0, 0, aw, ah); } catch (err) { return; }
+    const bd = bg.data;
+
+    const thr = IMG_THR_LO * Math.pow(IMG_THR_HI / IMG_THR_LO,
+                                      1 - motionSensitivity / 100);
+    const thrSq = thr * thr;
+    const mask = new Float32Array(aw * ah);
+    for (let i = 0, p = 0; i < mask.length; i++, p += 4) {
+      const dr = sd[p] - bd[p];
+      const dg = sd[p + 1] - bd[p + 1];
+      const db = sd[p + 2] - bd[p + 2];
+      if (dr * dr + dg * dg + db * db > thrSq) mask[i] = MOVE_LEVEL;
+    }
+    if (token !== imageAnalysisToken) return;
+    paintVis(sd, mask);
+
+    const entry = { vis: cloneCanvas(visCanvas), aw, ah, persisted: false };
+    cachePutImage(key, entry);
+    persistImage(key, entry);        // one-shot: PNG encode is fine here
+    entry.persisted = true;
+    upscaleToMotionView();
+  }
+
+  // ================= Live loop (video) =================
+  // RESTORED OLD FAST PATH: rAF + currentTime gate + duplicate freeze.
+  // Analysis, render, lens — nothing else. The only cache touch is at a
+  // bucket CHANGE (~5/sec): draw vis into a pooled canvas + copy the
+  // buffer. No canvas creation, no toBlob, no IndexedDB in this loop —
+  // ever. Those were the causes of the fps drops.
+  let lastVidTime = -1;
+  let lastBucketKey = null;
   function startVideoLoop() {
     if (rafId !== null) return;
     function tick() {
       try {
         if (mode !== 'video') { rafId = null; return; }
-        if (motionOn) {
+
+        // playback-speed guarantee: never below 1×
+        if (vid.defaultPlaybackRate !== 1) vid.defaultPlaybackRate = 1;
+        if (vid.playbackRate !== 1) vid.playbackRate = 1;
+
+        if (motionOn && vid.readyState >= 2 && vid.currentTime !== lastVidTime) {
+          lastVidTime = vid.currentTime;
+
           analyzeMotion();
           renderMotionView();
+
+          // RAM snapshot ONLY on bucket change — reused canvases, no allocs
+          const key = videoBucketKey(vid.currentTime);
+          if (key !== lastBucketKey) {
+            lastBucketKey = key;
+            const mem = vidCache.get(key);
+            if (mem && mem.buf) {
+              motionBuf.set(mem.buf);
+              vctx.clearRect(0, 0, aw, ah);
+              vctx.drawImage(mem.snap, 0, 0);
+              upscaleToMotionView();
+            } else {
+              const snap = snapPool[snapIdx];
+              snapIdx = (snapIdx + 1) % snapPool.length;
+              const sctx = snap.getContext('2d');
+              sctx.clearRect(0, 0, aw, ah);
+              sctx.drawImage(visCanvas, 0, 0);
+              cachePutVideo(key, snap, motionBuf.slice(), aw, ah);
+            }
+          }
         }
+
         if (lens.classList.contains('visible')) render();
       } catch (err) { /* keep the loop alive no matter what */ }
       rafId = requestAnimationFrame(tick);
@@ -328,16 +553,32 @@
   }
 
   vid.addEventListener('loadeddata', function () {
-    setupAnalysis();
+    vid.defaultPlaybackRate = 1;
+    vid.playbackRate = 1;
+    lastVidTime = -1;
+    lastBucketKey = null;
+    mediaKey = computeMediaKey(mediaInput.files[0] || null);
+    setupVideoAnalysis();
     prepareSampler();
+    updateStageVisibility();
     motionBtn.disabled = false;
     startVideoLoop();
   });
+
   img.addEventListener('load', function () {
+    mediaKey = computeMediaKey(mediaInput.files[0] || null);
     prepareSampler();
     lastPoint = null;
+    updateStageVisibility();
+    motionBtn.disabled = false;
+    if (motionOn) runImageAnalysis();
   });
-  if (img.complete && img.naturalWidth > 0) prepareSampler();
+  if (img.complete && img.naturalWidth > 0) {
+    mediaKey = computeMediaKey(null);
+    prepareSampler();
+    updateStageVisibility();
+    motionBtn.disabled = false;
+  }
 
   function render() {
     const w = natW(), h = natH();
@@ -359,12 +600,6 @@
 
     if (document.activeElement !== coordX) coordX.value = Math.round(nx);
     if (document.activeElement !== coordY) coordY.value = Math.round(ny);
-
-    // The color readout always samples the ORIGINAL frame, never the
-    // motion visualization, so values stay meaningful in both views.
-    if (mode === 'video') {
-      try { fctx.drawImage(vid, 0, 0); } catch (err) { /* tainted */ }
-    }
 
     const hex = sampleAt(nx, ny);
     if (hex) {
@@ -463,24 +698,30 @@
 
   // ---------- Motion View controls ----------
   function setMotionView(on) {
-    motionOn = on && mode === 'video';
+    motionOn = !!on;
     motionBtn.setAttribute('aria-pressed', String(motionOn));
     motionBtn.classList.toggle('active', motionOn);
-    motionView.style.display = motionOn ? 'block' : 'none';
-    vid.style.display = motionOn ? 'none' : 'block';
+    updateStageVisibility();
     if (motionOn) {
-      // reset analysis so it starts from the current frame
-      prevFrame = null;
-      motionBuf && motionBuf.fill(0);
+      if (mode === 'image') {
+        runImageAnalysis();
+      } else {
+        prevFrame = null;
+        lastVidTime = -1;
+        lastBucketKey = null;
+        motionBuf && motionBuf.fill(0);
+      }
     }
   }
   motionBtn.addEventListener('click', function () {
-    if (mode !== 'video' || !vid.videoWidth) return;
+    const loaded = mode === 'video' ? vid.videoWidth : img.naturalWidth;
+    if (!loaded) return;
     setMotionView(!motionOn);
   });
   motionSens.addEventListener('input', function () {
     motionSensitivity = parseFloat(this.value);
     motionBadge.textContent = motionSensitivity + '%';
+    if (motionOn && mode === 'image') runImageAnalysis();
   });
 
   // ---------- Unified Browse: images AND videos ----------
@@ -491,31 +732,29 @@
     lastPoint = null;
     pinned = false;
     lens.classList.remove('locked');
-    // Motion View resets whenever new media loads; default is original view
     setMotionView(false);
     motionBtn.disabled = true;
+    mediaKey = computeMediaKey(file);
+    // Cache intentionally NOT cleared — input-type switches keep everything.
 
     if (file.type.startsWith('video/')) {
       mode = 'video';
-      img.style.display = 'none';
-      vid.style.display = 'block';
       vid.src = URL.createObjectURL(file);
       vid.play().catch(function () {});
-      // button is enabled once 'loadeddata' fires
     } else {
       mode = 'image';
       stopVideoLoop();
       vid.pause();
       vid.removeAttribute('src');
-      vid.style.display = 'none';
-      img.style.display = 'block';
       img.src = URL.createObjectURL(file);
     }
+    updateStageVisibility();
+
+    // Picker hygiene: return to neutral "no file chosen" always.
+    e.target.value = '';
   });
 
-  // ================= Template Matching (translated from the bot's
-  // recognize_handler.template_match / OpenCV matchTemplate) =================
-  // Grayscale helper — BT.601, matching the luminance used in Motion View.
+  // ================= Template Matching =================
   function toGray(ctx, w, h) {
     const d = ctx.getImageData(0, 0, w, h).data;
     const g = new Float32Array(w * h);
@@ -524,11 +763,9 @@
     return g;
   }
 
-  // Wraps any drawable (img, video, canvas) into a canvas + ctx pair the
-  // matcher can read pixels from. Marked so repeat calls reuse the copy.
   function asSource(drawable) {
     if (drawable instanceof HTMLCanvasElement && drawable.__tplCtx) {
-      return drawable; // already prepared (from a previous call)
+      return drawable;
     }
     const c = document.createElement('canvas');
     c.width = drawable.naturalWidth || drawable.videoWidth || drawable.width;
@@ -539,11 +776,9 @@
     return c;
   }
 
-  // Exhaustive scan with early abandonment. `threshold` is the MEAN
-  // per-pixel grayscale difference on the 0..255 scale: 8 ≈ strict UI
-  // match, 15–25 ≈ fuzzy match. `region` is the optional search window
-  // [x0, y0, x1, y1] — the analog of the bot's mask=[...] argument, and
-  // the single biggest speed lever.
+  // Exhaustive scan with early abandonment.
+  // `threshold` = mean per-pixel grayscale difference (8 strict, 15–25 fuzzy).
+  // `region` = search window [x0,y0,x1,y1] — the bot's mask argument.
   function matchTemplate(frame, tpl, opts = {}) {
     const { threshold = 8, stride = 1, maxHits = Infinity, region = null } = opts;
     const fw = frame.width, fh = frame.height;
@@ -551,7 +786,7 @@
     const tg = toGray(tpl.__tplCtx, tpl.width, tpl.height);
     const tw = tpl.width, th = tpl.height;
     const tArea = tw * th;
-    const worst = threshold * tArea;   // max total diff a hit may accumulate
+    const worst = threshold * tArea;
 
     const x0 = region ? Math.max(0, region[0]) : 0;
     const y0 = region ? Math.max(0, region[1]) : 0;
@@ -568,7 +803,7 @@
           const tRow = ty * tw;
           for (let tx = 0; tx < tw; tx++) {
             sum += Math.abs(fg[fRow + tx] - tg[tRow + tx]);
-            if (sum > worst) { dead = true; break; }   // ← early abandonment
+            if (sum > worst) { dead = true; break; }
           }
         }
         if (!dead) {
@@ -580,8 +815,6 @@
     return hits;
   }
 
-  // Peak suppression: OpenCV merges overlapping detections; without this a
-  // big matched button yields dozens of adjacent hits a few px apart.
   function dedupeHits(hits, tw, th) {
     const minDist = Math.min(tw, th) / 2;
     const sorted = hits.slice().sort((a, b) => a.score - b.score);
@@ -593,8 +826,6 @@
     return kept;
   }
 
-  // Pyramid version: 4x-downscaled coarse scan (256x fewer comparisons),
-  // then refine each candidate at full resolution in a small neighborhood.
   function matchTemplateFast(frameDrawable, tplDrawable, opts = {}) {
     const S = 4;
     const frame = asSource(frameDrawable);
@@ -633,8 +864,6 @@
     return dedupeHits(refined, tpl.width, tpl.height);
   }
 
-  // Refreshes the shared frame buffer from the currently loaded media and
-  // returns it — this is what lets the matcher search the LIVE video frame.
   function currentFrame() {
     const w = natW(), h = natH();
     if (!w || !h) return null;
@@ -642,17 +871,15 @@
     frameCanvas.height = h;
     try {
       fctx.drawImage(activeMedia(), 0, 0);
-    } catch (err) { return null; }  // tainted source
+    } catch (err) { return null; }
     frameCanvas.__tplCtx = fctx;
     return frameCanvas;
   }
 
-  // Public API — call from the console or another script:
-  //   findTemplate(tplImg)                       → exhaustive scan, whole frame
-  //   findTemplate(tplImg, {region:[100,90,1380,210]})
-  //   findTemplate(tplImg, {threshold:15, dedupe:true})
-  //   findTemplateFast(tplImg)                   → pyramid scan, big frames
-  // Returns [{x, y, score}] in frame coordinates.
+  // Public API:
+  //   findTemplate(tplImg, {region, threshold, dedupe})  → [{x,y,score}]
+  //   findTemplateFast(tplImg, {threshold})              → pyramid scan
+  //   motionCacheStats()                                 → cache sizes
   window.findTemplate = function (tplDrawable, opts = {}) {
     const frame = currentFrame();
     if (!frame) return [];
@@ -664,6 +891,10 @@
     const frame = currentFrame();
     if (!frame) return [];
     return matchTemplateFast(frame, tplDrawable, opts);
+  };
+  window.motionCacheStats = function () {
+    return { ramImages: analysisCache.size, ramVideoBuckets: vidCache.size,
+             storage: IDB_NAME + '/' + IDB_STORE };
   };
 
   // ---------- Keyboard ----------
@@ -681,9 +912,7 @@
       case '[': setLensSize(lensSize - 20); break;
       case ']': setLensSize(lensSize + 20); break;
       case 'p': case 'P': togglePin(); break;
-      case 'm': case 'M':
-        if (mode === 'video') setMotionView(!motionOn);
-        break;
+      case 'm': case 'M': setMotionView(!motionOn); break;
     }
   });
 
