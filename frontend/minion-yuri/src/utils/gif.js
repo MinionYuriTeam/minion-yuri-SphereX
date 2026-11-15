@@ -1,11 +1,12 @@
 // Tiny animated-GIF encoder (no npm package needed).
-// SPHEREx frames are greyscale, so we use a palette of 256 greys: no colour loss.
 //
-//   encodeGif(frames, width, height, delayCs) -> Uint8Array (the .gif file)
-//   frames  = array of Uint8Array, one grey value (0–255) per pixel, row by row
+//   encodeGif(frames, width, height, delayCs, palette) -> Uint8Array (the .gif file)
+//   frames  = array of Uint8Array, one palette index (0–255) per pixel, row by row
 //   delayCs = time per frame in hundredths of a second (50 = 2 frames per second)
+//   palette = 256 colours as [r,g,b, r,g,b, ...] (768 numbers). Left out = 256 greys,
+//             so for black-and-white frames the index is simply the grey value.
 
-export function encodeGif(frames, width, height, delayCs) {
+export function encodeGif(frames, width, height, delayCs, palette = null) {
   const out = [];
   const byte = (b) => out.push(b & 255);
   const word = (w) => { byte(w); byte(w >> 8); };
@@ -18,7 +19,10 @@ export function encodeGif(frames, width, height, delayCs) {
   byte(0xf7);
   byte(0);
   byte(0);
-  for (let i = 0; i < 256; i++) { byte(i); byte(i); byte(i); } // grey ramp
+  for (let i = 0; i < 256; i++) {
+    if (palette) { byte(palette[i * 3] || 0); byte(palette[i * 3 + 1] || 0); byte(palette[i * 3 + 2] || 0); }
+    else { byte(i); byte(i); byte(i); } // grey ramp
+  }
 
   // loop forever
   byte(0x21); byte(0xff); byte(11); text("NETSCAPE2.0"); byte(3); byte(1); word(0); byte(0);
