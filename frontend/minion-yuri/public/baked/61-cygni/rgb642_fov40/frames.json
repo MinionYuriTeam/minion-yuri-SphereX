@@ -1,0 +1,25 @@
+{
+ "arrays": [
+  6,
+  4,
+  2
+ ],
+ "ra": 316.764424,
+ "dec": 38.773564,
+ "fov": 40,
+ "epochs": [
+  {
+   "date": "2025-06-16",
+   "png_url": "baked/61-cygni/rgb642_fov40/rgb_00.png"
+  },
+  {
+   "date": "2025-10-27",
+   "png_url": "baked/61-cygni/rgb642_fov40/rgb_01.png"
+  },
+  {
+   "date": "2026-05-29",
+   "png_url": "baked/61-cygni/rgb642_fov40/rgb_02.png"
+  }
+ ],
+ "baked": true
+}

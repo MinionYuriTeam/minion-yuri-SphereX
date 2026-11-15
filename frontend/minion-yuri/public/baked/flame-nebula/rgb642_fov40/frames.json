@@ -1,0 +1,29 @@
+{
+ "arrays": [
+  6,
+  4,
+  2
+ ],
+ "ra": 85.4292,
+ "dec": -1.8417,
+ "fov": 40,
+ "epochs": [
+  {
+   "date": "2025-09-17",
+   "png_url": "baked/flame-nebula/rgb642_fov40/rgb_00.png"
+  },
+  {
+   "date": "2026-03-07",
+   "png_url": "baked/flame-nebula/rgb642_fov40/rgb_01.png"
+  },
+  {
+   "date": "2026-09-17",
+   "png_url": "baked/flame-nebula/rgb642_fov40/rgb_02.png"
+  },
+  {
+   "date": "2026-10-04",
+   "png_url": "baked/flame-nebula/rgb642_fov40/rgb_03.png"
+  }
+ ],
+ "baked": true
+}

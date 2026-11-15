@@ -60,7 +60,7 @@ Table of Contents
 - 🖥️ **Frontend:** React (Create React App), JavaScript, CSS
 - 🧠 **Backend:** Python, FastAPI, astropy, numpy, Pillow
 - 🛰️ **Data:** SPHEREx images from NASA/IPAC IRSA (search via SIA2, pixels from IRSA's AWS S3 copy), names via CDS Sesame, Gaia DR3 for proper motions
-- ☁️ **Hosting:** frontend on Vercel (https://stealingthemoon.earth) with 12 targets built in (the 5 test targets + 7 more); any other spot uses a backend on the visitor's own computer
+- ☁️ **Hosting:** frontend on Vercel (https://stealingthemoon.earth) with 20 targets built in (the 5 test targets + 15 more); any other spot uses a backend on the visitor's own computer
 - 📦 **Package management:** npm (frontend), pip + venv (backend)
 
 ## Repository Structure
@@ -89,7 +89,7 @@ Table of Contents
   - public/mock/frames.json # fake /api/frames answer for working offline
   - src/
     - api/frames.js         # the ONLY file that talks to the backend
-    - data/target.js        # the built-in targets (5 test targets + 7 more)
+    - data/target.js        # the built-in targets (5 test targets + 15 more)
     - components/           # search, player, loupe, difference view, flags, Gaia track, spectrum, GIF export, ...
     - pages/                # Sky map, Spot the mover, How it works, Team, About the data
   - README.md               # frontend details: who owns which component
@@ -204,14 +204,14 @@ the site gets its data in two ways:
 
 ```mermaid
 flowchart TD
-    S[Search / preset / array / FOV] --> Q{One of the 12 built-in targets,<br/>with a built-in array + FOV?}
+    S[Search / preset / array / FOV] --> Q{One of the 20 built-in targets,<br/>with a built-in array + FOV?}
     Q -- yes --> B[Built-in files in the site<br/>public/baked/ — no backend needed]
     Q -- no --> L{Backend answering at<br/>localhost:8000 on the visitor's computer?}
     L -- yes --> R[Live frames from the visitor's own backend]
     L -- no --> H[Offers the built-in targets;<br/>how to start the backend is folded away]
 ```
 
-**1. 12 targets are built in** (see [Built-in Targets](#built-in-targets)).
+**1. 20 targets are built in** (see [Built-in Targets](#built-in-targets)).
 `backend/bake.py` renders them into `frontend/minion-yuri/public/baked/`, and
 they deploy with the site:
 - every detector array (1–6) at all five fields of view (2′, 5′, 10′, 20′, 40′)
@@ -367,12 +367,12 @@ passes on the **deployed** site, not just locally.
 
 | Priority | Feature | ID | Owner | Status |
 |---|---|---|---|---|
-| Must | Coordinate search + field of view | F1, F2 | Sam (UI), Raman (`/api/resolve`) | Live for the 12 built-in targets (by name or alias, e.g. "m42"); other names and coordinates need a backend |
+| Must | Coordinate search + field of view | F1, F2 | Sam (UI), Raman (`/api/resolve`) | Live for the 20 built-in targets (by name or alias, e.g. "m42"); other names and coordinates need a backend |
 | Must | Blink player (1–2 fps, slider, play/pause) | F4 | Sam | Live |
 | Must | Detector-array selector, stacked per visit | F3, F5 | Raman | Live: array buttons 1–6 |
 | Must | Zoom loupe on the target | F6 | Jay | Live: loupe panel + lens on the big picture |
 | Must | Shareable URL with coordinates | F7 | Sam | Live (`?ra=&dec=&fov=&array=`) |
-| Must | One-click presets | F8 | Sam + Axe (cache) | Live: the 5 test targets + 7 more, built into the site |
+| Must | One-click presets | F8 | Sam + Axe (cache) | Live: the 5 test targets + 15 more, built into the site |
 | Should | Difference mode (new minus old) | F9 | Jay | Live: Normal / Difference / Show 3 views |
 | Should | Wavelength scrubber / false-colour RGB | F10 | Shoya | Live: 6 arrays + False colour (arrays 6 · 4 · 2) |
 | Should | Predicted Gaia track overlay | F11 | Jay + Shoya | Live for targets with a proper motion |
@@ -385,8 +385,8 @@ passes on the **deployed** site, not just locally.
 ## Built-in Targets
 
 <p align="center">
-  <img src="docs/images/built_in_targets.png" alt="The 12 built-in targets in false colour: 5 test targets and 7 more" width="800"/>
-  <br/><sub>The 12 targets built into the site, in false colour (arrays 6 · 4 · 2 as red · green · blue), 10′ across.</sub>
+  <img src="docs/images/built_in_targets.png" alt="The 20 built-in targets in false colour: 5 test targets and 15 more" width="800"/>
+  <br/><sub>The 20 targets built into the site, in false colour (arrays 6 · 4 · 2 as red · green · blue), 10′ across.</sub>
 </p>
 
 Every built-in target plays on the public site without a backend, with all six
@@ -407,7 +407,7 @@ their catalogue (year 2000) position, so presets should use **today's position**
 | RW Aurigae | Blink player, spectrum (variable star) | 76.956526, 30.401438 | D3 | 3 |
 | R Draconis | Blink player (variable star, many visits) | 248.167611, 66.754979 | D3 | 7 |
 
-### 7 more
+### 15 more
 
 Added so that names a visitor is likely to type work straight away. Positions
 are today's (`ra_now`/`dec_now` from `/api/resolve`).
@@ -421,27 +421,19 @@ are today's (`ra_now`/`dec_now` from `/api/resolve`).
 | Orion Nebula | Star-forming cloud: best in false colour | 83.820112, −5.387602 | D4 | 4 | – | orion, m42 |
 | Andromeda Galaxy | The core of the nearest large galaxy | 10.684708, 41.268750 | D2 | 4 | – | andromeda, m31 |
 | Crab Nebula | Supernova remnant from the year 1054 | 83.632400, 22.017400 | D3 | 4 | – | crab, m1 |
+| Wolf 359 | One of the nearest stars; moves 4.7″ a year (0.75 px) | 164.091558, 6.994666 | D2 | 6 | yes | wolf, cn leo |
+| 61 Cygni | First star whose distance was measured (1838); two stars moving 5.3″ a year | 316.764424, 38.773564 | D2 | 5 | yes | 61 cyg, bessel's star |
+| Teegarden's Star | Faint red dwarf with Earth-mass planets; moves 5.1″ a year (0.8 px) | 43.280343, 16.853009 | D2 | 3 | yes | teegarden, gat 1370 |
+| Ring Nebula | Planetary nebula, about a dozen pixels across | 283.396251, 33.029153 | D4 | 4 | – | ring, m57 |
+| Carina Nebula | Giant star-forming cloud around Eta Carinae | 161.264612, −59.684400 | D4 | 8 | – | carina, eta carinae |
+| Eagle Nebula | Star-forming cloud, home of the Pillars of Creation | 274.688001, −13.792012 | D4 | 5 | – | eagle, m16, pillars of creation |
+| Flame Nebula | Star-forming cloud in Orion | 85.429200, −1.841700 | D4 | 4 | – | flame, ngc 2024 |
+| Whirlpool Galaxy | Spiral galaxy and its companion in one frame | 202.469575, 47.195258 | D2 | 6 | – | whirlpool, m51 |
 
-### 8 more, baking on 15 Nov
-
-Listed in `src/data/target.js` and being baked the same way. Each one counts as
-built in once its entry is in `public/baked/index.json`; any that doesn't
-finish is removed from `target.js` so it never shows as a preset.
-
-| Target | Why it's here | Today's position (RA, Dec) | Best array | Predicted track | Also found as |
-|---|---|---|---|---|---|
-| Wolf 359 | One of the nearest stars; moves 4.7″ a year (0.75 px) | 164.091558, 6.994666 | D2 | yes | wolf, cn leo |
-| 61 Cygni | First star whose distance was measured (1838); two stars moving 5.3″ a year | 316.764424, 38.773564 | D2 | yes | 61 cyg, bessel's star |
-| Teegarden's Star | Faint red dwarf with Earth-mass planets; moves 5.1″ a year (0.8 px) | 43.280343, 16.853009 | D2 | yes | teegarden, gat 1370 |
-| Ring Nebula | Planetary nebula, about a dozen pixels across | 283.396251, 33.029153 | D4 | – | ring, m57 |
-| Carina Nebula | Giant star-forming cloud around Eta Carinae | 161.264612, −59.684400 | D4 | – | carina, eta carinae |
-| Eagle Nebula | Star-forming cloud, home of the Pillars of Creation | 274.688001, −13.792012 | D4 | – | eagle, m16, pillars of creation |
-| Flame Nebula | Star-forming cloud in Orion | 85.429200, −1.841700 | D4 | – | flame, ngc 2024 |
-| Whirlpool Galaxy | Spiral galaxy and its companion in one frame | 202.469575, 47.195258 | D2 | – | whirlpool, m51 |
-
-Known gaps: the spectrum is empty for the Orion Nebula (every exposure at the
-centre is flagged; the panel says so) and has only 7 points for Kapteyn's Star. The nebulae and the
-galaxy have no predicted track because they don't move measurably.
+Known gaps: the spectrum is empty for the Orion Nebula, the Carina Nebula and
+61 Cygni (every exposure at the centre is flagged or saturated; the panel says
+so) and has only 7 points for Kapteyn's Star. The nebulae and galaxies have no
+predicted track because they don't move measurably.
 
 <p align="center">
   <img src="docs/images/five_targets.png" alt="The 5 test targets as the API serves them: one row per target, one frame per visit" width="800"/>

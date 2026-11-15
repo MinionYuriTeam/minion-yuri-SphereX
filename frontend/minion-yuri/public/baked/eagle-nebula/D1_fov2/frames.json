@@ -1,0 +1,66 @@
+{
+ "array": 1,
+ "wavelength_um": [
+  0.746,
+  1.117
+ ],
+ "epochs": [
+  {
+   "date": "2025-09-10",
+   "datetime": "2025-09-10T12:26:41.705",
+   "date_start": "2025-09-06T14:31:22.028",
+   "date_end": "2025-09-15T07:14:40.044",
+   "n_exposures": 19,
+   "png_url": "baked/eagle-nebula/D1_fov2/epoch_00.png",
+   "flags_png_url": "baked/eagle-nebula/D1_fov2/epoch_00_flags.png"
+  },
+  {
+   "date": "2026-03-24",
+   "datetime": "2026-03-24T14:53:20.749",
+   "date_start": "2026-03-21T22:54:46.541",
+   "date_end": "2026-03-26T20:11:47.252",
+   "n_exposures": 20,
+   "png_url": "baked/eagle-nebula/D1_fov2/epoch_01.png",
+   "flags_png_url": "baked/eagle-nebula/D1_fov2/epoch_01_flags.png"
+  },
+  {
+   "date": "2026-04-10",
+   "datetime": "2026-04-10T20:21:13.590",
+   "date_start": "2026-04-10T20:21:13.590",
+   "date_end": "2026-04-10T20:21:13.590",
+   "n_exposures": 1,
+   "png_url": "baked/eagle-nebula/D1_fov2/epoch_02.png",
+   "flags_png_url": "baked/eagle-nebula/D1_fov2/epoch_02_flags.png"
+  },
+  {
+   "date": "2026-09-05",
+   "datetime": "2026-09-05T04:08:54.016",
+   "date_start": "2026-08-31T08:39:25.226",
+   "date_end": "2026-09-11T07:01:58.592",
+   "n_exposures": 38,
+   "png_url": "baked/eagle-nebula/D1_fov2/epoch_03.png",
+   "flags_png_url": "baked/eagle-nebula/D1_fov2/epoch_03_flags.png"
+  },
+  {
+   "date": "2026-10-04",
+   "datetime": "2026-10-04T06:30:54.539",
+   "date_start": "2026-10-04T00:50:25.863",
+   "date_end": "2026-10-04T12:12:15.327",
+   "n_exposures": 4,
+   "png_url": "baked/eagle-nebula/D1_fov2/epoch_04.png",
+   "flags_png_url": "baked/eagle-nebula/D1_fov2/epoch_04_flags.png"
+  }
+ ],
+ "ra": 274.688001,
+ "dec": -13.792012,
+ "fov": 2,
+ "size_px": 21,
+ "pixel_scale_arcsec": 6.15,
+ "display_range": [
+  -0.8812584280967712,
+  126.45198974609376
+ ],
+ "n_skipped": 0,
+ "n_failed": 0,
+ "baked": true
+}

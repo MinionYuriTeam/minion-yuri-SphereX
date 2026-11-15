@@ -2,6 +2,16 @@
 
 Newest first. One entry per piece of work, with the branch it landed on.
 
+## 15 Nov 2026: 8 more built-in targets, 20 in total (`raman-more-targets`)
+
+- **`public/baked/`**: Wolf 359, 61 Cygni, Teegarden's Star, Ring Nebula,
+  Carina Nebula, Eagle Nebula, Flame Nebula and Whirlpool Galaxy, each with
+  6 arrays × 5 fields of view, false colour, flags and spectrum. No failed
+  downloads. `public/baked` is now 75 MB.
+- **README**: counts, picture and table updated to all 20 targets.
+- Known gaps: the spectrum is empty for the Carina Nebula and 61 Cygni
+  (saturated or flagged at the centre), as for the Orion Nebula.
+
 ## 15 Nov 2026: 7 more built-in targets (`raman-more-targets`)
 
 - **`src/data/target.js`**: 7 new targets next to the 5 test targets: Proxima

@@ -1,0 +1,25 @@
+{
+ "arrays": [
+  6,
+  4,
+  2
+ ],
+ "ra": 164.091558,
+ "dec": 6.994666,
+ "fov": 2,
+ "epochs": [
+  {
+   "date": "2025-04-30",
+   "png_url": "baked/wolf-359/rgb642_fov2/rgb_00.png"
+  },
+  {
+   "date": "2025-12-09",
+   "png_url": "baked/wolf-359/rgb642_fov2/rgb_01.png"
+  },
+  {
+   "date": "2026-05-18",
+   "png_url": "baked/wolf-359/rgb642_fov2/rgb_02.png"
+  }
+ ],
+ "baked": true
+}

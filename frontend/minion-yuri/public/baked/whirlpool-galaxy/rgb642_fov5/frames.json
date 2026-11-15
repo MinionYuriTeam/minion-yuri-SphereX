@@ -1,0 +1,33 @@
+{
+ "arrays": [
+  6,
+  4,
+  2
+ ],
+ "ra": 202.469575,
+ "dec": 47.195258,
+ "fov": 5,
+ "epochs": [
+  {
+   "date": "2025-05-09",
+   "png_url": "baked/whirlpool-galaxy/rgb642_fov5/rgb_00.png"
+  },
+  {
+   "date": "2025-05-23",
+   "png_url": "baked/whirlpool-galaxy/rgb642_fov5/rgb_01.png"
+  },
+  {
+   "date": "2025-12-17",
+   "png_url": "baked/whirlpool-galaxy/rgb642_fov5/rgb_02.png"
+  },
+  {
+   "date": "2026-05-18",
+   "png_url": "baked/whirlpool-galaxy/rgb642_fov5/rgb_03.png"
+  },
+  {
+   "date": "2026-06-06",
+   "png_url": "baked/whirlpool-galaxy/rgb642_fov5/rgb_04.png"
+  }
+ ],
+ "baked": true
+}

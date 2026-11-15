@@ -1,0 +1,75 @@
+{
+ "array": 5,
+ "wavelength_um": [
+  3.811,
+  4.43
+ ],
+ "epochs": [
+  {
+   "date": "2025-05-14",
+   "datetime": "2025-05-14T07:25:19.024",
+   "date_start": "2025-05-09T05:12:22.134",
+   "date_end": "2025-05-19T00:04:11.229",
+   "n_exposures": 33,
+   "png_url": "baked/whirlpool-galaxy/D5_fov5/epoch_00.png",
+   "flags_png_url": null
+  },
+  {
+   "date": "2025-12-11",
+   "datetime": "2025-12-11T05:23:17.492",
+   "date_start": "2025-12-08T08:30:05.210",
+   "date_end": "2025-12-18T12:55:36.518",
+   "n_exposures": 36,
+   "png_url": "baked/whirlpool-galaxy/D5_fov5/epoch_01.png",
+   "flags_png_url": null
+  },
+  {
+   "date": "2026-05-18",
+   "datetime": "2026-05-18T13:34:19.186",
+   "date_start": "2026-05-16T05:36:46.650",
+   "date_end": "2026-05-21T17:42:37.280",
+   "n_exposures": 13,
+   "png_url": "baked/whirlpool-galaxy/D5_fov5/epoch_02.png",
+   "flags_png_url": null
+  },
+  {
+   "date": "2026-05-30",
+   "datetime": "2026-05-30T05:21:42.464",
+   "date_start": "2026-05-30T05:18:29.067",
+   "date_end": "2026-05-30T05:24:55.861",
+   "n_exposures": 4,
+   "png_url": "baked/whirlpool-galaxy/D5_fov5/epoch_03.png",
+   "flags_png_url": "baked/whirlpool-galaxy/D5_fov5/epoch_03_flags.png"
+  },
+  {
+   "date": "2026-06-07",
+   "datetime": "2026-06-07T18:36:38.930",
+   "date_start": "2026-06-07T18:36:38.930",
+   "date_end": "2026-06-07T18:36:38.930",
+   "n_exposures": 1,
+   "png_url": "baked/whirlpool-galaxy/D5_fov5/epoch_04.png",
+   "flags_png_url": "baked/whirlpool-galaxy/D5_fov5/epoch_04_flags.png"
+  },
+  {
+   "date": "2026-06-19",
+   "datetime": "2026-06-19T16:47:32.054",
+   "date_start": "2026-06-19T10:56:25.065",
+   "date_end": "2026-06-19T20:43:16.994",
+   "n_exposures": 5,
+   "png_url": "baked/whirlpool-galaxy/D5_fov5/epoch_05.png",
+   "flags_png_url": null
+  }
+ ],
+ "ra": 202.469575,
+ "dec": 47.195258,
+ "fov": 5,
+ "size_px": 49,
+ "pixel_scale_arcsec": 6.15,
+ "display_range": [
+  -0.41333509236574173,
+  7.548165297508243
+ ],
+ "n_skipped": 5,
+ "n_failed": 0,
+ "baked": true
+}

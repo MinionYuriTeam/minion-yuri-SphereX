@@ -1,0 +1,29 @@
+{
+ "arrays": [
+  6,
+  4,
+  2
+ ],
+ "ra": 283.396251,
+ "dec": 33.029153,
+ "fov": 20,
+ "epochs": [
+  {
+   "date": "2025-09-05",
+   "png_url": "baked/ring-nebula/rgb642_fov20/rgb_00.png"
+  },
+  {
+   "date": "2026-04-11",
+   "png_url": "baked/ring-nebula/rgb642_fov20/rgb_01.png"
+  },
+  {
+   "date": "2026-05-10",
+   "png_url": "baked/ring-nebula/rgb642_fov20/rgb_02.png"
+  },
+  {
+   "date": "2026-09-06",
+   "png_url": "baked/ring-nebula/rgb642_fov20/rgb_03.png"
+  }
+ ],
+ "baked": true
+}

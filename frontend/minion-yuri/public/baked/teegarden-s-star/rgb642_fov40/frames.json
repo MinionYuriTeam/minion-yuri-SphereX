@@ -1,0 +1,17 @@
+{
+ "arrays": [
+  6,
+  4,
+  2
+ ],
+ "ra": 43.280343,
+ "dec": 16.853009,
+ "fov": 40,
+ "epochs": [
+  {
+   "date": "2025-08-11",
+   "png_url": "baked/teegarden-s-star/rgb642_fov40/rgb_00.png"
+  }
+ ],
+ "baked": true
+}
