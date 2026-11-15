@@ -56,12 +56,14 @@ function presetAt(view) {
 }
 function gifLabel(view) {
   const where = presetAt(view)?.name || `${Number(view.ra).toFixed(4)}, ${Number(view.dec).toFixed(4)}`;
-  return `${where} · array ${view.array} · ${view.fov}′`;
+  const what = view.rgb ? `false colour R${RGB_ARRAYS[0]} G${RGB_ARRAYS[1]} B${RGB_ARRAYS[2]}` : `array ${view.array}`;
+  return `${where} · ${what} · ${view.fov}′`;
 }
 function gifFileName(view) {
   const where = presetAt(view)?.name || `ra${Number(view.ra).toFixed(3)}_dec${Number(view.dec).toFixed(3)}`;
   const slug = where.toLowerCase().replace(/[^a-z0-9.+-]+/g, "-").replace(/^-|-$/g, "");
-  return `spherex-${slug}-array${view.array}-${view.fov}arcmin.gif`;
+  const what = view.rgb ? `falsecolour${RGB_ARRAYS.join("")}` : `array${view.array}`;
+  return `spherex-${slug}-${what}-${view.fov}arcmin.gif`;
 }
 
 function Loading() {
@@ -213,30 +215,29 @@ function App() {
                 />
                 {/* inside the player, so on a phone it sits right under Field of view (not under the loupe) */}
                 <div className="controls-wide">
-                  <BandPicker
-                    array={view.array}
-                    onChange={(a) => setView({ ...view, array: a })}
-                    wavelength={data?.wavelength_um}
-                  />
+                  <ColourMode on={Boolean(view.rgb)} onChange={(on) => setView({ ...view, rgb: on ? 1 : 0 })} />
                 </div>
+                {!view.rgb && (
+                  <div className="controls-wide">
+                    <BandPicker
+                      array={view.array}
+                      onChange={(a) => setView({ ...view, array: a })}
+                      wavelength={data?.wavelength_um}
+                    />
+                  </div>
+                )}
               </BlinkPlayer>
             )}
 
-            {/* while loading or after an error the player is hidden, so keep FOV + array reachable */}
+            {/* while loading or after an error the player is hidden, so keep these reachable */}
             {!data && (
               <>
                 <FovPicker fov={view.fov} onChange={(f) => setView({ ...view, fov: f })} loadTime={null} />
-                <BandPicker array={view.array} onChange={(a) => setView({ ...view, array: a })} wavelength={null} />
+                <ColourMode on={Boolean(view.rgb)} onChange={(on) => setView({ ...view, rgb: on ? 1 : 0 })} />
+                {!view.rgb && (
+                  <BandPicker array={view.array} onChange={(a) => setView({ ...view, array: a })} wavelength={null} />
+                )}
               </>
-            )}
-
-            <ColourMode on={Boolean(view.rgb)} onChange={(on) => setView({ ...view, rgb: on ? 1 : 0 })} />
-            {!view.rgb && (
-              <BandPicker
-                array={view.array}
-                onChange={(a) => setView({ ...view, array: a })}
-                wavelength={data?.wavelength_um}
-              />
             )}
             <ViewToggle />
           </section>
