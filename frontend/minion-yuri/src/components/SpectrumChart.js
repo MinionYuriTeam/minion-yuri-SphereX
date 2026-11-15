@@ -69,7 +69,7 @@ const LABEL_MODES = [
 
 const STYLES = [
   { key: "curve", label: "Curve", tip: "A smooth line through the dots, filled with the colour of each wavelength" },
-  { key: "dots", label: "Dots", tip: "Every measurement as its own dot, with error bars" },
+  { key: "dots", label: "Dots", tip: "The measurements as dots with error bars (nearby exposures from one visit averaged)" },
 ];
 
 // Smooth line through the dots: median flux in narrow wavelength bins, then a
@@ -283,7 +283,7 @@ function Chart({ points, array, bands, style }) {
               {hover.quality === "bright" && " · saturated core, approximate"}
             </>
           : curve
-            ? <>Smoothed spectrum, yellow tags = its peaks (nm). Hover the graph for a value, or switch to Dots for every measurement.</>
+            ? <>Smoothed spectrum, yellow tags = its peaks (nm). Hover the graph for a value, or switch to Dots for the measurements.</>
             : style === "curve"
               ? <>Too few measurements for a smooth line here, showing the dots. Hover a dot for its value.</>
               : <>Hover a dot for its value. Hollow dots = star so bright the detector saturated (approximate).</>}
@@ -344,7 +344,6 @@ function SpectrumChart({ ra, dec, array }) {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [binned, setBinned] = useState(false);
   const [retry, setRetry] = useState(0);
   const [labels, setLabels] = useState("gas");
   const [style, setStyle] = useState("curve");
@@ -373,8 +372,9 @@ function SpectrumChart({ ra, dec, array }) {
   const good = useMemo(() => (data ? data.points
     .filter((p) => Number.isFinite(p.flux_mjy) && Number.isFinite(p.wavelength_um))
     .map((p) => ({ ...p, flux: p.flux_mjy, error: p.error_mjy })) : []), [data]); // flux in mJy
-  // the curve always uses every exposure; Dots can be averaged
-  const points = useMemo(() => (binned && style === "dots" ? binPoints(good) : good), [good, binned, style]);
+  // the curve uses every exposure; Dots are always averaged (median per visit and
+  // wavelength bin), which is steadier and much less cluttered than one dot per exposure
+  const points = useMemo(() => (style === "dots" ? binPoints(good) : good), [good, style]);
 
   return (
     <div className="spectrum">
@@ -396,12 +396,6 @@ function SpectrumChart({ ra, dec, array }) {
                 data-tip={m.tip}>{m.label}</button>
             ))}
           </div>
-          {style === "dots" && <div className="fov-buttons spectrum-mode">
-            <button className={binned ? "" : "active"} onClick={() => setBinned(false)}
-              data-tip="One dot per SPHEREx exposure">Every exposure</button>
-            <button className={binned ? "active" : ""} onClick={() => setBinned(true)}
-              data-tip="Median of nearby wavelengths per visit: steadier dots for faint targets">Averaged</button>
-          </div>}
           </div>
         )}
       </div>
