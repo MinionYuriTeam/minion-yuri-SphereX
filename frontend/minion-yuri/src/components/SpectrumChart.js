@@ -62,6 +62,54 @@ const LABEL_MODES = [
   { key: "off", label: "Off", bands: [], tip: "Hide the molecule labels" },
 ];
 
+const STYLES = [
+  { key: "curve", label: "Curve", tip: "A smooth line through the dots, filled with the colour of each wavelength" },
+  { key: "dots", label: "Dots", tip: "Every measurement as its own dot, with error bars" },
+];
+
+// Smooth line through the dots: median flux in narrow wavelength bins, then a
+// 3-bin running mean. Returns [{ um, flux }] or null when there's too little data.
+const CURVE_BINS = 70;
+const CURVE_MIN_BINS = 12;
+const CURVE_GAP_UM = 0.3; // wider than this with no data = a gap in the line
+function smoothCurve(points) {
+  const [a, b] = [0.72, 5.05];
+  const bins = Array.from({ length: CURVE_BINS }, () => []);
+  for (const p of points) {
+    const i = Math.floor((Math.log(p.wavelength_um / a) / Math.log(b / a)) * CURVE_BINS);
+    if (i >= 0 && i < CURVE_BINS) bins[i].push(p);
+  }
+  const median = (xs) => {
+    const s = [...xs].sort((u, v) => u - v), m = s.length >> 1;
+    return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+  };
+  const raw = bins.filter((g) => g.length)
+    .map((g) => ({ um: median(g.map((p) => p.wavelength_um)), flux: median(g.map((p) => p.flux_mjy)) }));
+  if (raw.length < CURVE_MIN_BINS) return null;
+  return raw.map((p, i) => {
+    const near = raw.slice(Math.max(0, i - 1), i + 2);
+    return { um: p.um, flux: near.reduce((s, q) => s + q.flux, 0) / near.length };
+  });
+}
+
+// The highest bumps of the curve (like the tagged peaks on a lab spectrum).
+// Prominence = how far a peak rises above the lower of the two valleys around it,
+// measured on screen so it works on log and linear axes alike.
+function findPeaks(curve, sy, max = 4, minPx = 14) {
+  const ys = curve.map((p) => sy(p.flux)); // smaller y = higher on screen
+  const peaks = [];
+  for (let i = 0; i < ys.length; i++) {
+    if ((i > 0 && ys[i - 1] <= ys[i]) || (i < ys.length - 1 && ys[i + 1] < ys[i])) continue;
+    let left = ys[i], right = ys[i];
+    for (let j = i - 1; j >= 0 && ys[j] >= ys[i]; j--) left = Math.max(left, ys[j]);
+    for (let j = i + 1; j < ys.length && ys[j] >= ys[i]; j++) right = Math.max(right, ys[j]);
+    const prominence = Math.min(left, right) - ys[i];
+    if (prominence >= minPx) peaks.push({ ...curve[i], prominence });
+  }
+  return peaks.sort((p, q) => q.prominence - p.prominence).slice(0, max)
+    .sort((p, q) => p.um - q.um);
+}
+
 // Put each band's name in the first row where it doesn't overlap a name already there
 function layoutBands(bands, sx) {
   const rowsEnd = [];
@@ -75,7 +123,7 @@ function layoutBands(bands, sx) {
   });
 }
 
-function Chart({ points, array, bands }) {
+function Chart({ points, array, bands, style }) {
   const [hover, setHover] = useState(null);
   const x0 = M.left, x1 = W - M.right, y0 = H - M.bottom, y1 = M.top;
   const sx = (um) => x0 + ((um - X_DOMAIN[0]) / (X_DOMAIN[1] - X_DOMAIN[0])) * (x1 - x0);
@@ -99,10 +147,36 @@ function Chart({ points, array, bands }) {
     sy = (v) => y0 - ((v - lo) / (hi - lo)) * (y0 - y1);
   }
 
+  const curve = style === "curve" ? smoothCurve(points) : null;
+  const peaks = curve ? findPeaks(curve, sy) : [];
+  // break the line where there are no measurements, instead of drawing a straight bridge
+  const segments = [];
+  (curve || []).forEach((p, i) => {
+    if (i === 0 || p.um - curve[i - 1].um > CURVE_GAP_UM) segments.push([]);
+    segments[segments.length - 1].push(p);
+  });
+  const pathOf = (seg) => seg.map((p, i) => `${i ? "L" : "M"}${sx(p.um).toFixed(1)},${sy(p.flux).toFixed(1)}`).join("");
+  const line = segments.map(pathOf).join("");
+  const area = segments.map((seg) =>
+    `${pathOf(seg)}L${sx(seg[seg.length - 1].um).toFixed(1)},${y0}L${sx(seg[0].um).toFixed(1)},${y0}Z`).join("");
+
   return (
     <>
       <svg className="spectrum-svg" viewBox={`0 0 ${W} ${H}`} role="img"
         aria-label={`Spectrum: ${points.length} measurements from 0.75 to 5 µm`}>
+        {/* fill colour follows wavelength: the arrays' blue (short) to red (long) */}
+        <defs>
+          <linearGradient id="spectrum-fill" gradientUnits="userSpaceOnUse" x1={x0} x2={x1} y1="0" y2="0">
+            {Object.entries(ARRAY_UM).map(([n, [a, b]]) => (
+              <stop key={n} offset={(sx((a + b) / 2) - x0) / (x1 - x0)} stopColor={ARRAY_COLOURS[n]} />
+            ))}
+          </linearGradient>
+          <linearGradient id="spectrum-fade" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stopColor="#fff" stopOpacity="0.75" />
+            <stop offset="1" stopColor="#fff" stopOpacity="0.15" />
+          </linearGradient>
+          <mask id="spectrum-mask"><rect x="0" y="0" width={W} height={H} fill="url(#spectrum-fade)" /></mask>
+        </defs>
         {/* the six arrays as faint bands, the one in the player highlighted */}
         {Object.entries(ARRAY_UM).map(([n, [a, b]]) => (
           <g key={n}>
@@ -134,15 +208,34 @@ function Chart({ points, array, bands }) {
         <text x={14} y={(y0 + y1) / 2} className="axis-title"
           transform={`rotate(-90 14 ${(y0 + y1) / 2})`}>Flux (mJy{log ? ", log" : ""})</text>
 
+        {curve && <path d={area} fill="url(#spectrum-fill)" mask="url(#spectrum-mask)" className="curve-fill" />}
+
         {points.map((p, i) => {
           const cx = sx(p.wavelength_um), cy = sy(p.flux_mjy), c = ARRAY_COLOURS[p.array];
           return (
-            <g key={i} onMouseEnter={() => setHover(p)} onMouseLeave={() => setHover(null)}>
-              <line x1={cx} x2={cx} y1={sy(p.flux_mjy - p.error_mjy)} y2={sy(p.flux_mjy + p.error_mjy)}
-                stroke={c} className="errbar" />
-              <circle cx={cx} cy={cy} r={hover === p ? 6 : 4}
+            <g key={i} onMouseEnter={() => setHover(p)} onMouseLeave={() => setHover(null)}
+              className={curve ? "dot-faint" : ""}>
+              {!curve && (
+                <line x1={cx} x2={cx} y1={sy(p.flux_mjy - p.error_mjy)} y2={sy(p.flux_mjy + p.error_mjy)}
+                  stroke={c} className="errbar" />
+              )}
+              <circle cx={cx} cy={cy} r={hover === p ? 6 : curve ? 2.5 : 4}
                 fill={p.quality === "bright" ? "none" : c} stroke={c} strokeWidth="1.6" />
               <circle cx={cx} cy={cy} r="10" fill="transparent" />{/* bigger hover target */}
+            </g>
+          );
+        })}
+
+        {curve && <path d={line} className="curve-line" />}
+
+        {/* tagged peaks: wavelength of each big bump, like a lab spectrum */}
+        {peaks.map((p) => {
+          const x = sx(p.um), label = p.um.toFixed(2), w = label.length * 6.6 + 8;
+          return (
+            <g key={p.um} className="peak" data-tip={`Peak at ${label} µm: ${fmtFlux(p.flux)} mJy`}>
+              <line x1={x} x2={x} y1={sy(p.flux)} y2={y0 - 16} />
+              <rect x={x - w / 2} y={y0 - 16} width={w} height="14" rx="2" />
+              <text x={x} y={y0 - 5.5}>{label}</text>
             </g>
           );
         })}
@@ -154,7 +247,11 @@ function Chart({ points, array, bands }) {
               {" "}· array {hover.array} · {hover.date}{hover.n > 1 && ` · median of ${hover.n}`}
               {hover.quality === "bright" && " · saturated core, approximate"}
             </>
-          : <>Hover a dot for its value. Hollow dots = star so bright the detector saturated (approximate).</>}
+          : curve
+            ? <>Line = smoothed spectrum, yellow tags = its peaks (µm). Hover a dot for its value.</>
+            : style === "curve"
+              ? <>Too few measurements for a smooth line here, showing the dots. Hover a dot for its value.</>
+              : <>Hover a dot for its value. Hollow dots = star so bright the detector saturated (approximate).</>}
       </p>
     </>
   );
@@ -169,6 +266,7 @@ function SpectrumChart({ ra, dec, array }) {
   const [binned, setBinned] = useState(false);
   const [retry, setRetry] = useState(0);
   const [labels, setLabels] = useState("gas");
+  const [style, setStyle] = useState("curve");
 
   // new spot: forget the old spectrum, check if this one is baked
   useEffect(() => {
@@ -204,6 +302,12 @@ function SpectrumChart({ ra, dec, array }) {
         </h3>
         {data?.points.length > 0 && (
           <div className="spectrum-controls">
+          <div className="fov-buttons spectrum-mode" aria-label="Chart style">
+            {STYLES.map((s) => (
+              <button key={s.key} className={style === s.key ? "active" : ""} onClick={() => setStyle(s.key)}
+                data-tip={s.tip}>{s.label}</button>
+            ))}
+          </div>
           <div className="fov-buttons spectrum-mode" aria-label="Molecule labels">
             {LABEL_MODES.map((m) => (
               <button key={m.key} className={labels === m.key ? "active" : ""} onClick={() => setLabels(m.key)}
@@ -246,7 +350,7 @@ function SpectrumChart({ ra, dec, array }) {
 
       {data && points.length > 0 && (
         <>
-          <Chart points={points} array={array}
+          <Chart points={points} array={array} style={style}
             bands={LABEL_MODES.find((m) => m.key === labels).bands} />
           <p className="spectrum-meta">
             {data.points.length} of {data.n_exposures} exposures measured

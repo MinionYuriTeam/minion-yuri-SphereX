@@ -41,6 +41,29 @@
 .spectrum-svg .tick-y { text-anchor: end; }
 .spectrum-svg .axis-title { fill: #8c96ab; font-size: 12px; text-anchor: middle; }
 .spectrum-svg .errbar { stroke-width: 1.2; opacity: 0.6; }
+
+/* Curve style: wavelength-coloured fill under a smooth line, dots faint behind it */
+.spectrum-svg .curve-fill { pointer-events: none; }
+.spectrum-svg .curve-line {
+  fill: none;
+  stroke: #e6eaf2;
+  stroke-width: 2.2;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+.spectrum-svg .dot-faint { opacity: 0.35; }
+.spectrum-svg .dot-faint:hover { opacity: 1; }
+
+/* yellow wavelength tags on the peaks */
+.spectrum-svg .peak line { stroke: #ff6b6b; stroke-width: 1.2; stroke-dasharray: 3 3; }
+.spectrum-svg .peak rect { fill: #f5d90a; stroke: #8a7a00; stroke-width: 0.8; }
+.spectrum-svg .peak text {
+  fill: #0b1120;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-anchor: middle;
+  font-family: 'IBM Plex Mono', monospace;
+}
 .spectrum-svg circle { cursor: pointer; }
 
 .spectrum-readout,
