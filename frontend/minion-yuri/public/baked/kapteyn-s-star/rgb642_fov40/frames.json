@@ -1,0 +1,25 @@
+{
+ "arrays": [
+  6,
+  4,
+  2
+ ],
+ "ra": 77.987359,
+ "dec": -45.060852,
+ "fov": 40,
+ "epochs": [
+  {
+   "date": "2025-09-03",
+   "png_url": "baked/kapteyn-s-star/rgb642_fov40/rgb_00.png"
+  },
+  {
+   "date": "2026-02-11",
+   "png_url": "baked/kapteyn-s-star/rgb642_fov40/rgb_01.png"
+  },
+  {
+   "date": "2026-09-02",
+   "png_url": "baked/kapteyn-s-star/rgb642_fov40/rgb_02.png"
+  }
+ ],
+ "baked": true
+}

@@ -1,0 +1,75 @@
+{
+ "array": 3,
+ "wavelength_um": [
+  1.63,
+  2.435
+ ],
+ "epochs": [
+  {
+   "date": "2025-05-28",
+   "datetime": "2025-05-28T04:39:53.137",
+   "date_start": "2025-05-25T04:05:58.632",
+   "date_end": "2025-06-05T17:18:39.064",
+   "n_exposures": 32,
+   "png_url": "baked/61-cygni/D3_fov10/epoch_00.png",
+   "flags_png_url": "baked/61-cygni/D3_fov10/epoch_00_flags.png"
+  },
+  {
+   "date": "2025-06-16",
+   "datetime": "2025-06-16T01:07:48.836",
+   "date_start": "2025-06-16T01:07:48.836",
+   "date_end": "2025-06-16T01:07:48.836",
+   "n_exposures": 1,
+   "png_url": "baked/61-cygni/D3_fov10/epoch_01.png",
+   "flags_png_url": "baked/61-cygni/D3_fov10/epoch_01_flags.png"
+  },
+  {
+   "date": "2025-07-04",
+   "datetime": "2025-07-04T20:51:59.590",
+   "date_start": "2025-07-04T20:51:59.590",
+   "date_end": "2025-07-04T20:51:59.590",
+   "n_exposures": 1,
+   "png_url": "baked/61-cygni/D3_fov10/epoch_02.png",
+   "flags_png_url": "baked/61-cygni/D3_fov10/epoch_02_flags.png"
+  },
+  {
+   "date": "2025-10-28",
+   "datetime": "2025-10-28T00:11:41.581",
+   "date_start": "2025-10-24T19:43:20.971",
+   "date_end": "2025-10-31T13:02:56.051",
+   "n_exposures": 19,
+   "png_url": "baked/61-cygni/D3_fov10/epoch_03.png",
+   "flags_png_url": "baked/61-cygni/D3_fov10/epoch_03_flags.png"
+  },
+  {
+   "date": "2026-05-28",
+   "datetime": "2026-05-28T15:01:47.416",
+   "date_start": "2026-05-25T15:45:28.093",
+   "date_end": "2026-05-31T23:20:07.869",
+   "n_exposures": 31,
+   "png_url": "baked/61-cygni/D3_fov10/epoch_04.png",
+   "flags_png_url": "baked/61-cygni/D3_fov10/epoch_04_flags.png"
+  },
+  {
+   "date": "2026-07-06",
+   "datetime": "2026-07-06T02:47:44.076",
+   "date_start": "2026-07-05T14:18:19.447",
+   "date_end": "2026-07-06T09:51:17.266",
+   "n_exposures": 3,
+   "png_url": "baked/61-cygni/D3_fov10/epoch_05.png",
+   "flags_png_url": "baked/61-cygni/D3_fov10/epoch_05_flags.png"
+  }
+ ],
+ "ra": 316.764424,
+ "dec": 38.773564,
+ "fov": 10,
+ "size_px": 99,
+ "pixel_scale_arcsec": 6.15,
+ "display_range": [
+  -0.36315321177244186,
+  85.70620250701904
+ ],
+ "n_skipped": 3,
+ "n_failed": 0,
+ "baked": true
+}

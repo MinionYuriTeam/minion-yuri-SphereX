@@ -1,0 +1,66 @@
+{
+ "array": 2,
+ "wavelength_um": [
+  1.103,
+  1.65
+ ],
+ "epochs": [
+  {
+   "date": "2025-06-27",
+   "datetime": "2025-06-27T10:49:20.582",
+   "date_start": "2025-06-24T02:23:26.521",
+   "date_end": "2025-07-07T00:14:10.865",
+   "n_exposures": 32,
+   "png_url": "baked/carina-nebula/D2_fov2/epoch_00.png",
+   "flags_png_url": "baked/carina-nebula/D2_fov2/epoch_00_flags.png"
+  },
+  {
+   "date": "2025-07-20",
+   "datetime": "2025-07-20T13:17:20.435",
+   "date_start": "2025-07-14T00:08:40.016",
+   "date_end": "2025-07-25T16:37:21.724",
+   "n_exposures": 8,
+   "png_url": "baked/carina-nebula/D2_fov2/epoch_01.png",
+   "flags_png_url": "baked/carina-nebula/D2_fov2/epoch_01_flags.png"
+  },
+  {
+   "date": "2026-01-04",
+   "datetime": "2026-01-04T23:25:15.321",
+   "date_start": "2026-01-01T15:21:03.609",
+   "date_end": "2026-01-08T02:10:39.176",
+   "n_exposures": 31,
+   "png_url": "baked/carina-nebula/D2_fov2/epoch_02.png",
+   "flags_png_url": "baked/carina-nebula/D2_fov2/epoch_02_flags.png"
+  },
+  {
+   "date": "2026-02-03",
+   "datetime": "2026-02-03T23:20:02.545",
+   "date_start": "2026-01-31T14:01:01.446",
+   "date_end": "2026-02-08T12:39:47.801",
+   "n_exposures": 10,
+   "png_url": "baked/carina-nebula/D2_fov2/epoch_03.png",
+   "flags_png_url": "baked/carina-nebula/D2_fov2/epoch_03_flags.png"
+  },
+  {
+   "date": "2026-06-23",
+   "datetime": "2026-06-23T05:02:55.639",
+   "date_start": "2026-06-17T15:18:04.394",
+   "date_end": "2026-06-27T06:42:06.406",
+   "n_exposures": 30,
+   "png_url": "baked/carina-nebula/D2_fov2/epoch_04.png",
+   "flags_png_url": "baked/carina-nebula/D2_fov2/epoch_04_flags.png"
+  }
+ ],
+ "ra": 161.264612,
+ "dec": -59.6844,
+ "fov": 2,
+ "size_px": 21,
+ "pixel_scale_arcsec": 6.15,
+ "display_range": [
+  -12.649641799926759,
+  1778.370932617184
+ ],
+ "n_skipped": 1,
+ "n_failed": 0,
+ "baked": true
+}

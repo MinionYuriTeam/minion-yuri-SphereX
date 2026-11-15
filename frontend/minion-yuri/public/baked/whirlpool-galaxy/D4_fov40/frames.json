@@ -1,0 +1,48 @@
+{
+ "array": 4,
+ "wavelength_um": [
+  2.403,
+  3.847
+ ],
+ "epochs": [
+  {
+   "date": "2025-05-22",
+   "datetime": "2025-05-22T09:59:11.146",
+   "date_start": "2025-05-20T13:36:13.665",
+   "date_end": "2025-05-25T14:16:56.393",
+   "n_exposures": 13,
+   "png_url": "baked/whirlpool-galaxy/D4_fov40/epoch_00.png",
+   "flags_png_url": "baked/whirlpool-galaxy/D4_fov40/epoch_00_flags.png"
+  },
+  {
+   "date": "2025-12-04",
+   "datetime": "2025-12-04T11:40:39.114",
+   "date_start": "2025-12-03T16:05:00.622",
+   "date_end": "2025-12-05T21:57:35.532",
+   "n_exposures": 13,
+   "png_url": "baked/whirlpool-galaxy/D4_fov40/epoch_01.png",
+   "flags_png_url": "baked/whirlpool-galaxy/D4_fov40/epoch_01_flags.png"
+  },
+  {
+   "date": "2026-05-24",
+   "datetime": "2026-05-24T22:12:20.182",
+   "date_start": "2026-05-20T10:39:40.390",
+   "date_end": "2026-05-30T15:06:13.188",
+   "n_exposures": 13,
+   "png_url": "baked/whirlpool-galaxy/D4_fov40/epoch_02.png",
+   "flags_png_url": "baked/whirlpool-galaxy/D4_fov40/epoch_02_flags.png"
+  }
+ ],
+ "ra": 202.469575,
+ "dec": 47.195258,
+ "fov": 40,
+ "size_px": 391,
+ "pixel_scale_arcsec": 6.15,
+ "display_range": [
+  -0.009106031060218811,
+  1.4742354536056497
+ ],
+ "n_skipped": 16,
+ "n_failed": 0,
+ "baked": true
+}

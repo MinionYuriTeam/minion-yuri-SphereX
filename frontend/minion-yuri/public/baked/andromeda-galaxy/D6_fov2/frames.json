@@ -1,0 +1,66 @@
+{
+ "array": 6,
+ "wavelength_um": [
+  4.412,
+  5.01
+ ],
+ "epochs": [
+  {
+   "date": "2025-07-20",
+   "datetime": "2025-07-20T14:17:31.908",
+   "date_start": "2025-07-18T07:30:48.130",
+   "date_end": "2025-07-22T06:11:02.932",
+   "n_exposures": 18,
+   "png_url": "baked/andromeda-galaxy/D6_fov2/epoch_00.png",
+   "flags_png_url": null
+  },
+  {
+   "date": "2025-08-15",
+   "datetime": "2025-08-15T05:35:32.931",
+   "date_start": "2025-08-15T05:35:32.931",
+   "date_end": "2025-08-15T05:35:32.931",
+   "n_exposures": 1,
+   "png_url": "baked/andromeda-galaxy/D6_fov2/epoch_01.png",
+   "flags_png_url": "baked/andromeda-galaxy/D6_fov2/epoch_01_flags.png"
+  },
+  {
+   "date": "2025-12-22",
+   "datetime": "2025-12-22T02:05:03.453",
+   "date_start": "2025-12-18T05:08:23.278",
+   "date_end": "2025-12-27T07:33:20.096",
+   "n_exposures": 18,
+   "png_url": "baked/andromeda-galaxy/D6_fov2/epoch_02.png",
+   "flags_png_url": null
+  },
+  {
+   "date": "2026-07-21",
+   "datetime": "2026-07-21T19:51:17.295",
+   "date_start": "2026-07-19T05:39:11.829",
+   "date_end": "2026-07-23T13:56:29.188",
+   "n_exposures": 19,
+   "png_url": "baked/andromeda-galaxy/D6_fov2/epoch_03.png",
+   "flags_png_url": null
+  },
+  {
+   "date": "2026-08-06",
+   "datetime": "2026-08-06T02:02:17.229",
+   "date_start": "2026-08-04T12:33:07.327",
+   "date_end": "2026-08-07T07:21:10.947",
+   "n_exposures": 6,
+   "png_url": "baked/andromeda-galaxy/D6_fov2/epoch_04.png",
+   "flags_png_url": null
+  }
+ ],
+ "ra": 10.684708,
+ "dec": 41.26875,
+ "fov": 2,
+ "size_px": 21,
+ "pixel_scale_arcsec": 6.15,
+ "display_range": [
+  -7.150987911224365,
+  52.961463165283206
+ ],
+ "n_skipped": 0,
+ "n_failed": 0,
+ "baked": true
+}

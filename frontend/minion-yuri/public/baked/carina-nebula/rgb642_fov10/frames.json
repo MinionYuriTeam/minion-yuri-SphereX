@@ -1,0 +1,45 @@
+{
+ "arrays": [
+  6,
+  4,
+  2
+ ],
+ "ra": 161.264612,
+ "dec": -59.6844,
+ "fov": 10,
+ "epochs": [
+  {
+   "date": "2025-06-04",
+   "png_url": "baked/carina-nebula/rgb642_fov10/rgb_00.png"
+  },
+  {
+   "date": "2025-06-21",
+   "png_url": "baked/carina-nebula/rgb642_fov10/rgb_01.png"
+  },
+  {
+   "date": "2025-07-11",
+   "png_url": "baked/carina-nebula/rgb642_fov10/rgb_02.png"
+  },
+  {
+   "date": "2026-01-13",
+   "png_url": "baked/carina-nebula/rgb642_fov10/rgb_03.png"
+  },
+  {
+   "date": "2026-02-17",
+   "png_url": "baked/carina-nebula/rgb642_fov10/rgb_04.png"
+  },
+  {
+   "date": "2026-06-10",
+   "png_url": "baked/carina-nebula/rgb642_fov10/rgb_05.png"
+  },
+  {
+   "date": "2026-06-21",
+   "png_url": "baked/carina-nebula/rgb642_fov10/rgb_06.png"
+  },
+  {
+   "date": "2026-07-11",
+   "png_url": "baked/carina-nebula/rgb642_fov10/rgb_07.png"
+  }
+ ],
+ "baked": true
+}

@@ -1,0 +1,29 @@
+{
+ "arrays": [
+  6,
+  4,
+  2
+ ],
+ "ra": 217.367717,
+ "dec": -62.673773,
+ "fov": 5,
+ "epochs": [
+  {
+   "date": "2025-07-26",
+   "png_url": "baked/proxima-centauri/rgb642_fov5/rgb_00.png"
+  },
+  {
+   "date": "2025-08-23",
+   "png_url": "baked/proxima-centauri/rgb642_fov5/rgb_01.png"
+  },
+  {
+   "date": "2026-02-16",
+   "png_url": "baked/proxima-centauri/rgb642_fov5/rgb_02.png"
+  },
+  {
+   "date": "2026-07-23",
+   "png_url": "baked/proxima-centauri/rgb642_fov5/rgb_03.png"
+  }
+ ],
+ "baked": true
+}

@@ -1,0 +1,48 @@
+{
+ "array": 5,
+ "wavelength_um": [
+  3.811,
+  4.43
+ ],
+ "epochs": [
+  {
+   "date": "2025-08-08",
+   "datetime": "2025-08-08T10:41:50.211",
+   "date_start": "2025-08-06T07:56:11.581",
+   "date_end": "2025-08-10T11:21:38.884",
+   "n_exposures": 18,
+   "png_url": "baked/teegarden-s-star/D5_fov2/epoch_00.png",
+   "flags_png_url": null
+  },
+  {
+   "date": "2026-02-02",
+   "datetime": "2026-02-02T01:37:14.107",
+   "date_start": "2026-01-30T01:30:47.186",
+   "date_end": "2026-02-05T00:54:44.625",
+   "n_exposures": 19,
+   "png_url": "baked/teegarden-s-star/D5_fov2/epoch_01.png",
+   "flags_png_url": null
+  },
+  {
+   "date": "2026-08-11",
+   "datetime": "2026-08-11T02:31:46.065",
+   "date_start": "2026-08-09T00:01:50.276",
+   "date_end": "2026-08-12T12:43:48.611",
+   "n_exposures": 18,
+   "png_url": "baked/teegarden-s-star/D5_fov2/epoch_02.png",
+   "flags_png_url": null
+  }
+ ],
+ "ra": 43.280343,
+ "dec": 16.853009,
+ "fov": 2,
+ "size_px": 21,
+ "pixel_scale_arcsec": 6.15,
+ "display_range": [
+  -0.029975296556949613,
+  58.543140029907384
+ ],
+ "n_skipped": 0,
+ "n_failed": 0,
+ "baked": true
+}

@@ -1,0 +1,75 @@
+{
+ "array": 4,
+ "wavelength_um": [
+  2.403,
+  3.847
+ ],
+ "epochs": [
+  {
+   "date": "2025-06-25",
+   "datetime": "2025-06-25T16:06:40.532",
+   "date_start": "2025-06-23T23:08:36.803",
+   "date_end": "2025-06-29T03:04:24.630",
+   "n_exposures": 17,
+   "png_url": "baked/luhman-16/D4_fov10/epoch_00.png",
+   "flags_png_url": "baked/luhman-16/D4_fov10/epoch_00_flags.png"
+  },
+  {
+   "date": "2025-07-19",
+   "datetime": "2025-07-19T01:11:26.614",
+   "date_start": "2025-07-18T01:53:06.039",
+   "date_end": "2025-07-19T20:19:29.053",
+   "n_exposures": 4,
+   "png_url": "baked/luhman-16/D4_fov10/epoch_01.png",
+   "flags_png_url": "baked/luhman-16/D4_fov10/epoch_01_flags.png"
+  },
+  {
+   "date": "2025-12-24",
+   "datetime": "2025-12-24T05:10:10.034",
+   "date_start": "2025-12-21T20:25:01.517",
+   "date_end": "2025-12-24T23:16:28.395",
+   "n_exposures": 16,
+   "png_url": "baked/luhman-16/D4_fov10/epoch_02.png",
+   "flags_png_url": "baked/luhman-16/D4_fov10/epoch_02_flags.png"
+  },
+  {
+   "date": "2026-01-18",
+   "datetime": "2026-01-18T18:36:29.176",
+   "date_start": "2026-01-15T20:00:39.686",
+   "date_end": "2026-01-22T01:53:01.365",
+   "n_exposures": 6,
+   "png_url": "baked/luhman-16/D4_fov10/epoch_03.png",
+   "flags_png_url": "baked/luhman-16/D4_fov10/epoch_03_flags.png"
+  },
+  {
+   "date": "2026-06-19",
+   "datetime": "2026-06-19T10:15:02.872",
+   "date_start": "2026-06-14T04:10:32.854",
+   "date_end": "2026-06-25T12:14:40.437",
+   "n_exposures": 17,
+   "png_url": "baked/luhman-16/D4_fov10/epoch_04.png",
+   "flags_png_url": "baked/luhman-16/D4_fov10/epoch_04_flags.png"
+  },
+  {
+   "date": "2026-07-20",
+   "datetime": "2026-07-20T00:26:27.411",
+   "date_start": "2026-07-17T20:18:38.761",
+   "date_end": "2026-07-21T10:38:54.162",
+   "n_exposures": 5,
+   "png_url": "baked/luhman-16/D4_fov10/epoch_05.png",
+   "flags_png_url": "baked/luhman-16/D4_fov10/epoch_05_flags.png"
+  }
+ ],
+ "ra": 162.294389,
+ "dec": -53.316814,
+ "fov": 10,
+ "size_px": 99,
+ "pixel_scale_arcsec": 6.15,
+ "display_range": [
+  -0.06380180418491363,
+  18.752439346313544
+ ],
+ "n_skipped": 5,
+ "n_failed": 0,
+ "baked": true
+}

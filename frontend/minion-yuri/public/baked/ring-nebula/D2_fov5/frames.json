@@ -1,0 +1,57 @@
+{
+ "array": 2,
+ "wavelength_um": [
+  1.103,
+  1.65
+ ],
+ "epochs": [
+  {
+   "date": "2025-09-09",
+   "datetime": "2025-09-09T20:40:29.010",
+   "date_start": "2025-09-08T08:43:13.221",
+   "date_end": "2025-09-12T23:42:03.710",
+   "n_exposures": 18,
+   "png_url": "baked/ring-nebula/D2_fov5/epoch_00.png",
+   "flags_png_url": "baked/ring-nebula/D2_fov5/epoch_00_flags.png"
+  },
+  {
+   "date": "2026-04-02",
+   "datetime": "2026-04-02T07:14:19.373",
+   "date_start": "2026-03-31T07:57:35.389",
+   "date_end": "2026-04-09T15:04:35.740",
+   "n_exposures": 19,
+   "png_url": "baked/ring-nebula/D2_fov5/epoch_01.png",
+   "flags_png_url": "baked/ring-nebula/D2_fov5/epoch_01_flags.png"
+  },
+  {
+   "date": "2026-05-07",
+   "datetime": "2026-05-07T05:24:07.402",
+   "date_start": "2026-05-04T22:50:09.788",
+   "date_end": "2026-05-09T11:58:05.017",
+   "n_exposures": 2,
+   "png_url": "baked/ring-nebula/D2_fov5/epoch_02.png",
+   "flags_png_url": "baked/ring-nebula/D2_fov5/epoch_02_flags.png"
+  },
+  {
+   "date": "2026-09-12",
+   "datetime": "2026-09-12T01:48:48.310",
+   "date_start": "2026-09-08T18:30:02.474",
+   "date_end": "2026-09-17T06:08:09.324",
+   "n_exposures": 18,
+   "png_url": "baked/ring-nebula/D2_fov5/epoch_03.png",
+   "flags_png_url": "baked/ring-nebula/D2_fov5/epoch_03_flags.png"
+  }
+ ],
+ "ra": 283.396251,
+ "dec": 33.029153,
+ "fov": 5,
+ "size_px": 49,
+ "pixel_scale_arcsec": 6.15,
+ "display_range": [
+  -0.03480166792869568,
+  2.689499325752262
+ ],
+ "n_skipped": 13,
+ "n_failed": 0,
+ "baked": true
+}

@@ -1,0 +1,25 @@
+{
+ "arrays": [
+  6,
+  4,
+  2
+ ],
+ "ra": 346.629312,
+ "dec": -5.044959,
+ "fov": 2,
+ "epochs": [
+  {
+   "date": "2025-06-10",
+   "png_url": "baked/trappist-1/rgb642_fov2/rgb_00.png"
+  },
+  {
+   "date": "2025-11-26",
+   "png_url": "baked/trappist-1/rgb642_fov2/rgb_01.png"
+  },
+  {
+   "date": "2026-06-18",
+   "png_url": "baked/trappist-1/rgb642_fov2/rgb_02.png"
+  }
+ ],
+ "baked": true
+}

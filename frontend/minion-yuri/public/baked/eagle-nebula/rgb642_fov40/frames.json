@@ -1,0 +1,17 @@
+{
+ "arrays": [
+  6,
+  4,
+  2
+ ],
+ "ra": 274.688001,
+ "dec": -13.792012,
+ "fov": 40,
+ "epochs": [
+  {
+   "date": "2026-04-03",
+   "png_url": "baked/eagle-nebula/rgb642_fov40/rgb_00.png"
+  }
+ ],
+ "baked": true
+}

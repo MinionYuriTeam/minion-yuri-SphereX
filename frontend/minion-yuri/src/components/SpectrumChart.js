@@ -291,7 +291,7 @@ function Chart({ points, array, bands, style }) {
           : curve
             ? <>Smoothed spectrum, yellow tags = its peaks (nm). Hover the graph for a value, or switch to Dots for the measurements.</>
             : style === "curve"
-              ? <>Too few measurements for a smooth line here, showing the dots. Hover a dot for its value.</>
+              ? <>Each dot is one clean SPHEREx measurement of this spot. Hover a dot for its value.</>
               : <>Hover a dot for its value. Hollow dots = star so bright the detector saturated (approximate).</>}
       </p>
     </>
@@ -350,7 +350,8 @@ function ExposureBars({ points }) {
   );
 }
 
-function SpectrumChart({ ra, dec, array, ready = false, pm = null }) {
+// noBackend = the pictures of this spot couldn't load because no backend answered
+function SpectrumChart({ ra, dec, array, ready = false, pm = null, noBackend = false }) {
   const [baked, setBaked] = useState(null);   // null = still checking
   const [requested, setRequested] = useState(false);
   const [data, setData] = useState(null);
@@ -423,8 +424,10 @@ function SpectrumChart({ ra, dec, array, ready = false, pm = null }) {
 
       {baked === false && !requested && (
         <div className="spectrum-empty">
-          <p>The spectrum starts downloading by itself once the pictures above have loaded.
-            It uses every exposure on all six arrays, so it can take a few minutes.</p>
+          {noBackend
+            ? <p>The spectrum of this spot isn't built in. Pick one of the built-in spots above to see one.</p>
+            : <p>The spectrum starts downloading by itself once the pictures above have loaded.
+                It uses every exposure on all six arrays, so it can take a few minutes.</p>}
         </div>
       )}
 
@@ -445,7 +448,10 @@ function SpectrumChart({ ra, dec, array, ready = false, pm = null }) {
       )}
 
       {data && points.length === 0 && (
-        <p className="spectrum-status">No usable measurement of the target here ({data.n_exposures} exposures checked).</p>
+        <p className="spectrum-status">
+          No clean measurement at this exact spot: all {data.n_exposures} exposures were flagged or cut off here,
+          which happens in very bright or crowded regions like nebulae. Spectra work best on single stars.
+        </p>
       )}
 
       {data && points.length > 0 && (
@@ -458,8 +464,8 @@ function SpectrumChart({ ra, dec, array, ready = false, pm = null }) {
           </h4>
           <ExposureBars points={good} />
           <p className="spectrum-meta">
-            {data.points.length} of {data.n_exposures} exposures measured
-            {data.n_dropped > 0 && ` (${data.n_dropped} skipped: target off the edge, flagged pixels or cosmic rays)`}
+            {data.points.length} clean measurements from {data.n_exposures} exposures
+            {data.n_dropped > 0 && " (the rest had the target off the edge, flagged pixels or cosmic rays)"}
             {data.source === "baked" && " · built in"}
           </p>
         </>

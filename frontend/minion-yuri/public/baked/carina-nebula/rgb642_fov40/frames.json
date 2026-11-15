@@ -1,0 +1,33 @@
+{
+ "arrays": [
+  6,
+  4,
+  2
+ ],
+ "ra": 161.264612,
+ "dec": -59.6844,
+ "fov": 40,
+ "epochs": [
+  {
+   "date": "2025-06-21",
+   "png_url": "baked/carina-nebula/rgb642_fov40/rgb_00.png"
+  },
+  {
+   "date": "2026-01-13",
+   "png_url": "baked/carina-nebula/rgb642_fov40/rgb_01.png"
+  },
+  {
+   "date": "2026-06-03",
+   "png_url": "baked/carina-nebula/rgb642_fov40/rgb_02.png"
+  },
+  {
+   "date": "2026-06-17",
+   "png_url": "baked/carina-nebula/rgb642_fov40/rgb_03.png"
+  },
+  {
+   "date": "2026-07-10",
+   "png_url": "baked/carina-nebula/rgb642_fov40/rgb_04.png"
+  }
+ ],
+ "baked": true
+}

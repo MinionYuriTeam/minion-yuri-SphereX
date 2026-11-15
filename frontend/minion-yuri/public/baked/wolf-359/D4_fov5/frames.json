@@ -1,0 +1,57 @@
+{
+ "array": 4,
+ "wavelength_um": [
+  2.403,
+  3.847
+ ],
+ "epochs": [
+  {
+   "date": "2025-05-12",
+   "datetime": "2025-05-12T21:53:15.473",
+   "date_start": "2025-05-09T23:25:52.508",
+   "date_end": "2025-05-18T11:20:28.647",
+   "n_exposures": 11,
+   "png_url": "baked/wolf-359/D4_fov5/epoch_00.png",
+   "flags_png_url": "baked/wolf-359/D4_fov5/epoch_00_flags.png"
+  },
+  {
+   "date": "2025-06-06",
+   "datetime": "2025-06-06T23:28:40.914",
+   "date_start": "2025-06-06T18:23:48.872",
+   "date_end": "2025-06-07T05:43:27.809",
+   "n_exposures": 6,
+   "png_url": "baked/wolf-359/D4_fov5/epoch_01.png",
+   "flags_png_url": "baked/wolf-359/D4_fov5/epoch_01_flags.png"
+  },
+  {
+   "date": "2025-11-30",
+   "datetime": "2025-11-30T19:46:44.241",
+   "date_start": "2025-11-29T04:21:02.928",
+   "date_end": "2025-12-03T02:45:46.034",
+   "n_exposures": 18,
+   "png_url": "baked/wolf-359/D4_fov5/epoch_02.png",
+   "flags_png_url": "baked/wolf-359/D4_fov5/epoch_02_flags.png"
+  },
+  {
+   "date": "2026-05-18",
+   "datetime": "2026-05-18T16:33:09.385",
+   "date_start": "2026-05-15T23:19:14.729",
+   "date_end": "2026-05-21T09:47:05.193",
+   "n_exposures": 8,
+   "png_url": "baked/wolf-359/D4_fov5/epoch_03.png",
+   "flags_png_url": "baked/wolf-359/D4_fov5/epoch_03_flags.png"
+  }
+ ],
+ "ra": 164.091558,
+ "dec": 6.994666,
+ "fov": 5,
+ "size_px": 49,
+ "pixel_scale_arcsec": 6.15,
+ "display_range": [
+  -0.015410781279206276,
+  27.82766051292471
+ ],
+ "n_skipped": 0,
+ "n_failed": 0,
+ "baked": true
+}

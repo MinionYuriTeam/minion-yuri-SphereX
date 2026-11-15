@@ -167,6 +167,7 @@ input {
 /* ===== "run your own backend" help (RunBackendHelp.js) ===== */
 .status.run-backend {
   aspect-ratio: auto;
+  justify-content: flex-start;
   min-height: 360px;
   align-items: stretch;
   text-align: left;
@@ -175,6 +176,38 @@ input {
 
 .run-backend p {
   max-width: none;
+}
+
+/* the built-in spots: the first thing offered */
+.run-spots {
+  margin: 2px 0 6px;
+}
+
+/* running the backend yourself: folded away */
+.run-own {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid #243049;
+  font-size: 13px;
+  color: #8c96ab;
+}
+
+.run-own summary {
+  cursor: pointer;
+}
+
+.run-own summary:hover {
+  color: #e6eaf2;
+}
+
+.run-own[open] summary {
+  margin-bottom: 10px;
+}
+
+.run-own[open] {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .run-backend code {

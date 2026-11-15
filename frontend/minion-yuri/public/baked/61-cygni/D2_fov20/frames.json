@@ -1,0 +1,48 @@
+{
+ "array": 2,
+ "wavelength_um": [
+  1.103,
+  1.65
+ ],
+ "epochs": [
+  {
+   "date": "2025-05-20",
+   "datetime": "2025-05-20T22:18:09.379",
+   "date_start": "2025-05-20T01:50:52.164",
+   "date_end": "2025-05-23T19:33:05.187",
+   "n_exposures": 17,
+   "png_url": "baked/61-cygni/D2_fov20/epoch_00.png",
+   "flags_png_url": "baked/61-cygni/D2_fov20/epoch_00_flags.png"
+  },
+  {
+   "date": "2025-11-02",
+   "datetime": "2025-11-02T09:32:19.127",
+   "date_start": "2025-10-29T13:48:23.999",
+   "date_end": "2025-11-10T01:14:43.396",
+   "n_exposures": 16,
+   "png_url": "baked/61-cygni/D2_fov20/epoch_01.png",
+   "flags_png_url": "baked/61-cygni/D2_fov20/epoch_01_flags.png"
+  },
+  {
+   "date": "2026-05-21",
+   "datetime": "2026-05-21T15:49:28.788",
+   "date_start": "2026-05-20T13:36:34.161",
+   "date_end": "2026-05-23T23:08:17.528",
+   "n_exposures": 14,
+   "png_url": "baked/61-cygni/D2_fov20/epoch_02.png",
+   "flags_png_url": "baked/61-cygni/D2_fov20/epoch_02_flags.png"
+  }
+ ],
+ "ra": 316.764424,
+ "dec": 38.773564,
+ "fov": 20,
+ "size_px": 195,
+ "pixel_scale_arcsec": 6.15,
+ "display_range": [
+  -0.19965396523475648,
+  35.34059722900336
+ ],
+ "n_skipped": 18,
+ "n_failed": 0,
+ "baked": true
+}

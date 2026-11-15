@@ -1,0 +1,48 @@
+{
+ "array": 5,
+ "wavelength_um": [
+  3.811,
+  4.43
+ ],
+ "epochs": [
+  {
+   "date": "2025-09-03",
+   "datetime": "2025-09-03T06:57:00.480",
+   "date_start": "2025-08-28T15:21:19.565",
+   "date_end": "2025-09-11T08:37:37.126",
+   "n_exposures": 19,
+   "png_url": "baked/eagle-nebula/D5_fov2/epoch_00.png",
+   "flags_png_url": null
+  },
+  {
+   "date": "2026-03-27",
+   "datetime": "2026-03-27T14:05:23.612",
+   "date_start": "2026-03-26T00:38:44.851",
+   "date_end": "2026-03-30T18:43:33.930",
+   "n_exposures": 19,
+   "png_url": "baked/eagle-nebula/D5_fov2/epoch_01.png",
+   "flags_png_url": "baked/eagle-nebula/D5_fov2/epoch_01_flags.png"
+  },
+  {
+   "date": "2026-08-31",
+   "datetime": "2026-08-31T04:43:27.902",
+   "date_start": "2026-08-27T08:32:17.901",
+   "date_end": "2026-09-04T23:27:44.921",
+   "n_exposures": 18,
+   "png_url": "baked/eagle-nebula/D5_fov2/epoch_02.png",
+   "flags_png_url": null
+  }
+ ],
+ "ra": 274.688001,
+ "dec": -13.792012,
+ "fov": 2,
+ "size_px": 21,
+ "pixel_scale_arcsec": 6.15,
+ "display_range": [
+  -3.07009584903717,
+  32.907517013549906
+ ],
+ "n_skipped": 0,
+ "n_failed": 0,
+ "baked": true
+}

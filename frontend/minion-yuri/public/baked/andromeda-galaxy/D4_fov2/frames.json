@@ -1,0 +1,75 @@
+{
+ "array": 4,
+ "wavelength_um": [
+  2.403,
+  3.847
+ ],
+ "epochs": [
+  {
+   "date": "2025-07-10",
+   "datetime": "2025-07-10T16:22:59.210",
+   "date_start": "2025-07-09T14:57:45.524",
+   "date_end": "2025-07-11T22:24:15.049",
+   "n_exposures": 18,
+   "png_url": "baked/andromeda-galaxy/D4_fov2/epoch_00.png",
+   "flags_png_url": "baked/andromeda-galaxy/D4_fov2/epoch_00_flags.png"
+  },
+  {
+   "date": "2025-08-14",
+   "datetime": "2025-08-14T21:34:26.243",
+   "date_start": "2025-08-14T21:34:26.243",
+   "date_end": "2025-08-14T21:34:26.243",
+   "n_exposures": 1,
+   "png_url": "baked/andromeda-galaxy/D4_fov2/epoch_01.png",
+   "flags_png_url": "baked/andromeda-galaxy/D4_fov2/epoch_01_flags.png"
+  },
+  {
+   "date": "2026-01-01",
+   "datetime": "2026-01-01T10:33:26.294",
+   "date_start": "2025-12-31T06:01:19.680",
+   "date_end": "2026-01-04T20:52:55.792",
+   "n_exposures": 17,
+   "png_url": "baked/andromeda-galaxy/D4_fov2/epoch_02.png",
+   "flags_png_url": "baked/andromeda-galaxy/D4_fov2/epoch_02_flags.png"
+  },
+  {
+   "date": "2026-01-28",
+   "datetime": "2026-01-28T02:18:22.566",
+   "date_start": "2026-01-28T02:18:22.566",
+   "date_end": "2026-01-28T02:18:22.566",
+   "n_exposures": 1,
+   "png_url": "baked/andromeda-galaxy/D4_fov2/epoch_03.png",
+   "flags_png_url": "baked/andromeda-galaxy/D4_fov2/epoch_03_flags.png"
+  },
+  {
+   "date": "2026-07-10",
+   "datetime": "2026-07-10T12:20:28.101",
+   "date_start": "2026-07-10T00:03:29.172",
+   "date_end": "2026-07-11T00:35:05.310",
+   "n_exposures": 18,
+   "png_url": "baked/andromeda-galaxy/D4_fov2/epoch_04.png",
+   "flags_png_url": "baked/andromeda-galaxy/D4_fov2/epoch_04_flags.png"
+  },
+  {
+   "date": "2026-08-04",
+   "datetime": "2026-08-04T23:58:54.682",
+   "date_start": "2026-08-04T23:58:54.682",
+   "date_end": "2026-08-04T23:58:54.682",
+   "n_exposures": 1,
+   "png_url": "baked/andromeda-galaxy/D4_fov2/epoch_05.png",
+   "flags_png_url": "baked/andromeda-galaxy/D4_fov2/epoch_05_flags.png"
+  }
+ ],
+ "ra": 10.684708,
+ "dec": 41.26875,
+ "fov": 2,
+ "size_px": 21,
+ "pixel_scale_arcsec": 6.15,
+ "display_range": [
+  -9.502755165100098,
+  128.375758666992
+ ],
+ "n_skipped": 0,
+ "n_failed": 0,
+ "baked": true
+}

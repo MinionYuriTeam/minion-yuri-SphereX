@@ -1,0 +1,75 @@
+{
+ "array": 2,
+ "wavelength_um": [
+  1.103,
+  1.65
+ ],
+ "epochs": [
+  {
+   "date": "2025-05-13",
+   "datetime": "2025-05-13T00:23:14.703",
+   "date_start": "2025-05-09T05:12:22.134",
+   "date_end": "2025-05-19T00:04:11.229",
+   "n_exposures": 16,
+   "png_url": "baked/whirlpool-galaxy/D2_fov20/epoch_00.png",
+   "flags_png_url": "baked/whirlpool-galaxy/D2_fov20/epoch_00_flags.png"
+  },
+  {
+   "date": "2025-12-09",
+   "datetime": "2025-12-09T02:27:41.963",
+   "date_start": "2025-12-08T08:30:05.210",
+   "date_end": "2025-12-11T09:48:55.783",
+   "n_exposures": 9,
+   "png_url": "baked/whirlpool-galaxy/D2_fov20/epoch_01.png",
+   "flags_png_url": "baked/whirlpool-galaxy/D2_fov20/epoch_01_flags.png"
+  },
+  {
+   "date": "2026-05-18",
+   "datetime": "2026-05-18T23:35:05.754",
+   "date_start": "2026-05-16T05:36:46.649",
+   "date_end": "2026-05-21T17:42:37.280",
+   "n_exposures": 11,
+   "png_url": "baked/whirlpool-galaxy/D2_fov20/epoch_02.png",
+   "flags_png_url": "baked/whirlpool-galaxy/D2_fov20/epoch_02_flags.png"
+  },
+  {
+   "date": "2026-05-30",
+   "datetime": "2026-05-30T05:21:42.464",
+   "date_start": "2026-05-30T05:18:29.067",
+   "date_end": "2026-05-30T05:24:55.860",
+   "n_exposures": 4,
+   "png_url": "baked/whirlpool-galaxy/D2_fov20/epoch_03.png",
+   "flags_png_url": "baked/whirlpool-galaxy/D2_fov20/epoch_03_flags.png"
+  },
+  {
+   "date": "2026-06-07",
+   "datetime": "2026-06-07T18:36:38.929",
+   "date_start": "2026-06-07T18:36:38.929",
+   "date_end": "2026-06-07T18:36:38.929",
+   "n_exposures": 1,
+   "png_url": "baked/whirlpool-galaxy/D2_fov20/epoch_04.png",
+   "flags_png_url": "baked/whirlpool-galaxy/D2_fov20/epoch_04_flags.png"
+  },
+  {
+   "date": "2026-06-19",
+   "datetime": "2026-06-19T15:48:33.517",
+   "date_start": "2026-06-19T10:56:25.065",
+   "date_end": "2026-06-19T20:43:16.994",
+   "n_exposures": 3,
+   "png_url": "baked/whirlpool-galaxy/D2_fov20/epoch_05.png",
+   "flags_png_url": "baked/whirlpool-galaxy/D2_fov20/epoch_05_flags.png"
+  }
+ ],
+ "ra": 202.469575,
+ "dec": 47.195258,
+ "fov": 20,
+ "size_px": 195,
+ "pixel_scale_arcsec": 6.15,
+ "display_range": [
+  -0.023134640604257583,
+  5.143263394832641
+ ],
+ "n_skipped": 54,
+ "n_failed": 0,
+ "baked": true
+}

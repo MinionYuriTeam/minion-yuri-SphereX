@@ -1,0 +1,29 @@
+{
+ "arrays": [
+  6,
+  4,
+  2
+ ],
+ "ra": 83.6324,
+ "dec": 22.0174,
+ "fov": 2,
+ "epochs": [
+  {
+   "date": "2025-09-21",
+   "png_url": "baked/crab-nebula/rgb642_fov2/rgb_00.png"
+  },
+  {
+   "date": "2026-02-23",
+   "png_url": "baked/crab-nebula/rgb642_fov2/rgb_01.png"
+  },
+  {
+   "date": "2026-03-05",
+   "png_url": "baked/crab-nebula/rgb642_fov2/rgb_02.png"
+  },
+  {
+   "date": "2026-09-17",
+   "png_url": "baked/crab-nebula/rgb642_fov2/rgb_03.png"
+  }
+ ],
+ "baked": true
+}

@@ -1,0 +1,57 @@
+{
+ "array": 3,
+ "wavelength_um": [
+  1.63,
+  2.435
+ ],
+ "epochs": [
+  {
+   "date": "2025-07-26",
+   "datetime": "2025-07-26T10:12:59.600",
+   "date_start": "2025-07-22T11:50:27.861",
+   "date_end": "2025-08-04T01:26:14.207",
+   "n_exposures": 20,
+   "png_url": "baked/proxima-centauri/D3_fov10/epoch_00.png",
+   "flags_png_url": "baked/proxima-centauri/D3_fov10/epoch_00_flags.png"
+  },
+  {
+   "date": "2025-08-23",
+   "datetime": "2025-08-23T05:19:42.442",
+   "date_start": "2025-08-23T05:19:42.442",
+   "date_end": "2025-08-23T05:19:42.442",
+   "n_exposures": 1,
+   "png_url": "baked/proxima-centauri/D3_fov10/epoch_01.png",
+   "flags_png_url": "baked/proxima-centauri/D3_fov10/epoch_01_flags.png"
+  },
+  {
+   "date": "2026-02-16",
+   "datetime": "2026-02-16T12:33:20.057",
+   "date_start": "2026-02-15T22:21:44.146",
+   "date_end": "2026-02-18T20:28:35.375",
+   "n_exposures": 18,
+   "png_url": "baked/proxima-centauri/D3_fov10/epoch_02.png",
+   "flags_png_url": "baked/proxima-centauri/D3_fov10/epoch_02_flags.png"
+  },
+  {
+   "date": "2026-07-23",
+   "datetime": "2026-07-23T08:49:42.681",
+   "date_start": "2026-07-20T08:30:57.628",
+   "date_end": "2026-07-25T18:59:40.226",
+   "n_exposures": 17,
+   "png_url": "baked/proxima-centauri/D3_fov10/epoch_03.png",
+   "flags_png_url": "baked/proxima-centauri/D3_fov10/epoch_03_flags.png"
+  }
+ ],
+ "ra": 217.367717,
+ "dec": -62.673773,
+ "fov": 10,
+ "size_px": 99,
+ "pixel_scale_arcsec": 6.15,
+ "display_range": [
+  -0.8968611091375351,
+  119.00206680297806
+ ],
+ "n_skipped": 4,
+ "n_failed": 0,
+ "baked": true
+}

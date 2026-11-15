@@ -1,0 +1,75 @@
+{
+ "array": 2,
+ "wavelength_um": [
+  1.103,
+  1.65
+ ],
+ "epochs": [
+  {
+   "date": "2025-05-02",
+   "datetime": "2025-05-02T14:32:56.139",
+   "date_start": "2025-05-02T13:40:43.430",
+   "date_end": "2025-05-02T15:25:08.848",
+   "n_exposures": 8,
+   "png_url": "baked/wolf-359/D2_fov10/epoch_00.png",
+   "flags_png_url": "baked/wolf-359/D2_fov10/epoch_00_flags.png"
+  },
+  {
+   "date": "2025-05-29",
+   "datetime": "2025-05-29T06:32:09.262",
+   "date_start": "2025-05-29T06:28:55.867",
+   "date_end": "2025-05-29T06:35:22.657",
+   "n_exposures": 4,
+   "png_url": "baked/wolf-359/D2_fov10/epoch_01.png",
+   "flags_png_url": "baked/wolf-359/D2_fov10/epoch_01_flags.png"
+  },
+  {
+   "date": "2025-06-06",
+   "datetime": "2025-06-06T15:30:26.490",
+   "date_start": "2025-06-06T05:14:28.332",
+   "date_end": "2025-06-07T23:37:39.342",
+   "n_exposures": 7,
+   "png_url": "baked/wolf-359/D2_fov10/epoch_02.png",
+   "flags_png_url": "baked/wolf-359/D2_fov10/epoch_02_flags.png"
+  },
+  {
+   "date": "2025-12-03",
+   "datetime": "2025-12-03T11:24:56.298",
+   "date_start": "2025-12-02T17:05:40.857",
+   "date_end": "2025-12-04T03:10:29.264",
+   "n_exposures": 18,
+   "png_url": "baked/wolf-359/D2_fov10/epoch_03.png",
+   "flags_png_url": "baked/wolf-359/D2_fov10/epoch_03_flags.png"
+  },
+  {
+   "date": "2026-05-17",
+   "datetime": "2026-05-17T07:58:27.417",
+   "date_start": "2026-05-17T07:55:14.020",
+   "date_end": "2026-05-17T08:01:40.814",
+   "n_exposures": 4,
+   "png_url": "baked/wolf-359/D2_fov10/epoch_04.png",
+   "flags_png_url": "baked/wolf-359/D2_fov10/epoch_04_flags.png"
+  },
+  {
+   "date": "2026-05-27",
+   "datetime": "2026-05-27T15:37:00.334",
+   "date_start": "2026-05-27T15:33:46.170",
+   "date_end": "2026-05-27T15:40:14.498",
+   "n_exposures": 4,
+   "png_url": "baked/wolf-359/D2_fov10/epoch_05.png",
+   "flags_png_url": "baked/wolf-359/D2_fov10/epoch_05_flags.png"
+  }
+ ],
+ "ra": 164.091558,
+ "dec": 6.994666,
+ "fov": 10,
+ "size_px": 99,
+ "pixel_scale_arcsec": 6.15,
+ "display_range": [
+  -0.016454990953207016,
+  1.6285334467887869
+ ],
+ "n_skipped": 0,
+ "n_failed": 0,
+ "baked": true
+}

@@ -1,0 +1,57 @@
+{
+ "array": 6,
+ "wavelength_um": [
+  4.412,
+  5.01
+ ],
+ "epochs": [
+  {
+   "date": "2025-08-29",
+   "datetime": "2025-08-29T05:58:13.979",
+   "date_start": "2025-08-23T04:55:27.366",
+   "date_end": "2025-09-05T01:04:46.398",
+   "n_exposures": 17,
+   "png_url": "baked/eagle-nebula/D6_fov2/epoch_00.png",
+   "flags_png_url": null
+  },
+  {
+   "date": "2026-04-02",
+   "datetime": "2026-04-02T13:50:19.024",
+   "date_start": "2026-03-31T17:29:38.608",
+   "date_end": "2026-04-06T10:22:52.011",
+   "n_exposures": 17,
+   "png_url": "baked/eagle-nebula/D6_fov2/epoch_01.png",
+   "flags_png_url": null
+  },
+  {
+   "date": "2026-05-09",
+   "datetime": "2026-05-09T10:09:23.522",
+   "date_start": "2026-05-09T01:58:50.201",
+   "date_end": "2026-05-09T21:34:19.966",
+   "n_exposures": 6,
+   "png_url": "baked/eagle-nebula/D6_fov2/epoch_02.png",
+   "flags_png_url": null
+  },
+  {
+   "date": "2026-08-28",
+   "datetime": "2026-08-28T09:35:55.868",
+   "date_start": "2026-08-25T22:20:12.028",
+   "date_end": "2026-08-31T03:52:36.028",
+   "n_exposures": 20,
+   "png_url": "baked/eagle-nebula/D6_fov2/epoch_03.png",
+   "flags_png_url": null
+  }
+ ],
+ "ra": 274.688001,
+ "dec": -13.792012,
+ "fov": 2,
+ "size_px": 21,
+ "pixel_scale_arcsec": 6.15,
+ "display_range": [
+  -2.798944520950317,
+  24.98091429710388
+ ],
+ "n_skipped": 0,
+ "n_failed": 0,
+ "baked": true
+}

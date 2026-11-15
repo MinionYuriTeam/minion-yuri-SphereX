@@ -6,6 +6,7 @@ without any backend running.
     .venv/bin/python bake.py                 # all 5 targets
     .venv/bin/python bake.py "WISE 0855"     # just one (name as in target.js)
     .venv/bin/python bake.py --spectra       # only the spectra (all, or the names given)
+    .venv/bin/python bake.py --small "Orion Nebula"   # much faster: 20' and 40' only on the target's own array
 
 What it makes, for each target in frontend/minion-yuri/src/data/target.js:
   - all 6 detector arrays at every field of view the site offers (2', 5', 10', 20', 40')
@@ -23,6 +24,7 @@ then commit public/baked/. Bigger fields are made first so smaller ones reuse
 their downloads.
 """
 
+import fcntl
 import json
 import re
 import shutil
@@ -43,6 +45,7 @@ BAKED = FRONTEND / "public" / "baked"
 # the FOV buttons in FovPicker.js, largest first: smaller ones reuse the downloads
 FOVS = [40, 20, 10, 5, 2]
 RGB_ARRAYS = (6, 4, 2)     # red, green, blue
+SMALL_MAX_FOV = 10         # --small: wider fields only on the target's own array
 
 
 def read_targets():
@@ -131,15 +134,18 @@ def main():
     targets = read_targets()
     args = sys.argv[1:]
     spectra_only = "--spectra" in args          # bake.py --spectra [name ...]: only spectrum.json
-    only = [a for a in args if a != "--spectra"]
+    small = "--small" in args                   # 20' and 40' only on the best array; false colour up to 10'
+    only = [a for a in args if not a.startswith("--")]
     BAKED.mkdir(parents=True, exist_ok=True)
     index_path = BAKED / "index.json"
     index = json.loads(index_path.read_text()) if index_path.exists() else {"targets": []}
     by_name = {t["name"]: t for t in index["targets"]}
+    done = []                                   # targets this run baked
 
     for target in targets:
         if only and target["name"] not in only:
             continue
+        done.append(target["name"])
         if spectra_only:
             print(f"{target['name']}  ({target['ra']}, {target['dec']})")
             entry = by_name.setdefault(target["name"], {**target, "slug": slug(target["name"]), "baked": []})
@@ -150,23 +156,34 @@ def main():
         best_first = [target["array"]] + [a for a in range(1, 7) if a != target["array"]]
         for array in best_first:
             for fov in FOVS:
+                if small and fov > SMALL_MAX_FOV and array != target["array"]:
+                    continue
                 combos.append(bake_one(target, array, fov))
         by_name[target["name"]] = {**target, "slug": slug(target["name"]), "baked": combos}
         
         bake_spectrum(target, by_name[target["name"]])
         rgb = []                                         # false colour, one FOV at a time
         for fov in FOVS:
+            if small and fov > SMALL_MAX_FOV:
+                continue
             try:
                 rgb.append(bake_rgb(target, fov))
             except Exception as exc:
                 print(f"  false colour {fov}' failed, frames are still baked: {exc}")
         by_name[target["name"]]["rgb"] = rgb
 
-    index = {
-        "generated": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-        "targets": [by_name[t["name"]] for t in targets if t["name"] in by_name],
-    }
-    index_path.write_text(json.dumps(index, indent=1))
+    # Several bake.py runs may work on different targets at once: re-read the
+    # index under a lock and only replace the targets this run made.
+    with open(BAKED / ".index.lock", "w") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        if index_path.exists():
+            latest = {t["name"]: t for t in json.loads(index_path.read_text())["targets"]}
+            by_name = {**latest, **{name: by_name[name] for name in done}}
+        index = {
+            "generated": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+            "targets": [by_name[t["name"]] for t in targets if t["name"] in by_name],
+        }
+        index_path.write_text(json.dumps(index, indent=1))
     size = sum(p.stat().st_size for p in BAKED.rglob("*") if p.is_file())
     print(f"\nWrote {index_path} ({size / 1e6:.1f} MB in public/baked)")
     incomplete = [(t["name"], c["array"], c["fov"]) for t in index["targets"]

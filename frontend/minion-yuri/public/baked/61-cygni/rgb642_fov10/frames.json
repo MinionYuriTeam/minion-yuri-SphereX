@@ -1,0 +1,33 @@
+{
+ "arrays": [
+  6,
+  4,
+  2
+ ],
+ "ra": 316.764424,
+ "dec": 38.773564,
+ "fov": 10,
+ "epochs": [
+  {
+   "date": "2025-05-28",
+   "png_url": "baked/61-cygni/rgb642_fov10/rgb_00.png"
+  },
+  {
+   "date": "2025-06-16",
+   "png_url": "baked/61-cygni/rgb642_fov10/rgb_01.png"
+  },
+  {
+   "date": "2025-10-27",
+   "png_url": "baked/61-cygni/rgb642_fov10/rgb_02.png"
+  },
+  {
+   "date": "2026-05-28",
+   "png_url": "baked/61-cygni/rgb642_fov10/rgb_03.png"
+  },
+  {
+   "date": "2026-07-06",
+   "png_url": "baked/61-cygni/rgb642_fov10/rgb_04.png"
+  }
+ ],
+ "baked": true
+}
