@@ -64,6 +64,60 @@ export async function resolveName(name, { signal } = {}) {
   return getJson(`${api}/api/resolve?${new URLSearchParams({ name })}`, signal, 'Could not look that up.', api);
 }
 
+// False colour: three detector arrays as the red, green and blue of one picture.
+// GET /api/rgb?ra=&dec=&fov=&arrays=6,4,2 (baked for the test targets)
+// -> { arrays: [r, g, b], fov, epochs: [ { date, png_url } ], source }
+export async function getRgb({ ra, dec, fov, arrays = [6, 4, 2] }, { signal } = {}) {
+  const target = await findBakedTarget(ra, dec);
+  const combo = target?.rgb?.find((c) => c.fov === Number(fov) && c.arrays.join() === arrays.join());
+  if (combo) {
+    const json = await getJson(`${PUBLIC}/${combo.path}`, signal, 'Could not load the built-in colour images.');
+    json.epochs = json.epochs.map((e) => ({ ...e, png_url: `${PUBLIC}/${e.png_url}` }));
+    return { ...json, source: 'baked' };
+  }
+  const api = getApiUrl();
+  const json = await getJson(
+    `${api}/api/rgb?${new URLSearchParams({ ra, dec, fov, arrays: arrays.join(',') })}`,
+    signal,
+    'Could not load the colour images.',
+    api
+  );
+  return { ...json, source: 'backend' };
+}
+
+// Is the spectrum of this spot baked into the site? (then it loads instantly)
+export async function hasBakedSpectrum(ra, dec) {
+  return Boolean((await findBakedTarget(ra, dec))?.spectrum);
+}
+
+// Spectrum: one point per exposure, all six arrays.
+// GET /api/spectrum?ra=&dec=&pm_ra=&pm_dec= (baked for the test targets)
+// -> { points: [ { wavelength_um, bandwidth_um, flux_mjy, error_mjy, array, array_range_um,
+//                  date, visit, quality } ], n_exposures, n_dropped, source }
+// Always unbinned: SpectrumChart bins on the client (same rule as the backend's binned=true).
+export async function getSpectrum({ ra, dec, pm_ra = 0, pm_dec = 0 }, { signal } = {}) {
+  const target = await findBakedTarget(ra, dec);
+  if (target?.spectrum) {
+    const json = await getJson(`${PUBLIC}/${target.spectrum}`, signal, 'Could not load the built-in spectrum.');
+    return { ...json, source: 'baked' };
+  }
+  const api = getApiUrl();
+  const json = await getJson(
+    `${api}/api/spectrum?${new URLSearchParams({ ra, dec, pm_ra, pm_dec })}`,
+    signal,
+    'Could not measure the spectrum.',
+    api
+  );
+  return { ...json, source: 'backend' };
+}
+
+async function findBakedTarget(ra, dec) {
+  const index = await getBakedIndex();
+  return index.targets.find(
+    (t) => Math.abs(t.ra - Number(ra)) < 1e-6 && Math.abs(t.dec - Number(dec)) < 1e-6
+  );
+}
+
 // Which target / array / field of view is baked: public/baked/index.json
 let bakedIndex = null;
 export function getBakedIndex() {
@@ -76,10 +130,7 @@ export function getBakedIndex() {
 }
 
 async function findBaked({ ra, dec, fov, array }) {
-  const index = await getBakedIndex();
-  const target = index.targets.find(
-    (t) => Math.abs(t.ra - Number(ra)) < 1e-6 && Math.abs(t.dec - Number(dec)) < 1e-6
-  );
+  const target = await findBakedTarget(ra, dec);
   const combo = target?.baked.find((c) => c.array === Number(array) && c.fov === Number(fov));
   return combo ? combo.path : null;
 }
