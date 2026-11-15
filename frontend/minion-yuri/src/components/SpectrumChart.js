@@ -59,8 +59,8 @@ const fmtFlux = (v) => (Math.abs(v) >= 1000 ? `${+(v / 1000).toPrecision(3)}k` :
 const LABEL_MODES = [
   { key: "gas", label: "Atmosphere", bands: GAS_BANDS,
     tip: "Molecules in the air of brown dwarfs and cool stars (our targets)" },
-  { key: "ice", label: "Ice", bands: ICE_BANDS,
-    tip: "Frozen molecules on dust in cold clouds (what SPHEREx's ice survey looks for)" },
+  { key: "ice", label: "Solid", bands: ICE_BANDS,
+    tip: "Frozen (solid) molecules on dust in cold clouds, what SPHEREx's ice survey looks for. Too cold for our 5 targets" },
   { key: "off", label: "Off", bands: [], tip: "Hide the molecule labels" },
 ];
 
