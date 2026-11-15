@@ -1,0 +1,154 @@
+/* F15 Spot the mover (pages/SpotTheMover.js) */
+.game-status {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #8c96ab;
+  max-width: 520px;
+}
+
+.game-board {
+  width: 100%;
+  max-width: 520px;
+}
+
+.game-loading {
+  aspect-ratio: 1;
+  display: grid;
+  place-content: center;
+  gap: 10px;
+  text-align: center;
+  background: #000;
+  border-radius: 10px;
+  color: #8c96ab;
+}
+
+.game-picture {
+  position: relative;
+  aspect-ratio: 1;
+  background: #000;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: crosshair;
+  touch-action: manipulation; /* no double-tap zoom on phones */
+}
+
+.game-picture.is-done {
+  cursor: default;
+}
+
+.game-picture canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+.game-picture svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.game-click line {
+  stroke: #ff5d5d;
+  stroke-width: 2px;
+  vector-effect: non-scaling-stroke;
+}
+
+.game-click.is-hit line {
+  stroke: #5dff9a;
+}
+
+.game-hint {
+  fill: none;
+  stroke: #ffd166;
+  stroke-width: 1.5px;
+  stroke-dasharray: 5 5;
+  vector-effect: non-scaling-stroke;
+}
+
+.game-track {
+  fill: none;
+  stroke: #7dd3fc;
+  stroke-width: 1.5px;
+  stroke-dasharray: 4 4;
+  opacity: 0.8;
+  vector-effect: non-scaling-stroke;
+}
+
+.game-dot {
+  fill: #7dd3fc;
+  opacity: 0.6;
+}
+
+.game-ring {
+  position: absolute;
+  min-width: 18px;
+  min-height: 18px;
+  transform: translate(-50%, -50%);
+  border: 2px solid #7dd3fc;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px #00000088;
+  pointer-events: none;
+}
+
+.game-date {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: #000000aa;
+  color: #e6eaf2;
+  font-size: 13px;
+  pointer-events: none;
+}
+
+.game-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.game-controls span {
+  font-size: 13px;
+  color: #8c96ab;
+}
+
+.game-feedback {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  min-height: 2em;
+}
+
+.game-feedback.is-hit strong:first-child {
+  color: #5dff9a;
+}
+
+.game-feedback.is-miss strong:first-child {
+  color: #ff8a4c;
+}
+
+.game-why a,
+.game-summary a {
+  color: #ff8a4c;
+}
+
+.game-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.game-summary ol {
+  margin: 0;
+  padding-left: 20px;
+  color: #c9d1e0;
+}
