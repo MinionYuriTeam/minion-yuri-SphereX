@@ -1,0 +1,74 @@
+/* F13 flags overlay (FlagsOverlay.js), drawn over the main image */
+.viewer img.flags-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated; /* one red square per SPHEREx pixel, like the image */
+  pointer-events: none;       /* the lens still gets the mouse */
+}
+
+.viewer .flags-control {
+  position: absolute;
+  top: 10px;
+  left: 10px;            /* top-left: the other overlay buttons are top-right */
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* the lens's zoom badge (Loupe.css) also sits top-left: move it below the flags button */
+.viewer .lens-overlay-zoom {
+  top: 50px;
+}
+
+.viewer .flags-toggle {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid #ffffff33;
+  border-radius: 8px;
+  background: #000000aa;
+  color: #8c96ab;
+  cursor: pointer;
+}
+
+.viewer .flags-toggle svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.viewer .flags-toggle.is-on {
+  color: #ff5a5a;
+  border-color: #ff5a5a;
+}
+
+.viewer .flags-toggle:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.viewer .flags-legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: #000000aa;
+  color: #fff;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.viewer .flags-swatch {
+  width: 10px;
+  height: 10px;
+  background: rgba(255, 60, 60, 0.67); /* same red as the backend's flags PNG */
+}

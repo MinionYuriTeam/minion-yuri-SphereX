@@ -25,6 +25,7 @@ import Loupe, { DEFAULT_LENS, LensOverlay, LensToggle } from './components/Loupe
 import ViewToggle from './components/ViewToggle';         // F9
 import DifferenceView from './components/DifferenceView'; // F9
 import GaiaMarker from './components/GaiaMarker';         // F11
+import FlagsOverlay from './components/FlagsOverlay';     // F13
 // PAGES (opened from the navbar)
 import HowItWorks from './pages/HowItWorks';
 import Team from './pages/Team';
@@ -57,8 +58,16 @@ function readUrl() {
 function readLayout() {
   return new URLSearchParams(window.location.search).get('layout') === '3' ? 'three' : 'two';
 }
-function urlQuery(view, layout) {
-  return '?' + new URLSearchParams(layout === 'three' ? { ...view, layout: 3 } : view);
+// flags=1 in the address bar = the F13 flags overlay is on
+function readFlags() {
+  return new URLSearchParams(window.location.search).get('flags') === '1';
+}
+// everything the address bar (and the share link) carries
+function urlParams(view, layout, flags) {
+  return { ...view, ...(layout === 'three' ? { layout: 3 } : {}), ...(flags ? { flags: 1 } : {}) };
+}
+function urlQuery(view, layout, flags) {
+  return '?' + new URLSearchParams(urlParams(view, layout, flags));
 }
 
 // shown while the backend works; the first load of a new spot can take up to a minute
@@ -114,11 +123,12 @@ function App() {
   const [mainLens, setMainLens] = useState(true);       // lens on the big picture on/off (2-view)
   const [searchTrack, setSearchTrack] = useState(null); // F11: proper motion of the last name searched
   const [layout, setLayout] = useState(readLayout);   // 'two': lens on the big picture · 'three': Loupe as its own picture
-  const layoutRef = useRef(layout);                    // for the URL write in the frames effect (no refetch on layout change)
+  const [showFlags, setShowFlags] = useState(readFlags); // F13: flagged pixels in red on the big picture
+  const uiRef = useRef({ layout, showFlags });          // for the URL write in the frames effect (no refetch on layout/flags change)
   useEffect(() => {
-    layoutRef.current = layout;
-    window.history.replaceState(null, '', urlQuery(view, layout) + window.location.hash);
-  }, [layout]); // eslint-disable-line react-hooks/exhaustive-deps -- view's own effect keeps the URL in sync for view changes
+    uiRef.current = { layout, showFlags };
+    window.history.replaceState(null, '', urlQuery(view, layout, showFlags) + window.location.hash);
+  }, [layout, showFlags]); // eslint-disable-line react-hooks/exhaustive-deps -- view's own effect keeps the URL in sync for view changes
   const frameUrl = data?.epochs?.[Math.min(index, (data?.epochs?.length || 1) - 1)]?.png_url;
   const showDiff = viewMode === 'difference' && canDiff;
   // F11: the star whose predicted track we draw: a preset's, or the last name searched
@@ -150,7 +160,7 @@ function App() {
         if (!controller.signal.aborted) setLoading(false);
       });
 
-    window.history.replaceState(null, '', urlQuery(view, layoutRef.current) + window.location.hash);
+    window.history.replaceState(null, '', urlQuery(view, uiRef.current.layout, uiRef.current.showFlags) + window.location.hash);
     return () => controller.abort();
   }, [view, retry]);
 
@@ -214,7 +224,11 @@ function App() {
             targets={TARGETS}
             current={view}
             // a preset opens on its own best array, so it also leaves false colour
-            onPick={(t) => setView({ ...view, ra: t.ra, dec: t.dec, array: t.array ?? view.array, rgb: 0 })}
+            // a preset made to show the flags overlay (Epsilon Indi B) turns it on
+            onPick={(t) => {
+              if (t.showFlags) setShowFlags(true);
+              setView({ ...view, ra: t.ra, dec: t.dec, array: t.array ?? view.array, rgb: 0 });
+            }}
           />
         </section>
 
@@ -248,8 +262,10 @@ function App() {
                 gifName={gifFileName(view)}
                 gifTrack={trackPoints(track, data.epochs, view, widthArcsec)}
                 gifZoom={lens.zoom}
+                gifFlags={showFlags}
                 centered={layout === 'three'}
                 overlay={<>
+                  <FlagsOverlay epochs={data.epochs} index={index} on={showFlags} setOn={setShowFlags} />
                   {layout === 'two' && frameUrl && mainLens && <LensOverlay lens={lens} setLens={setLens} src={frameUrl} />}
                   {layout === 'two' && <LensToggle on={mainLens} onChange={setMainLens} />}
                   <GaiaMarker
@@ -308,7 +324,7 @@ function App() {
               <TargetInfo view={view} targets={TARGETS} wavelength={data?.wavelength_um} />
             </section>
             <section className="panel">
-              <ShareLink view={layout === 'three' ? { ...view, layout: 3 } : view} />
+              <ShareLink view={urlParams(view, layout, showFlags)} />
             </section>
           </aside>
         </div>

@@ -65,7 +65,9 @@ export function lensLayout({ uv, zoom, lensSize, w, h, nw, nh, src }) {
   const BORDER = 2; // lens border (Loupe.css): shift so the lens centre is exactly under the mouse
   const px = (w / nw) * zoom; // one image pixel inside the lens, in screen px
   return {
-    pixelStyle: {
+    // no outline once one pixel fills more than half the lens (small FOV + big zoom):
+    // the pixel is obvious, and its outline would only show as stray edges at the rim
+    pixelStyle: px > lensSize / 2 ? null : {
       width: px,
       height: px,
       left: half + (Math.floor(ix) - ix) * px,
@@ -135,7 +137,7 @@ export function LensOverlay({ lens, setLens, src }) {
       onDoubleClick={() => setSpot((s) => ({ ...s, pinned: !s.pinned, visible: true }))}
     >
       <div className={`loupe-lens ${spot.pinned ? "pinned" : ""}`} style={styles ? styles.lensStyle : { display: "none" }}>
-        {styles && <div className="loupe-pixel" style={styles.pixelStyle} />}
+        {styles?.pixelStyle && <div className="loupe-pixel" style={styles.pixelStyle} />}
       </div>
       {styles && <span className="lens-overlay-zoom" data-tip="Zoom (mouse wheel, + / −, or the Loupe slider)">{lens.zoom.toFixed(1)}×</span>}
     </div>

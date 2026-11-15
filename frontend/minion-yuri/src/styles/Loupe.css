@@ -55,6 +55,7 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
   background-repeat: no-repeat;
   image-rendering: pixelated; /* no blur, so 1–2 pixel shifts stay visible */
+  overflow: hidden; /* small lens + big zoom: the pixel outline can be wider than the lens; keep it inside the circle */
   pointer-events: none;
   z-index: 2;
 }
