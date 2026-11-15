@@ -300,15 +300,21 @@ function ExposureBars({ points }) {
   const sx = (um) => x0 + ((um - X_DOMAIN[0]) / (X_DOMAIN[1] - X_DOMAIN[0])) * (x1 - x0);
   const lo = X_DOMAIN[0] * 1000, n = Math.round((X_DOMAIN[1] - X_DOMAIN[0]) * 1000 / BAR_NM);
   const counts = new Array(n).fill(0);
+  const perArray = Array.from({ length: n }, () => ({})); // which arrays the exposures in each bar came from
   for (const p of points) {
     const i = Math.floor((p.wavelength_um * 1000 - lo) / BAR_NM);
-    if (i >= 0 && i < n) counts[i]++;
+    if (i >= 0 && i < n) {
+      counts[i]++;
+      perArray[i][p.array] = (perArray[i][p.array] || 0) + 1;
+    }
   }
+  // colour a bar by the array most of its exposures came from (where arrays overlap,
+  // or at the edges like array 1 below 750 nm, a fixed wavelength table gets it wrong)
+  const arrayOf = (i) => Number(Object.entries(perArray[i]).sort((x, y) => y[1] - x[1])[0][0]);
   const max = Math.max(1, ...counts);
   const ticks = niceLinearTicks(0, max, 3).filter((t) => Number.isInteger(t));
   const top = Math.max(max, ticks[ticks.length - 1] || 0); // the tallest bar always fits
   const sy = (c) => y0 - (c / top) * (y0 - y1);
-  const arrayAt = (um) => Number(Object.entries(ARRAY_UM).find(([, [a, b]]) => um >= a && um < b)?.[0] ?? 6);
 
   return (
     <svg className="spectrum-svg exposure-bars" viewBox={`0 0 ${W} ${BAR_H}`} role="img"
@@ -324,8 +330,8 @@ function ExposureBars({ points }) {
         const a = (lo + i * BAR_NM) / 1000, b = a + BAR_NM / 1000;
         return (
           <rect key={i} x={sx(a) + 0.5} y={sy(c)} width={Math.max(1, sx(b) - sx(a) - 1)} height={y0 - sy(c)}
-            fill={ARRAY_COLOURS[arrayAt((a + b) / 2)]} className="bar"
-            data-tip={`${nm(a)}–${nm(b)} nm: ${c} exposure${c > 1 ? "s" : ""}`} />
+            fill={ARRAY_COLOURS[arrayOf(i)]} className="bar"
+            data-tip={`${nm(a)}–${nm(b)} nm: ${c} exposure${c > 1 ? "s" : ""} (array ${arrayOf(i)})`} />
         );
       })}
       {[1, 2, 3, 4, 5].map((t) => (
