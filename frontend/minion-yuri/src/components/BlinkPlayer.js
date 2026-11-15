@@ -10,6 +10,7 @@ const SPEEDS = [1, 2, 5];
 function BlinkPlayer({ epochs, index, setIndex, side, children }) {
   const [playing, setPlaying] = useState(true);
   const [fps, setFps] = useState(2);
+  const [crosshair, setCrosshair] = useState(true);
 
   useEffect(() => {
     if (!playing || epochs.length < 2) return;
@@ -37,6 +38,27 @@ function BlinkPlayer({ epochs, index, setIndex, side, children }) {
             src={frame.png_url}
             alt={`Sky on ${frame.date}`}
           />
+          {/* Crosshair on the centre = the target. Gap in the middle so it never covers the star */}
+          {crosshair && (
+            <svg className="crosshair" viewBox="0 0 100 100" aria-hidden="true">
+              <circle cx="50" cy="50" r="9" />
+              <line x1="50" y1="30" x2="50" y2="39" />
+              <line x1="50" y1="61" x2="50" y2="70" />
+              <line x1="30" y1="50" x2="39" y2="50" />
+              <line x1="61" y1="50" x2="70" y2="50" />
+            </svg>
+          )}
+          <button
+            className={`crosshair-toggle ${crosshair ? "is-on" : ""}`}
+            onClick={() => setCrosshair(!crosshair)}
+            aria-label={crosshair ? "Hide crosshair" : "Show crosshair"}
+            title={crosshair ? "Hide crosshair" : "Show crosshair"}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="5" />
+              <path d="M12 2v5M12 17v5M2 12h5M17 12h5" />
+            </svg>
+          </button>
           <div className="hud">
             <span>{frame.date}</span>
             <span>{frame.n_exposures} exposures</span>

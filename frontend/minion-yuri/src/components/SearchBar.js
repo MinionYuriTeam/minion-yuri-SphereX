@@ -1,5 +1,5 @@
 // SAM — F1 search
-// Props it gets from App.js: targets, onSearch({ ra, dec, array? })
+// Props it gets from App.js: targets, onSearch({ ra, dec, array? }), onNoBackend(error)
 // Accepts:
 //   - one of our test targets ("barnard", "wise 0855")     -> instant
 //   - decimal "RA, Dec" (269.45, 4.69)                       -> instant
@@ -11,7 +11,7 @@ import "../styles/SearchBar.css";
 
 const clean = (s) => s.toLowerCase().replace(/[^a-z0-9]/g, "");
 
-function SearchBar({ targets, onSearch }) {
+function SearchBar({ targets, onSearch, onNoBackend }) {
   const [text, setText] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -48,10 +48,13 @@ function SearchBar({ targets, onSearch }) {
       const found = await resolveName(text);
       onSearch({ ra: found.ra_now ?? found.ra, dec: found.dec_now ?? found.dec });
     } catch (err) {
+      // no backend running: show the same "run your own backend" guide as for coordinates
+      if (err.code === "NO_BACKEND" && onNoBackend) {
+        onNoBackend(err);
+        return;
+      }
       setError(
-        err.code === "NO_BACKEND"
-          ? `Looking up "${text}" needs the backend running on your computer. Pick one of the built-in targets below, or type decimal coordinates (e.g. 269.45, 4.69) to see how to start the backend.`
-          : err.status === 404
+        err.status === 404
           ? `Couldn't find "${text}". Try a name like Barnard's Star, or coordinates like 269.45, 4.69 or 08h55m10.8s -07d14m42s`
           : err.message
       );

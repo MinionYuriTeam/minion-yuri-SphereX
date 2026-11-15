@@ -26,10 +26,19 @@ function Loupe({ imageUrl }) {
   const changeZoom = (z) => setZoom(clamp(z, 1.5, 10));
   const changeLens = (s) => setLensSize(clamp(s, 80, 200));
 
-  // load a copy of the image into a canvas so we can read pixel colours
+  // load a copy of each frame into a canvas so we can read pixel colours.
+  // Kept per URL, so when the loop comes back to a frame its colours are ready at once
+  // (no flicker to "—" or black while the next frame loads).
+  const samplersRef = useRef(new Map());
+  const [, setSamplerReady] = useState(0); // re-render once a new frame's colours are ready
   useEffect(() => {
-    samplerRef.current = null;
     if (!imageUrl) return;
+    const cached = samplersRef.current.get(imageUrl);
+    if (cached) {
+      samplerRef.current = cached;
+      return;
+    }
+    let cancelled = false;
     const im = new Image();
     im.crossOrigin = "anonymous";
     im.onload = () => {
@@ -38,9 +47,14 @@ function Loupe({ imageUrl }) {
       c.height = im.naturalHeight;
       const ctx = c.getContext("2d", { willReadFrequently: true });
       ctx.drawImage(im, 0, 0);
-      samplerRef.current = ctx;
+      samplersRef.current.set(imageUrl, ctx);
+      if (!cancelled) {
+        samplerRef.current = ctx; // swap only when ready; until then keep the previous frame's
+        setSamplerReady((n) => n + 1);
+      }
     };
     im.src = imageUrl;
+    return () => { cancelled = true; };
   }, [imageUrl]);
 
   // colour under the lens, e.g. "#1A2B3C" (null if the image doesn't allow it)
@@ -148,6 +162,8 @@ function Loupe({ imageUrl }) {
         className="loupe-stage"
         onMouseMove={handleMove}
         onMouseLeave={() => !pinned && setVisible(false)}
+        onTouchMove={(e) => handleMove(e.touches[0])}
+        onTouchStart={(e) => handleMove(e.touches[0])}
         onDoubleClick={togglePin}
       >
         <img
@@ -178,6 +194,15 @@ function Loupe({ imageUrl }) {
         </div>
       </div>
 
+      {/* hint line: always there (fixed height), only the text changes, so the layout never jumps */}
+      <p className="loupe-hint">
+        {pinned
+          ? "Pinned · double-click or P to unpin"
+          : visible
+            ? "Double-click or P to pin the lens"
+            : "Hover the image to magnify"}
+      </p>
+
       {/* readout: exact pixel, colour, image size */}
       <div className="loupe-readout">
         <label>X <input type="number" min="0" value={point ? Math.round(point.x) : 0}
@@ -186,7 +211,7 @@ function Loupe({ imageUrl }) {
           onChange={(e) => jumpTo("y", e.target.value)} /></label>
         <span className="loupe-colour">
           <span className="loupe-swatch" style={{ background: hex || "transparent" }} />
-          {hex || "n/a"}
+          {hex || "—"}
         </span>
         <span className="loupe-dim">{natural.w ? `${natural.w} × ${natural.h}` : "—"}</span>
       </div>
