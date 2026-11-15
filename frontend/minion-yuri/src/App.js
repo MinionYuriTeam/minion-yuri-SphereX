@@ -167,13 +167,18 @@ function App() {
         <section className="panel">
           <SearchBar
             targets={TARGETS}
-            onSearch={({ ra, dec, array }) => setView({ ...view, ra, dec, array: array ?? view.array })}
+            // a known target comes with its best array: go there (out of false colour);
+            // plain coordinates keep whatever the visitor was looking at
+            onSearch={({ ra, dec, array }) => setView(array != null
+              ? { ...view, ra, dec, array, rgb: 0 }
+              : { ...view, ra, dec })}
             onNoBackend={(err) => { setData(null); setError(err); }}
           />
           <Presets
             targets={TARGETS}
             current={view}
-            onPick={(t) => setView({ ...view, ra: t.ra, dec: t.dec, array: t.array ?? view.array })}
+            // a preset opens on its own best array, so it also leaves false colour
+            onPick={(t) => setView({ ...view, ra: t.ra, dec: t.dec, array: t.array ?? view.array, rgb: 0 })}
           />
         </section>
 
