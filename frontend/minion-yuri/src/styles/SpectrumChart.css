@@ -104,3 +104,7 @@
 }
 
 .spectrum-empty p { margin: 0; font-size: 13px; color: #8c96ab; flex: 1 1 260px; }
+
+/* measuring a new spot: spinner line, then the backend's live download log */
+.spectrum-measuring { display: flex; flex-direction: column; gap: 4px; }
+.spectrum-measuring .download-log { max-width: 640px; margin-top: 4px; }

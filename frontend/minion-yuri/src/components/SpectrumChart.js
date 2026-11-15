@@ -1,13 +1,19 @@
 // F12 spectrum chart (uses GET /api/spectrum from PR #9)
-// Props it gets from App.js: ra, dec, array (the detector array the player shows, highlighted)
+// Props it gets from App.js: ra, dec, array (the detector array the player shows, highlighted),
+//   ready = the player's pictures of this spot have finished loading from a backend,
+//   pm    = { pmRa, pmDec } proper motion in mas/yr (the F11 track), or null
 //
 // One dot per SPHEREx exposure: how bright the target is at that exposure's
 // wavelength. All six arrays together make a spectrum from 750 to 5000 nm.
 // The data is in µm (as the API sends it); the chart shows nanometres.
-// Baked test targets load instantly; any other spot needs a backend and can take minutes
-// (every exposure is downloaded), so it only starts when you press the button.
+// Baked test targets load instantly. Any other spot needs a backend and downloads every
+// exposure on all six arrays (about 6× the player), so it starts by itself only AFTER the
+// player's pictures have loaded, and shows the backend's
+// live download log while it measures. Fast stars are measured where they were on each
+// exposure's date (the proper motion goes to the backend).
 import { useEffect, useMemo, useState } from "react";
-import { getSpectrum, hasBakedSpectrum } from "../api/frames";
+import { getSpectrum, hasBakedSpectrum, newJobId } from "../api/frames";
+import DownloadLog from "./DownloadLog";
 import { GAS_BANDS, ICE_BANDS } from "../data/molecules";
 import "../styles/SpectrumChart.css";
 
@@ -344,7 +350,7 @@ function ExposureBars({ points }) {
   );
 }
 
-function SpectrumChart({ ra, dec, array }) {
+function SpectrumChart({ ra, dec, array, ready = false, pm = null }) {
   const [baked, setBaked] = useState(null);   // null = still checking
   const [requested, setRequested] = useState(false);
   const [data, setData] = useState(null);
@@ -353,6 +359,8 @@ function SpectrumChart({ ra, dec, array }) {
   const [retry, setRetry] = useState(0);
   const [labels, setLabels] = useState("gas");
   const [style, setStyle] = useState("curve");
+  const [job, setJob] = useState(null); // id of this measurement's backend log (DownloadLog)
+  const pmRa = pm?.pmRa || 0, pmDec = pm?.pmDec || 0;
 
   // new spot: forget the old spectrum, check if this one is baked
   useEffect(() => {
@@ -362,17 +370,24 @@ function SpectrumChart({ ra, dec, array }) {
     return () => { alive = false; };
   }, [ra, dec]);
 
-  // load when baked (instant) or when the visitor asks for it (backend, slow)
+  // not built in: start by itself once the player's pictures of this spot have loaded
+  useEffect(() => {
+    if (baked === false && ready) setRequested(true);
+  }, [baked, ready]);
+
+  // load when baked (instant) or when requested (backend, slow)
   useEffect(() => {
     if (!(baked || requested)) return;
     const controller = new AbortController();
+    const jobId = newJobId();
+    setJob(jobId);
     setLoading(true); setError(null);
-    getSpectrum({ ra, dec }, { signal: controller.signal })
+    getSpectrum({ ra, dec, pm_ra: pmRa, pm_dec: pmDec }, { signal: controller.signal, job: jobId })
       .then(setData)
       .catch((err) => { if (err.name !== "AbortError") setError(err); })
       .finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
-  }, [ra, dec, baked, requested, retry]);
+  }, [ra, dec, pmRa, pmDec, baked, requested, retry]);
 
   // every measured exposure (also what the bar chart counts)
   const good = useMemo(() => (data ? data.points
@@ -408,15 +423,18 @@ function SpectrumChart({ ra, dec, array }) {
 
       {baked === false && !requested && (
         <div className="spectrum-empty">
-          <p>Not built in for this spot. Measuring it needs your backend and downloads every exposure, so it can take a few minutes.</p>
-          <button className="active" onClick={() => setRequested(true)}>Measure spectrum</button>
+          <p>The spectrum starts downloading by itself once the pictures above have loaded.
+            It uses every exposure on all six arrays, so it can take a few minutes.</p>
         </div>
       )}
 
       {loading && (
-        <p className="spectrum-status">
-          <span className="status-spinner" aria-hidden="true" /> Measuring the target in every exposure…
-        </p>
+        <div className="spectrum-measuring">
+          <p className="spectrum-status">
+            <span className="status-spinner" aria-hidden="true" /> Measuring the target in every exposure…
+          </p>
+          {!baked && <DownloadLog job={job} />}
+        </div>
       )}
 
       {error && (

@@ -315,7 +315,9 @@ function App() {
 
         {/* 3. Spectrum of the target across all six arrays */}
         <section className="panel">
-          <SpectrumChart ra={view.ra} dec={view.dec} array={view.rgb ? null : view.array} />
+          <SpectrumChart ra={view.ra} dec={view.dec} array={view.rgb ? null : view.array}
+            ready={Boolean(data) && !loading && data.source === 'backend'}
+            pm={track ? { pmRa: track.pmRa, pmDec: track.pmDec } : null} />
         </section>
         </>
       )}
