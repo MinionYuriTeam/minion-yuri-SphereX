@@ -1,0 +1,45 @@
+{
+ "arrays": [
+  6,
+  4,
+  2
+ ],
+ "ra": 162.294389,
+ "dec": -53.316814,
+ "fov": 10,
+ "epochs": [
+  {
+   "date": "2025-05-30",
+   "png_url": "baked/luhman-16/rgb642_fov10/rgb_00.png"
+  },
+  {
+   "date": "2025-06-18",
+   "png_url": "baked/luhman-16/rgb642_fov10/rgb_01.png"
+  },
+  {
+   "date": "2025-06-30",
+   "png_url": "baked/luhman-16/rgb642_fov10/rgb_02.png"
+  },
+  {
+   "date": "2026-01-04",
+   "png_url": "baked/luhman-16/rgb642_fov10/rgb_03.png"
+  },
+  {
+   "date": "2026-02-01",
+   "png_url": "baked/luhman-16/rgb642_fov10/rgb_04.png"
+  },
+  {
+   "date": "2026-06-06",
+   "png_url": "baked/luhman-16/rgb642_fov10/rgb_05.png"
+  },
+  {
+   "date": "2026-06-19",
+   "png_url": "baked/luhman-16/rgb642_fov10/rgb_06.png"
+  },
+  {
+   "date": "2026-07-08",
+   "png_url": "baked/luhman-16/rgb642_fov10/rgb_07.png"
+  }
+ ],
+ "baked": true
+}

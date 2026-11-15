@@ -291,7 +291,7 @@ function Chart({ points, array, bands, style }) {
           : curve
             ? <>Smoothed spectrum, yellow tags = its peaks (nm). Hover the graph for a value, or switch to Dots for the measurements.</>
             : style === "curve"
-              ? <>Too few measurements for a smooth line here, showing the dots. Hover a dot for its value.</>
+              ? <>Each dot is one clean SPHEREx measurement of this spot. Hover a dot for its value.</>
               : <>Hover a dot for its value. Hollow dots = star so bright the detector saturated (approximate).</>}
       </p>
     </>
@@ -458,8 +458,8 @@ function SpectrumChart({ ra, dec, array, ready = false, pm = null }) {
           </h4>
           <ExposureBars points={good} />
           <p className="spectrum-meta">
-            {data.points.length} of {data.n_exposures} exposures measured
-            {data.n_dropped > 0 && ` (${data.n_dropped} skipped: target off the edge, flagged pixels or cosmic rays)`}
+            {data.points.length} clean measurements from {data.n_exposures} exposures
+            {data.n_dropped > 0 && " (the rest had the target off the edge, flagged pixels or cosmic rays)"}
             {data.source === "baked" && " · built in"}
           </p>
         </>

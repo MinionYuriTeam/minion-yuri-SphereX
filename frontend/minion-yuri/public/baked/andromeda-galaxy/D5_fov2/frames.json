@@ -1,0 +1,57 @@
+{
+ "array": 5,
+ "wavelength_um": [
+  3.811,
+  4.43
+ ],
+ "epochs": [
+  {
+   "date": "2025-07-15",
+   "datetime": "2025-07-15T00:02:44.455",
+   "date_start": "2025-07-13T13:29:27.699",
+   "date_end": "2025-07-21T00:43:45.007",
+   "n_exposures": 19,
+   "png_url": "baked/andromeda-galaxy/D5_fov2/epoch_00.png",
+   "flags_png_url": null
+  },
+  {
+   "date": "2025-12-25",
+   "datetime": "2025-12-25T23:47:40.896",
+   "date_start": "2025-12-21T14:36:57.797",
+   "date_end": "2025-12-30T20:17:15.060",
+   "n_exposures": 18,
+   "png_url": "baked/andromeda-galaxy/D5_fov2/epoch_01.png",
+   "flags_png_url": null
+  },
+  {
+   "date": "2026-07-14",
+   "datetime": "2026-07-14T21:36:08.958",
+   "date_start": "2026-07-14T06:43:15.554",
+   "date_end": "2026-07-15T08:51:27.433",
+   "n_exposures": 18,
+   "png_url": "baked/andromeda-galaxy/D5_fov2/epoch_02.png",
+   "flags_png_url": null
+  },
+  {
+   "date": "2026-08-06",
+   "datetime": "2026-08-06T12:05:02.325",
+   "date_start": "2026-08-06T05:16:18.608",
+   "date_end": "2026-08-06T18:18:38.638",
+   "n_exposures": 6,
+   "png_url": "baked/andromeda-galaxy/D5_fov2/epoch_03.png",
+   "flags_png_url": null
+  }
+ ],
+ "ra": 10.684708,
+ "dec": 41.26875,
+ "fov": 2,
+ "size_px": 21,
+ "pixel_scale_arcsec": 6.15,
+ "display_range": [
+  -9.845718574523925,
+  73.59833099365231
+ ],
+ "n_skipped": 1,
+ "n_failed": 0,
+ "baked": true
+}

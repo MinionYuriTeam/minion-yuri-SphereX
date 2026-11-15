@@ -1,0 +1,66 @@
+{
+ "array": 1,
+ "wavelength_um": [
+  0.746,
+  1.117
+ ],
+ "epochs": [
+  {
+   "date": "2025-08-12",
+   "datetime": "2025-08-12T16:42:42.279",
+   "date_start": "2025-08-10T04:38:15.192",
+   "date_end": "2025-08-13T23:53:17.103",
+   "n_exposures": 14,
+   "png_url": "baked/kapteyn-s-star/D1_fov40/epoch_00.png",
+   "flags_png_url": "baked/kapteyn-s-star/D1_fov40/epoch_00_flags.png"
+  },
+  {
+   "date": "2025-08-23",
+   "datetime": "2025-08-23T02:25:48.256",
+   "date_start": "2025-08-23T02:25:48.256",
+   "date_end": "2025-08-23T02:25:48.256",
+   "n_exposures": 1,
+   "png_url": "baked/kapteyn-s-star/D1_fov40/epoch_01.png",
+   "flags_png_url": "baked/kapteyn-s-star/D1_fov40/epoch_01_flags.png"
+  },
+  {
+   "date": "2026-03-06",
+   "datetime": "2026-03-06T07:32:51.983",
+   "date_start": "2026-03-04T03:21:36.888",
+   "date_end": "2026-03-10T02:44:06.772",
+   "n_exposures": 15,
+   "png_url": "baked/kapteyn-s-star/D1_fov40/epoch_02.png",
+   "flags_png_url": "baked/kapteyn-s-star/D1_fov40/epoch_02_flags.png"
+  },
+  {
+   "date": "2026-08-10",
+   "datetime": "2026-08-10T07:19:27.422",
+   "date_start": "2026-08-07T23:22:04.517",
+   "date_end": "2026-08-11T20:11:54.754",
+   "n_exposures": 14,
+   "png_url": "baked/kapteyn-s-star/D1_fov40/epoch_03.png",
+   "flags_png_url": "baked/kapteyn-s-star/D1_fov40/epoch_03_flags.png"
+  },
+  {
+   "date": "2026-08-19",
+   "datetime": "2026-08-19T23:35:32.176",
+   "date_start": "2026-08-19T23:33:23.245",
+   "date_end": "2026-08-19T23:37:41.107",
+   "n_exposures": 3,
+   "png_url": "baked/kapteyn-s-star/D1_fov40/epoch_04.png",
+   "flags_png_url": "baked/kapteyn-s-star/D1_fov40/epoch_04_flags.png"
+  }
+ ],
+ "ra": 77.987359,
+ "dec": -45.060852,
+ "fov": 40,
+ "size_px": 391,
+ "pixel_scale_arcsec": 6.15,
+ "display_range": [
+  -0.014674849808216095,
+  1.5572351515293188
+ ],
+ "n_skipped": 14,
+ "n_failed": 0,
+ "baked": true
+}

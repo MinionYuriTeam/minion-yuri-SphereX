@@ -50,7 +50,7 @@ Table of Contents
   - [How It Works](#how-it-works)
   - [API](#api)
   - [Features and Owners](#features-and-owners)
-  - [Test Targets](#test-targets)
+  - [Built-in Targets](#built-in-targets)
   - [Team](#team)
   - [Contribution Guidelines](#contribution-guidelines)
   - [Credits](#credits)
@@ -60,14 +60,14 @@ Table of Contents
 - 🖥️ **Frontend:** React (Create React App), JavaScript, CSS
 - 🧠 **Backend:** Python, FastAPI, astropy, numpy, Pillow
 - 🛰️ **Data:** SPHEREx images from NASA/IPAC IRSA (search via SIA2, pixels from IRSA's AWS S3 copy), names via CDS Sesame, Gaia DR3 for proper motions
-- ☁️ **Hosting:** frontend on Vercel (https://stealingthemoon.earth) with the 5 test targets built in; backend runs on the visitor's own computer
+- ☁️ **Hosting:** frontend on Vercel (https://stealingthemoon.earth) with 12 targets built in (the 5 test targets + 7 more); any other spot uses a backend on the visitor's own computer
 - 📦 **Package management:** npm (frontend), pip + venv (backend)
 
 ## Repository Structure
 ```
 - backend/                  # Python: all the astronomy, served as JSON + PNGs
-  - api.py                  # FastAPI app: /api/resolve, /api/frames
-  - bake.py                 # renders the 5 test targets into the frontend (public/baked/)
+  - api.py                  # FastAPI app: /api/resolve, /api/frames, /api/rgb, /api/spectrum, /api/progress
+  - bake.py                 # renders the built-in targets into the frontend (public/baked/)
   - epochs.py               # command-line tool: PNG grid / GIF / FITS for a position
   - pipeline/               # the data pipeline, one file per step
     - search.py             # 1. find every SPHEREx exposure covering the position
@@ -75,6 +75,8 @@ Table of Contents
     - grid.py               # 3. align every square onto one north-up grid
     - stacks.py             # 4. group exposures into visits and stack -> get_stacks()
     - render.py             # PNGs for the browser
+    - rgb.py                # false colour: three arrays as red / green / blue
+    - spectrum.py           # brightness at every wavelength for one spot
     - resolve.py            # names / coordinates -> RA, Dec (+ proper motion)
     - flags.py              # what each SPHEREx bad-pixel flag means
     - settings.py           # shared constants
@@ -83,13 +85,13 @@ Table of Contents
   - output/                 # downloads + generated images (not in git)
 
 - frontend/minion-yuri/     # React app
-  - public/baked/           # the 5 test targets, pre-rendered by backend/bake.py
+  - public/baked/           # the built-in targets, pre-rendered by backend/bake.py
   - public/mock/frames.json # fake /api/frames answer for working offline
   - src/
     - api/frames.js         # the ONLY file that talks to the backend
-    - data/target.js        # the 5 test targets
-    - components/           # search, player, loupe, presets, ...
-    - pages/                # About the data, How it works, Team
+    - data/target.js        # the built-in targets (5 test targets + 7 more)
+    - components/           # search, player, loupe, difference view, flags, Gaia track, spectrum, GIF export, ...
+    - pages/                # Sky map, Spot the mover, How it works, Team, About the data
   - README.md               # frontend details: who owns which component
 
 - deploy/
@@ -202,23 +204,35 @@ the site gets its data in two ways:
 
 ```mermaid
 flowchart TD
-    S[Search / preset / array / FOV] --> Q{One of the 5 test targets,<br/>with a built-in array + FOV?}
+    S[Search / preset / array / FOV] --> Q{One of the 12 built-in targets,<br/>with a built-in array + FOV?}
     Q -- yes --> B[Built-in files in the site<br/>public/baked/ — no backend needed]
     Q -- no --> L{Backend answering at<br/>localhost:8000 on the visitor's computer?}
     L -- yes --> R[Live frames from the visitor's own backend]
     L -- no --> H[Help screen: how to start the backend]
 ```
 
-**1. The 5 test targets are built in.** `backend/bake.py` renders them into
-`frontend/minion-yuri/public/baked/`, and they deploy with the site:
-- every detector array (1–6) at 2′, 5′ and 10′
-- each target's own (best) array also at 20′ and 40′
+**1. 12 targets are built in** (see [Built-in Targets](#built-in-targets)).
+`backend/bake.py` renders them into `frontend/minion-yuri/public/baked/`, and
+they deploy with the site:
+- every detector array (1–6) at all five fields of view (2′, 5′, 10′, 20′, 40′)
+- false colour (arrays 6 · 4 · 2) at the same five fields of view
+- the spectrum
+- the bad-pixel flags of every frame
 
 ```bash
 cd backend
-.venv/bin/python bake.py                # all 5; re-run when target.js changes
-.venv/bin/python bake.py "WISE 0855"    # just one
+.venv/bin/python bake.py                         # every target (slow: hours)
+.venv/bin/python bake.py "WISE 0855"             # just one
+.venv/bin/python bake.py --small "Orion Nebula"  # faster: 20′ and 40′ only on the target's own array
+.venv/bin/python bake.py --spectra               # only the spectra
 ```
+Several `bake.py` runs can work on different targets at the same time; each
+one only replaces its own targets in `public/baked/index.json`.
+
+**Add a target:** add an entry to `src/data/target.js` (name, today's `ra`/`dec`
+and proper motion from `/api/resolve`, best `array`, optional `aliases` for the
+search box), bake it, commit. It then shows up as a preset button, in the
+search box and on the sky map.
 Then commit `frontend/minion-yuri/public/baked/` and push; Vercel redeploys.
 `bake.py` reads the targets from `src/data/target.js`, so the two can't drift.
 
@@ -337,7 +351,9 @@ More detail: [backend/readme.md](backend/readme.md).
 | `GET /api/frames?ra=&dec=&fov=&array=` | Aligned, stacked frames of one patch on one detector array: `{ array, wavelength_um, epochs: [{ date, n_exposures, png_url, flags_png_url }] }` |
 | `GET /api/resolve?name=` | Name, decimal or sexagesimal coordinates → `{ ra, dec, pm_ra_mas_yr, pm_dec_mas_yr, ra_now, dec_now }` |
 | `GET /api/health` | `{ ok: true }` |
-| `GET /api/spectrum?ra=&dec=` | *Planned (Shoya, F12)* |
+| `GET /api/rgb?ra=&dec=&fov=&arrays=6,4,2` | False-colour frames: three detector arrays as red, green, blue: `{ arrays, epochs: [{ date, png_url }] }` |
+| `GET /api/spectrum?ra=&dec=&pm_ra=&pm_dec=` | Brightness of that spot at every wavelength, from every exposure on all six arrays: `{ points: [{ wavelength_um, flux, err, date }] }`; `binned=true` for one point per visit and wavelength bin |
+| `GET /api/progress?job=` | The download log of a request sent with `&job=<id>`, for the loading screen |
 
 Units: RA/Dec in decimal degrees, FOV in arcminutes, array 1–6 (short → long
 wavelength). Full JSON examples and extra fields: [backend/readme.md](backend/readme.md).
@@ -349,26 +365,33 @@ passes on the **deployed** site, not just locally.
 
 | Priority | Feature | ID | Owner | Status |
 |---|---|---|---|---|
-| Must | Coordinate search + field of view | F1, F2 | Sam (UI), Raman (`/api/resolve`) | Works locally with the real API (names, decimal, sexagesimal) |
-| Must | Blink player (1–2 fps, slider, play/pause) | F4 | Sam | Works locally with real frames |
-| Must | Detector-array selector, stacked per visit | F3, F5 | Raman | Works locally: array buttons 1–6 in the app |
-| Must | Zoom loupe on the target | F6 | Jay | Works locally on real frames |
-| Must | Shareable URL with coordinates | F7 | Sam | Works locally (`?ra=&dec=&fov=&array=`) |
-| Must | One-click presets for the 5 test targets | F8 | Sam + Axe (cache) | Work locally; server pre-cache to do |
-| Should | Difference mode (new minus old) | F9 | Jay | |
-| Should | Wavelength scrubber / false-colour RGB | F10 | Shoya | |
-| Should | Predicted Gaia track overlay | F11 | Jay + Shoya | |
-| Could | Click a pixel → spectrum | F12 | Shoya | |
-| Could | Flags overlay | F13 | first free | Backend ready (`flags_png_url`) |
-| Could | GIF export | F14 | first free | |
-| Could | "Spot the mover" game | F15 | first free | |
+| Must | Coordinate search + field of view | F1, F2 | Sam (UI), Raman (`/api/resolve`) | Live for the 12 built-in targets (by name or alias, e.g. "m42"); other names and coordinates need a backend |
+| Must | Blink player (1–2 fps, slider, play/pause) | F4 | Sam | Live |
+| Must | Detector-array selector, stacked per visit | F3, F5 | Raman | Live: array buttons 1–6 |
+| Must | Zoom loupe on the target | F6 | Jay | Live: loupe panel + lens on the big picture |
+| Must | Shareable URL with coordinates | F7 | Sam | Live (`?ra=&dec=&fov=&array=`) |
+| Must | One-click presets | F8 | Sam + Axe (cache) | Live: the 5 test targets + 7 more, built into the site |
+| Should | Difference mode (new minus old) | F9 | Jay | Live: Normal / Difference / Show 3 views |
+| Should | Wavelength scrubber / false-colour RGB | F10 | Shoya | Live: 6 arrays + False colour (arrays 6 · 4 · 2) |
+| Should | Predicted Gaia track overlay | F11 | Jay + Shoya | Live for targets with a proper motion |
+| Could | Click a pixel → spectrum | F12 | Shoya | Live: spectrum of the centre spot with molecule labels |
+| Could | Flags overlay | F13 | first free | Live: flag button on the picture |
+| Could | GIF export | F14 | first free | Live |
+| Could | "Spot the mover" game | F15 | first free | Live at `#/game` |
+| Extra | Sky map | – | Raman | Live at `#/sky`: the built-in targets marked on the sky, click to open |
 
-## Test Targets
+## Built-in Targets
 
 <p align="center">
-  <img src="docs/images/five_targets.png" alt="The 5 test targets as the API serves them: one row per target, one frame per visit" width="800"/>
-  <br/><sub>The 5 test targets as the backend serves them: one row per target, one frame per SPHEREx visit.</sub>
+  <img src="docs/images/built_in_targets.png" alt="The 12 built-in targets in false colour: 5 test targets and 7 more" width="800"/>
+  <br/><sub>The 12 targets built into the site, in false colour (arrays 6 · 4 · 2 as red · green · blue), 10′ across.</sub>
 </p>
+
+Every built-in target plays on the public site without a backend, with all six
+detector arrays and false colour at 2′, 5′, 10′, 20′ and 40′, the bad-pixel
+flags, the spectrum, a preset button, a sky-map marker and search by name.
+
+### The 5 test targets
 
 Each target shows off a different feature. Fast-moving stars have moved since
 their catalogue (year 2000) position, so presets should use **today's position**
@@ -381,6 +404,30 @@ their catalogue (year 2000) position, so presets should use **today's position**
 | Epsilon Indi B | Flags overlay (glare near a bright star) | 331.098400, −56.801256 | D3 | 7 |
 | RW Aurigae | Blink player, spectrum (variable star) | 76.956526, 30.401438 | D3 | 3 |
 | R Draconis | Blink player (variable star, many visits) | 248.167611, 66.754979 | D3 | 7 |
+
+### 7 more
+
+Added so that names a visitor is likely to type work straight away. Positions
+are today's (`ra_now`/`dec_now` from `/api/resolve`).
+
+| Target | Why it's here | Today's position (RA, Dec) | Best array | Visits found | Predicted track | Also found as |
+|---|---|---|---|---|---|---|
+| Proxima Centauri | Nearest star to the Sun; moves 3.9″ a year (0.6 px) | 217.367717, −62.673773 | D2 | 5 | yes | proxima, alpha cen c |
+| Kapteyn's Star | Second-fastest star in the sky: 8.6″ a year (1.4 px). Also in **Spot the mover** | 77.987359, −45.060852 | D2 | 6 | yes | kapteyn, hd 33793 |
+| Luhman 16 | Nearest brown dwarfs; moves 2.8″ a year (0.45 px) | 162.294389, −53.316814 | D3 | 8 | yes | luhman, wise 1049 |
+| TRAPPIST-1 | Star with 7 Earth-sized planets; moves 1.0″ a year (too little to see) | 346.629312, −5.044959 | D3 | 3 | yes | trappist |
+| Orion Nebula | Star-forming cloud: best in false colour | 83.820112, −5.387602 | D4 | 4 | – | orion, m42 |
+| Andromeda Galaxy | The core of the nearest large galaxy | 10.684708, 41.268750 | D2 | 4 | – | andromeda, m31 |
+| Crab Nebula | Supernova remnant from the year 1054 | 83.632400, 22.017400 | D3 | 4 | – | crab, m1 |
+
+Known gaps: the spectrum is empty for the Orion Nebula (every exposure at the
+centre is flagged) and has only 7 points for Kapteyn's Star. The nebulae and the
+galaxy have no predicted track because they don't move measurably.
+
+<p align="center">
+  <img src="docs/images/five_targets.png" alt="The 5 test targets as the API serves them: one row per target, one frame per visit" width="800"/>
+  <br/><sub>The 5 test targets as the backend serves them: one row per target, one frame per SPHEREx visit.</sub>
+</p>
 
 These positions and arrays are what the presets in
 [`src/data/target.js`](frontend/minion-yuri/src/data/target.js) use. (Before,

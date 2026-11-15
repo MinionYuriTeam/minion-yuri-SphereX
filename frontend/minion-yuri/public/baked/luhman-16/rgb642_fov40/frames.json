@@ -1,0 +1,41 @@
+{
+ "arrays": [
+  6,
+  4,
+  2
+ ],
+ "ra": 162.294389,
+ "dec": -53.316814,
+ "fov": 40,
+ "epochs": [
+  {
+   "date": "2025-05-30",
+   "png_url": "baked/luhman-16/rgb642_fov40/rgb_00.png"
+  },
+  {
+   "date": "2025-06-15",
+   "png_url": "baked/luhman-16/rgb642_fov40/rgb_01.png"
+  },
+  {
+   "date": "2025-06-24",
+   "png_url": "baked/luhman-16/rgb642_fov40/rgb_02.png"
+  },
+  {
+   "date": "2026-01-03",
+   "png_url": "baked/luhman-16/rgb642_fov40/rgb_03.png"
+  },
+  {
+   "date": "2026-02-02",
+   "png_url": "baked/luhman-16/rgb642_fov40/rgb_04.png"
+  },
+  {
+   "date": "2026-06-07",
+   "png_url": "baked/luhman-16/rgb642_fov40/rgb_05.png"
+  },
+  {
+   "date": "2026-06-19",
+   "png_url": "baked/luhman-16/rgb642_fov40/rgb_06.png"
+  }
+ ],
+ "baked": true
+}

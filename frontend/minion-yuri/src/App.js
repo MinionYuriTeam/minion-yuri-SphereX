@@ -175,6 +175,14 @@ function App() {
   }, []);
   const Page = PAGES[page]; // undefined on the main tool
 
+  // Open a built-in target (preset buttons, and the spots offered when a view isn't built in).
+  // It opens on its own best array, so it also leaves false colour;
+  // a target made to show the flags overlay (Epsilon Indi B) turns it on.
+  const pickTarget = (t) => {
+    if (t.showFlags) setShowFlags(true);
+    setView({ ...view, ra: t.ra, dec: t.dec, array: t.array ?? view.array, rgb: 0 });
+  };
+
   return (
     <div className="app">
       <EasterEgg />
@@ -226,12 +234,7 @@ function App() {
           <Presets
             targets={TARGETS}
             current={view}
-            // a preset opens on its own best array, so it also leaves false colour
-            // a preset made to show the flags overlay (Epsilon Indi B) turns it on
-            onPick={(t) => {
-              if (t.showFlags) setShowFlags(true);
-              setView({ ...view, ra: t.ra, dec: t.dec, array: t.array ?? view.array, rgb: 0 });
-            }}
+            onPick={pickTarget}
           />
         </section>
 
@@ -244,6 +247,8 @@ function App() {
               <RunBackendHelp
                 api={error.api}
                 presetName={TARGETS.find((t) => t.ra === view.ra && t.dec === view.dec)?.name}
+                targets={TARGETS}
+                onPick={pickTarget}
                 onRetry={() => setRetry((r) => r + 1)}
               />
             )}

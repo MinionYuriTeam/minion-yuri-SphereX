@@ -1,0 +1,48 @@
+{
+ "array": 1,
+ "wavelength_um": [
+  0.746,
+  1.117
+ ],
+ "epochs": [
+  {
+   "date": "2025-09-07",
+   "datetime": "2025-09-07T19:28:54.867",
+   "date_start": "2025-09-06T03:59:40.976",
+   "date_end": "2025-09-08T03:20:22.901",
+   "n_exposures": 15,
+   "png_url": "baked/orion-nebula/D1_fov40/epoch_00.png",
+   "flags_png_url": "baked/orion-nebula/D1_fov40/epoch_00_flags.png"
+  },
+  {
+   "date": "2026-03-11",
+   "datetime": "2026-03-11T23:46:12.002",
+   "date_start": "2026-03-09T10:15:30.937",
+   "date_end": "2026-03-15T03:11:36.323",
+   "n_exposures": 14,
+   "png_url": "baked/orion-nebula/D1_fov40/epoch_01.png",
+   "flags_png_url": "baked/orion-nebula/D1_fov40/epoch_01_flags.png"
+  },
+  {
+   "date": "2026-09-08",
+   "datetime": "2026-09-08T20:09:53.459",
+   "date_start": "2026-09-08T19:30:27.886",
+   "date_end": "2026-09-08T21:06:52.890",
+   "n_exposures": 5,
+   "png_url": "baked/orion-nebula/D1_fov40/epoch_02.png",
+   "flags_png_url": "baked/orion-nebula/D1_fov40/epoch_02_flags.png"
+  }
+ ],
+ "ra": 83.820112,
+ "dec": -5.387602,
+ "fov": 40,
+ "size_px": 391,
+ "pixel_scale_arcsec": 6.15,
+ "display_range": [
+  -0.40515476018190383,
+  49.59245986938477
+ ],
+ "n_skipped": 32,
+ "n_failed": 0,
+ "baked": true
+}

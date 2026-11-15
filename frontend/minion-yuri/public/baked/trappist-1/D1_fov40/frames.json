@@ -1,0 +1,30 @@
+{
+ "array": 1,
+ "wavelength_um": [
+  0.746,
+  1.117
+ ],
+ "epochs": [
+  {
+   "date": "2025-12-04",
+   "datetime": "2025-12-04T21:15:34.716",
+   "date_start": "2025-12-02T11:13:48.438",
+   "date_end": "2025-12-08T15:37:56.255",
+   "n_exposures": 14,
+   "png_url": "baked/trappist-1/D1_fov40/epoch_00.png",
+   "flags_png_url": "baked/trappist-1/D1_fov40/epoch_00_flags.png"
+  }
+ ],
+ "ra": 346.629312,
+ "dec": -5.044959,
+ "fov": 40,
+ "size_px": 391,
+ "pixel_scale_arcsec": 6.15,
+ "display_range": [
+  -0.013472840189933777,
+  0.8455983638763553
+ ],
+ "n_skipped": 56,
+ "n_failed": 0,
+ "baked": true
+}

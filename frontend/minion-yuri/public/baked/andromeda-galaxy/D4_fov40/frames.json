@@ -1,0 +1,75 @@
+{
+ "array": 4,
+ "wavelength_um": [
+  2.403,
+  3.847
+ ],
+ "epochs": [
+  {
+   "date": "2025-07-10",
+   "datetime": "2025-07-10T15:22:50.913",
+   "date_start": "2025-07-09T19:51:55.234",
+   "date_end": "2025-07-11T22:19:57.188",
+   "n_exposures": 14,
+   "png_url": "baked/andromeda-galaxy/D4_fov40/epoch_00.png",
+   "flags_png_url": "baked/andromeda-galaxy/D4_fov40/epoch_00_flags.png"
+  },
+  {
+   "date": "2025-08-14",
+   "datetime": "2025-08-14T21:34:26.243",
+   "date_start": "2025-08-14T21:34:26.243",
+   "date_end": "2025-08-14T21:34:26.243",
+   "n_exposures": 1,
+   "png_url": "baked/andromeda-galaxy/D4_fov40/epoch_01.png",
+   "flags_png_url": "baked/andromeda-galaxy/D4_fov40/epoch_01_flags.png"
+  },
+  {
+   "date": "2026-01-01",
+   "datetime": "2026-01-01T00:01:24.074",
+   "date_start": "2025-12-31T06:01:19.680",
+   "date_end": "2026-01-01T13:08:52.829",
+   "n_exposures": 14,
+   "png_url": "baked/andromeda-galaxy/D4_fov40/epoch_02.png",
+   "flags_png_url": "baked/andromeda-galaxy/D4_fov40/epoch_02_flags.png"
+  },
+  {
+   "date": "2026-01-28",
+   "datetime": "2026-01-28T02:18:22.566",
+   "date_start": "2026-01-28T02:18:22.566",
+   "date_end": "2026-01-28T02:18:22.566",
+   "n_exposures": 1,
+   "png_url": "baked/andromeda-galaxy/D4_fov40/epoch_03.png",
+   "flags_png_url": "baked/andromeda-galaxy/D4_fov40/epoch_03_flags.png"
+  },
+  {
+   "date": "2026-07-10",
+   "datetime": "2026-07-10T11:10:24.328",
+   "date_start": "2026-07-10T00:03:29.172",
+   "date_end": "2026-07-11T00:30:47.448",
+   "n_exposures": 14,
+   "png_url": "baked/andromeda-galaxy/D4_fov40/epoch_04.png",
+   "flags_png_url": "baked/andromeda-galaxy/D4_fov40/epoch_04_flags.png"
+  },
+  {
+   "date": "2026-08-04",
+   "datetime": "2026-08-04T23:58:54.682",
+   "date_start": "2026-08-04T23:58:54.682",
+   "date_end": "2026-08-04T23:58:54.682",
+   "n_exposures": 1,
+   "png_url": "baked/andromeda-galaxy/D4_fov40/epoch_05.png",
+   "flags_png_url": "baked/andromeda-galaxy/D4_fov40/epoch_05_flags.png"
+  }
+ ],
+ "ra": 10.684708,
+ "dec": 41.26875,
+ "fov": 40,
+ "size_px": 391,
+ "pixel_scale_arcsec": 6.15,
+ "display_range": [
+  -0.7170294940471649,
+  25.020600948333698
+ ],
+ "n_skipped": 11,
+ "n_failed": 0,
+ "baked": true
+}

@@ -32,6 +32,7 @@ const MOVERS = [
   { name: "Barnard's Star", arrays: [1, 2, 3] },
   { name: "WISE 0855", arrays: [5, 6] },
   { name: "Epsilon Indi B", arrays: [3] },
+  { name: "Kapteyn's Star", arrays: [1, 2, 3] },
 ];
 
 const shuffle = (list) => {

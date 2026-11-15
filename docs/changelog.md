@@ -2,6 +2,33 @@
 
 Newest first. One entry per piece of work, with the branch it landed on.
 
+## 15 Nov 2026: 7 more built-in targets (`raman-more-targets`)
+
+- **`src/data/target.js`**: 7 new targets next to the 5 test targets: Proxima
+  Centauri, Kapteyn's Star, Luhman 16, TRAPPIST-1, Orion Nebula, Andromeda
+  Galaxy and Crab Nebula. Each has today's position, best array, the "This
+  target" text and `aliases` for the search box ("m42", "proxima"). The four
+  stars also have a proper-motion track (F11).
+- **`public/baked/`**: all 7 baked like the test targets: 6 arrays × 5 fields of
+  view, false colour at 5 fields of view, flags and spectrum. No failed
+  downloads. `public/baked` is now 46 MB.
+- **`backend/bake.py`**: several runs can bake different targets at the same
+  time (the index is merged under a lock); new `--small` option (20′ and 40′
+  only on the target's own array) for a quick bake.
+- **`SearchBar.js`**: also matches a target's `aliases`.
+- **`SpotTheMover.js`**: Kapteyn's Star added as a mover (arrays 1–3).
+- **`Presets.js`, `RunBackendHelp.js`**: wording no longer says "5 targets".
+- **README**: new "Built-in Targets" section with a picture and table of all
+  12; feature table shows what is live; API table lists `/api/rgb`,
+  `/api/spectrum` and `/api/progress`.
+- Tarantula Nebula and Cat's Eye Nebula were started but left out: they have
+  about 300 exposures per array and could not finish before the deadline.
+- Known gaps: the Orion Nebula spectrum is empty and Kapteyn's Star has 7
+  points.
+- Tested in the browser: the 12 presets show, Kapteyn's Star and the Orion
+  Nebula (false colour, 40′ on array 1) load from the built-in files, the game
+  page loads.
+
 ## 15 Nov 2026: F15 "Spot the mover" game (`raman-f15-game`)
 
 - **`src/pages/SpotTheMover.js`** (+ `styles/SpotTheMover.css`): a new page

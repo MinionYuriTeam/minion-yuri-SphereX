@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-15T13:34:48+00:00",
+ "generated": "2026-11-15T21:15:39+00:00",
  "targets": [
   {
    "name": "Barnard's Star",
@@ -1358,6 +1358,1910 @@
      "fov": 2,
      "path": "baked/r-draconis/rgb642_fov2/frames.json",
      "epochs": 2
+    }
+   ]
+  },
+  {
+   "name": "Proxima Centauri",
+   "ra": 217.367717,
+   "dec": -62.673773,
+   "array": 2,
+   "slug": "proxima-centauri",
+   "baked": [
+    {
+     "array": 2,
+     "fov": 40,
+     "path": "baked/proxima-centauri/D2_fov40/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 2,
+     "fov": 20,
+     "path": "baked/proxima-centauri/D2_fov20/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 2,
+     "fov": 10,
+     "path": "baked/proxima-centauri/D2_fov10/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 2,
+     "fov": 5,
+     "path": "baked/proxima-centauri/D2_fov5/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 2,
+     "fov": 2,
+     "path": "baked/proxima-centauri/D2_fov2/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 40,
+     "path": "baked/proxima-centauri/D1_fov40/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 20,
+     "path": "baked/proxima-centauri/D1_fov20/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 10,
+     "path": "baked/proxima-centauri/D1_fov10/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 5,
+     "path": "baked/proxima-centauri/D1_fov5/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 2,
+     "path": "baked/proxima-centauri/D1_fov2/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 3,
+     "fov": 40,
+     "path": "baked/proxima-centauri/D3_fov40/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 3,
+     "fov": 20,
+     "path": "baked/proxima-centauri/D3_fov20/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 3,
+     "fov": 10,
+     "path": "baked/proxima-centauri/D3_fov10/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 3,
+     "fov": 5,
+     "path": "baked/proxima-centauri/D3_fov5/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 3,
+     "fov": 2,
+     "path": "baked/proxima-centauri/D3_fov2/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 40,
+     "path": "baked/proxima-centauri/D4_fov40/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 20,
+     "path": "baked/proxima-centauri/D4_fov20/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 10,
+     "path": "baked/proxima-centauri/D4_fov10/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 5,
+     "path": "baked/proxima-centauri/D4_fov5/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 2,
+     "path": "baked/proxima-centauri/D4_fov2/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 40,
+     "path": "baked/proxima-centauri/D5_fov40/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 20,
+     "path": "baked/proxima-centauri/D5_fov20/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 10,
+     "path": "baked/proxima-centauri/D5_fov10/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 5,
+     "path": "baked/proxima-centauri/D5_fov5/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 2,
+     "path": "baked/proxima-centauri/D5_fov2/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 40,
+     "path": "baked/proxima-centauri/D6_fov40/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 20,
+     "path": "baked/proxima-centauri/D6_fov20/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 10,
+     "path": "baked/proxima-centauri/D6_fov10/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 5,
+     "path": "baked/proxima-centauri/D6_fov5/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 2,
+     "path": "baked/proxima-centauri/D6_fov2/frames.json",
+     "epochs": 4,
+     "complete": true
+    }
+   ],
+   "spectrum": "baked/proxima-centauri/spectrum.json",
+   "rgb": [
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 40,
+     "path": "baked/proxima-centauri/rgb642_fov40/frames.json",
+     "epochs": 5
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 20,
+     "path": "baked/proxima-centauri/rgb642_fov20/frames.json",
+     "epochs": 5
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 10,
+     "path": "baked/proxima-centauri/rgb642_fov10/frames.json",
+     "epochs": 4
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 5,
+     "path": "baked/proxima-centauri/rgb642_fov5/frames.json",
+     "epochs": 4
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 2,
+     "path": "baked/proxima-centauri/rgb642_fov2/frames.json",
+     "epochs": 4
+    }
+   ]
+  },
+  {
+   "name": "Kapteyn's Star",
+   "ra": 77.987359,
+   "dec": -45.060852,
+   "array": 2,
+   "slug": "kapteyn-s-star",
+   "baked": [
+    {
+     "array": 2,
+     "fov": 40,
+     "path": "baked/kapteyn-s-star/D2_fov40/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 2,
+     "fov": 20,
+     "path": "baked/kapteyn-s-star/D2_fov20/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 2,
+     "fov": 10,
+     "path": "baked/kapteyn-s-star/D2_fov10/frames.json",
+     "epochs": 6,
+     "complete": true
+    },
+    {
+     "array": 2,
+     "fov": 5,
+     "path": "baked/kapteyn-s-star/D2_fov5/frames.json",
+     "epochs": 6,
+     "complete": true
+    },
+    {
+     "array": 2,
+     "fov": 2,
+     "path": "baked/kapteyn-s-star/D2_fov2/frames.json",
+     "epochs": 6,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 40,
+     "path": "baked/kapteyn-s-star/D1_fov40/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 20,
+     "path": "baked/kapteyn-s-star/D1_fov20/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 10,
+     "path": "baked/kapteyn-s-star/D1_fov10/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 5,
+     "path": "baked/kapteyn-s-star/D1_fov5/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 2,
+     "path": "baked/kapteyn-s-star/D1_fov2/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 3,
+     "fov": 40,
+     "path": "baked/kapteyn-s-star/D3_fov40/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 3,
+     "fov": 20,
+     "path": "baked/kapteyn-s-star/D3_fov20/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 3,
+     "fov": 10,
+     "path": "baked/kapteyn-s-star/D3_fov10/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 3,
+     "fov": 5,
+     "path": "baked/kapteyn-s-star/D3_fov5/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 3,
+     "fov": 2,
+     "path": "baked/kapteyn-s-star/D3_fov2/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 40,
+     "path": "baked/kapteyn-s-star/D4_fov40/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 20,
+     "path": "baked/kapteyn-s-star/D4_fov20/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 10,
+     "path": "baked/kapteyn-s-star/D4_fov10/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 5,
+     "path": "baked/kapteyn-s-star/D4_fov5/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 2,
+     "path": "baked/kapteyn-s-star/D4_fov2/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 40,
+     "path": "baked/kapteyn-s-star/D5_fov40/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 20,
+     "path": "baked/kapteyn-s-star/D5_fov20/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 10,
+     "path": "baked/kapteyn-s-star/D5_fov10/frames.json",
+     "epochs": 6,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 5,
+     "path": "baked/kapteyn-s-star/D5_fov5/frames.json",
+     "epochs": 6,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 2,
+     "path": "baked/kapteyn-s-star/D5_fov2/frames.json",
+     "epochs": 7,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 40,
+     "path": "baked/kapteyn-s-star/D6_fov40/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 20,
+     "path": "baked/kapteyn-s-star/D6_fov20/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 10,
+     "path": "baked/kapteyn-s-star/D6_fov10/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 5,
+     "path": "baked/kapteyn-s-star/D6_fov5/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 2,
+     "path": "baked/kapteyn-s-star/D6_fov2/frames.json",
+     "epochs": 5,
+     "complete": true
+    }
+   ],
+   "spectrum": "baked/kapteyn-s-star/spectrum.json",
+   "rgb": [
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 40,
+     "path": "baked/kapteyn-s-star/rgb642_fov40/frames.json",
+     "epochs": 3
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 20,
+     "path": "baked/kapteyn-s-star/rgb642_fov20/frames.json",
+     "epochs": 3
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 10,
+     "path": "baked/kapteyn-s-star/rgb642_fov10/frames.json",
+     "epochs": 4
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 5,
+     "path": "baked/kapteyn-s-star/rgb642_fov5/frames.json",
+     "epochs": 4
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 2,
+     "path": "baked/kapteyn-s-star/rgb642_fov2/frames.json",
+     "epochs": 4
+    }
+   ]
+  },
+  {
+   "name": "Luhman 16",
+   "ra": 162.294389,
+   "dec": -53.316814,
+   "array": 3,
+   "slug": "luhman-16",
+   "baked": [
+    {
+     "array": 3,
+     "fov": 40,
+     "path": "baked/luhman-16/D3_fov40/frames.json",
+     "epochs": 7,
+     "complete": true
+    },
+    {
+     "array": 3,
+     "fov": 20,
+     "path": "baked/luhman-16/D3_fov20/frames.json",
+     "epochs": 8,
+     "complete": true
+    },
+    {
+     "array": 3,
+     "fov": 10,
+     "path": "baked/luhman-16/D3_fov10/frames.json",
+     "epochs": 8,
+     "complete": true
+    },
+    {
+     "array": 3,
+     "fov": 5,
+     "path": "baked/luhman-16/D3_fov5/frames.json",
+     "epochs": 8,
+     "complete": true
+    },
+    {
+     "array": 3,
+     "fov": 2,
+     "path": "baked/luhman-16/D3_fov2/frames.json",
+     "epochs": 9,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 40,
+     "path": "baked/luhman-16/D1_fov40/frames.json",
+     "epochs": 6,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 20,
+     "path": "baked/luhman-16/D1_fov20/frames.json",
+     "epochs": 6,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 10,
+     "path": "baked/luhman-16/D1_fov10/frames.json",
+     "epochs": 6,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 5,
+     "path": "baked/luhman-16/D1_fov5/frames.json",
+     "epochs": 6,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 2,
+     "path": "baked/luhman-16/D1_fov2/frames.json",
+     "epochs": 6,
+     "complete": true
+    },
+    {
+     "array": 2,
+     "fov": 40,
+     "path": "baked/luhman-16/D2_fov40/frames.json",
+     "epochs": 9,
+     "complete": true
+    },
+    {
+     "array": 2,
+     "fov": 20,
+     "path": "baked/luhman-16/D2_fov20/frames.json",
+     "epochs": 9,
+     "complete": true
+    },
+    {
+     "array": 2,
+     "fov": 10,
+     "path": "baked/luhman-16/D2_fov10/frames.json",
+     "epochs": 8,
+     "complete": true
+    },
+    {
+     "array": 2,
+     "fov": 5,
+     "path": "baked/luhman-16/D2_fov5/frames.json",
+     "epochs": 8,
+     "complete": true
+    },
+    {
+     "array": 2,
+     "fov": 2,
+     "path": "baked/luhman-16/D2_fov2/frames.json",
+     "epochs": 8,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 40,
+     "path": "baked/luhman-16/D4_fov40/frames.json",
+     "epochs": 6,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 20,
+     "path": "baked/luhman-16/D4_fov20/frames.json",
+     "epochs": 6,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 10,
+     "path": "baked/luhman-16/D4_fov10/frames.json",
+     "epochs": 6,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 5,
+     "path": "baked/luhman-16/D4_fov5/frames.json",
+     "epochs": 6,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 2,
+     "path": "baked/luhman-16/D4_fov2/frames.json",
+     "epochs": 6,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 40,
+     "path": "baked/luhman-16/D5_fov40/frames.json",
+     "epochs": 9,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 20,
+     "path": "baked/luhman-16/D5_fov20/frames.json",
+     "epochs": 9,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 10,
+     "path": "baked/luhman-16/D5_fov10/frames.json",
+     "epochs": 8,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 5,
+     "path": "baked/luhman-16/D5_fov5/frames.json",
+     "epochs": 8,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 2,
+     "path": "baked/luhman-16/D5_fov2/frames.json",
+     "epochs": 8,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 40,
+     "path": "baked/luhman-16/D6_fov40/frames.json",
+     "epochs": 7,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 20,
+     "path": "baked/luhman-16/D6_fov20/frames.json",
+     "epochs": 8,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 10,
+     "path": "baked/luhman-16/D6_fov10/frames.json",
+     "epochs": 8,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 5,
+     "path": "baked/luhman-16/D6_fov5/frames.json",
+     "epochs": 9,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 2,
+     "path": "baked/luhman-16/D6_fov2/frames.json",
+     "epochs": 9,
+     "complete": true
+    }
+   ],
+   "spectrum": "baked/luhman-16/spectrum.json",
+   "rgb": [
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 40,
+     "path": "baked/luhman-16/rgb642_fov40/frames.json",
+     "epochs": 7
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 20,
+     "path": "baked/luhman-16/rgb642_fov20/frames.json",
+     "epochs": 8
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 10,
+     "path": "baked/luhman-16/rgb642_fov10/frames.json",
+     "epochs": 8
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 5,
+     "path": "baked/luhman-16/rgb642_fov5/frames.json",
+     "epochs": 9
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 2,
+     "path": "baked/luhman-16/rgb642_fov2/frames.json",
+     "epochs": 9
+    }
+   ]
+  },
+  {
+   "name": "TRAPPIST-1",
+   "ra": 346.629312,
+   "dec": -5.044959,
+   "array": 3,
+   "slug": "trappist-1",
+   "baked": [
+    {
+     "array": 3,
+     "fov": 40,
+     "path": "baked/trappist-1/D3_fov40/frames.json",
+     "epochs": 2,
+     "complete": true
+    },
+    {
+     "array": 3,
+     "fov": 20,
+     "path": "baked/trappist-1/D3_fov20/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 3,
+     "fov": 10,
+     "path": "baked/trappist-1/D3_fov10/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 3,
+     "fov": 5,
+     "path": "baked/trappist-1/D3_fov5/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 3,
+     "fov": 2,
+     "path": "baked/trappist-1/D3_fov2/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 40,
+     "path": "baked/trappist-1/D1_fov40/frames.json",
+     "epochs": 1,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 20,
+     "path": "baked/trappist-1/D1_fov20/frames.json",
+     "epochs": 2,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 10,
+     "path": "baked/trappist-1/D1_fov10/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 5,
+     "path": "baked/trappist-1/D1_fov5/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 2,
+     "path": "baked/trappist-1/D1_fov2/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 2,
+     "fov": 40,
+     "path": "baked/trappist-1/D2_fov40/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 2,
+     "fov": 20,
+     "path": "baked/trappist-1/D2_fov20/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 2,
+     "fov": 10,
+     "path": "baked/trappist-1/D2_fov10/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 2,
+     "fov": 5,
+     "path": "baked/trappist-1/D2_fov5/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 2,
+     "fov": 2,
+     "path": "baked/trappist-1/D2_fov2/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 40,
+     "path": "baked/trappist-1/D4_fov40/frames.json",
+     "epochs": 1,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 20,
+     "path": "baked/trappist-1/D4_fov20/frames.json",
+     "epochs": 2,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 10,
+     "path": "baked/trappist-1/D4_fov10/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 5,
+     "path": "baked/trappist-1/D4_fov5/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 2,
+     "path": "baked/trappist-1/D4_fov2/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 40,
+     "path": "baked/trappist-1/D5_fov40/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 20,
+     "path": "baked/trappist-1/D5_fov20/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 10,
+     "path": "baked/trappist-1/D5_fov10/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 5,
+     "path": "baked/trappist-1/D5_fov5/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 2,
+     "path": "baked/trappist-1/D5_fov2/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 40,
+     "path": "baked/trappist-1/D6_fov40/frames.json",
+     "epochs": 2,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 20,
+     "path": "baked/trappist-1/D6_fov20/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 10,
+     "path": "baked/trappist-1/D6_fov10/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 5,
+     "path": "baked/trappist-1/D6_fov5/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 2,
+     "path": "baked/trappist-1/D6_fov2/frames.json",
+     "epochs": 3,
+     "complete": true
+    }
+   ],
+   "spectrum": "baked/trappist-1/spectrum.json",
+   "rgb": [
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 40,
+     "path": "baked/trappist-1/rgb642_fov40/frames.json",
+     "epochs": 0
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 20,
+     "path": "baked/trappist-1/rgb642_fov20/frames.json",
+     "epochs": 2
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 10,
+     "path": "baked/trappist-1/rgb642_fov10/frames.json",
+     "epochs": 3
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 5,
+     "path": "baked/trappist-1/rgb642_fov5/frames.json",
+     "epochs": 3
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 2,
+     "path": "baked/trappist-1/rgb642_fov2/frames.json",
+     "epochs": 3
+    }
+   ]
+  },
+  {
+   "name": "Orion Nebula",
+   "ra": 83.820112,
+   "dec": -5.387602,
+   "array": 4,
+   "slug": "orion-nebula",
+   "baked": [
+    {
+     "array": 4,
+     "fov": 40,
+     "path": "baked/orion-nebula/D4_fov40/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 20,
+     "path": "baked/orion-nebula/D4_fov20/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 10,
+     "path": "baked/orion-nebula/D4_fov10/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 5,
+     "path": "baked/orion-nebula/D4_fov5/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 2,
+     "path": "baked/orion-nebula/D4_fov2/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 40,
+     "path": "baked/orion-nebula/D1_fov40/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 20,
+     "path": "baked/orion-nebula/D1_fov20/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 10,
+     "path": "baked/orion-nebula/D1_fov10/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 5,
+     "path": "baked/orion-nebula/D1_fov5/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 2,
+     "path": "baked/orion-nebula/D1_fov2/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 2,
+     "fov": 40,
+     "path": "baked/orion-nebula/D2_fov40/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 2,
+     "fov": 20,
+     "path": "baked/orion-nebula/D2_fov20/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 2,
+     "fov": 10,
+     "path": "baked/orion-nebula/D2_fov10/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 2,
+     "fov": 5,
+     "path": "baked/orion-nebula/D2_fov5/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 2,
+     "fov": 2,
+     "path": "baked/orion-nebula/D2_fov2/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 3,
+     "fov": 40,
+     "path": "baked/orion-nebula/D3_fov40/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 3,
+     "fov": 20,
+     "path": "baked/orion-nebula/D3_fov20/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 3,
+     "fov": 10,
+     "path": "baked/orion-nebula/D3_fov10/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 3,
+     "fov": 5,
+     "path": "baked/orion-nebula/D3_fov5/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 3,
+     "fov": 2,
+     "path": "baked/orion-nebula/D3_fov2/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 40,
+     "path": "baked/orion-nebula/D5_fov40/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 20,
+     "path": "baked/orion-nebula/D5_fov20/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 10,
+     "path": "baked/orion-nebula/D5_fov10/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 5,
+     "path": "baked/orion-nebula/D5_fov5/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 2,
+     "path": "baked/orion-nebula/D5_fov2/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 40,
+     "path": "baked/orion-nebula/D6_fov40/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 20,
+     "path": "baked/orion-nebula/D6_fov20/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 10,
+     "path": "baked/orion-nebula/D6_fov10/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 5,
+     "path": "baked/orion-nebula/D6_fov5/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 2,
+     "path": "baked/orion-nebula/D6_fov2/frames.json",
+     "epochs": 4,
+     "complete": true
+    }
+   ],
+   "spectrum": "baked/orion-nebula/spectrum.json",
+   "rgb": [
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 40,
+     "path": "baked/orion-nebula/rgb642_fov40/frames.json",
+     "epochs": 4
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 20,
+     "path": "baked/orion-nebula/rgb642_fov20/frames.json",
+     "epochs": 4
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 10,
+     "path": "baked/orion-nebula/rgb642_fov10/frames.json",
+     "epochs": 4
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 5,
+     "path": "baked/orion-nebula/rgb642_fov5/frames.json",
+     "epochs": 4
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 2,
+     "path": "baked/orion-nebula/rgb642_fov2/frames.json",
+     "epochs": 4
+    }
+   ]
+  },
+  {
+   "name": "Andromeda Galaxy",
+   "ra": 10.684708,
+   "dec": 41.26875,
+   "array": 2,
+   "slug": "andromeda-galaxy",
+   "baked": [
+    {
+     "array": 2,
+     "fov": 40,
+     "path": "baked/andromeda-galaxy/D2_fov40/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 2,
+     "fov": 20,
+     "path": "baked/andromeda-galaxy/D2_fov20/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 2,
+     "fov": 10,
+     "path": "baked/andromeda-galaxy/D2_fov10/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 2,
+     "fov": 5,
+     "path": "baked/andromeda-galaxy/D2_fov5/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 2,
+     "fov": 2,
+     "path": "baked/andromeda-galaxy/D2_fov2/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 40,
+     "path": "baked/andromeda-galaxy/D1_fov40/frames.json",
+     "epochs": 6,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 20,
+     "path": "baked/andromeda-galaxy/D1_fov20/frames.json",
+     "epochs": 6,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 10,
+     "path": "baked/andromeda-galaxy/D1_fov10/frames.json",
+     "epochs": 6,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 5,
+     "path": "baked/andromeda-galaxy/D1_fov5/frames.json",
+     "epochs": 6,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 2,
+     "path": "baked/andromeda-galaxy/D1_fov2/frames.json",
+     "epochs": 6,
+     "complete": true
+    },
+    {
+     "array": 3,
+     "fov": 40,
+     "path": "baked/andromeda-galaxy/D3_fov40/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 3,
+     "fov": 20,
+     "path": "baked/andromeda-galaxy/D3_fov20/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 3,
+     "fov": 10,
+     "path": "baked/andromeda-galaxy/D3_fov10/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 3,
+     "fov": 5,
+     "path": "baked/andromeda-galaxy/D3_fov5/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 3,
+     "fov": 2,
+     "path": "baked/andromeda-galaxy/D3_fov2/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 40,
+     "path": "baked/andromeda-galaxy/D4_fov40/frames.json",
+     "epochs": 6,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 20,
+     "path": "baked/andromeda-galaxy/D4_fov20/frames.json",
+     "epochs": 6,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 10,
+     "path": "baked/andromeda-galaxy/D4_fov10/frames.json",
+     "epochs": 6,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 5,
+     "path": "baked/andromeda-galaxy/D4_fov5/frames.json",
+     "epochs": 6,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 2,
+     "path": "baked/andromeda-galaxy/D4_fov2/frames.json",
+     "epochs": 6,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 40,
+     "path": "baked/andromeda-galaxy/D5_fov40/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 20,
+     "path": "baked/andromeda-galaxy/D5_fov20/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 10,
+     "path": "baked/andromeda-galaxy/D5_fov10/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 5,
+     "path": "baked/andromeda-galaxy/D5_fov5/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 2,
+     "path": "baked/andromeda-galaxy/D5_fov2/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 40,
+     "path": "baked/andromeda-galaxy/D6_fov40/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 20,
+     "path": "baked/andromeda-galaxy/D6_fov20/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 10,
+     "path": "baked/andromeda-galaxy/D6_fov10/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 5,
+     "path": "baked/andromeda-galaxy/D6_fov5/frames.json",
+     "epochs": 5,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 2,
+     "path": "baked/andromeda-galaxy/D6_fov2/frames.json",
+     "epochs": 5,
+     "complete": true
+    }
+   ],
+   "spectrum": "baked/andromeda-galaxy/spectrum.json",
+   "rgb": [
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 40,
+     "path": "baked/andromeda-galaxy/rgb642_fov40/frames.json",
+     "epochs": 4
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 20,
+     "path": "baked/andromeda-galaxy/rgb642_fov20/frames.json",
+     "epochs": 4
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 10,
+     "path": "baked/andromeda-galaxy/rgb642_fov10/frames.json",
+     "epochs": 4
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 5,
+     "path": "baked/andromeda-galaxy/rgb642_fov5/frames.json",
+     "epochs": 4
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 2,
+     "path": "baked/andromeda-galaxy/rgb642_fov2/frames.json",
+     "epochs": 4
+    }
+   ]
+  },
+  {
+   "name": "Crab Nebula",
+   "ra": 83.6324,
+   "dec": 22.0174,
+   "array": 3,
+   "slug": "crab-nebula",
+   "baked": [
+    {
+     "array": 3,
+     "fov": 40,
+     "path": "baked/crab-nebula/D3_fov40/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 3,
+     "fov": 20,
+     "path": "baked/crab-nebula/D3_fov20/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 3,
+     "fov": 10,
+     "path": "baked/crab-nebula/D3_fov10/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 3,
+     "fov": 5,
+     "path": "baked/crab-nebula/D3_fov5/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 3,
+     "fov": 2,
+     "path": "baked/crab-nebula/D3_fov2/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 40,
+     "path": "baked/crab-nebula/D1_fov40/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 20,
+     "path": "baked/crab-nebula/D1_fov20/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 10,
+     "path": "baked/crab-nebula/D1_fov10/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 5,
+     "path": "baked/crab-nebula/D1_fov5/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 1,
+     "fov": 2,
+     "path": "baked/crab-nebula/D1_fov2/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 2,
+     "fov": 40,
+     "path": "baked/crab-nebula/D2_fov40/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 2,
+     "fov": 20,
+     "path": "baked/crab-nebula/D2_fov20/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 2,
+     "fov": 10,
+     "path": "baked/crab-nebula/D2_fov10/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 2,
+     "fov": 5,
+     "path": "baked/crab-nebula/D2_fov5/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 2,
+     "fov": 2,
+     "path": "baked/crab-nebula/D2_fov2/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 40,
+     "path": "baked/crab-nebula/D4_fov40/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 20,
+     "path": "baked/crab-nebula/D4_fov20/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 10,
+     "path": "baked/crab-nebula/D4_fov10/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 5,
+     "path": "baked/crab-nebula/D4_fov5/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 4,
+     "fov": 2,
+     "path": "baked/crab-nebula/D4_fov2/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 40,
+     "path": "baked/crab-nebula/D5_fov40/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 20,
+     "path": "baked/crab-nebula/D5_fov20/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 10,
+     "path": "baked/crab-nebula/D5_fov10/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 5,
+     "path": "baked/crab-nebula/D5_fov5/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 5,
+     "fov": 2,
+     "path": "baked/crab-nebula/D5_fov2/frames.json",
+     "epochs": 3,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 40,
+     "path": "baked/crab-nebula/D6_fov40/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 20,
+     "path": "baked/crab-nebula/D6_fov20/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 10,
+     "path": "baked/crab-nebula/D6_fov10/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 5,
+     "path": "baked/crab-nebula/D6_fov5/frames.json",
+     "epochs": 4,
+     "complete": true
+    },
+    {
+     "array": 6,
+     "fov": 2,
+     "path": "baked/crab-nebula/D6_fov2/frames.json",
+     "epochs": 4,
+     "complete": true
+    }
+   ],
+   "spectrum": "baked/crab-nebula/spectrum.json",
+   "rgb": [
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 40,
+     "path": "baked/crab-nebula/rgb642_fov40/frames.json",
+     "epochs": 4
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 20,
+     "path": "baked/crab-nebula/rgb642_fov20/frames.json",
+     "epochs": 4
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 10,
+     "path": "baked/crab-nebula/rgb642_fov10/frames.json",
+     "epochs": 4
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 5,
+     "path": "baked/crab-nebula/rgb642_fov5/frames.json",
+     "epochs": 4
+    },
+    {
+     "arrays": [
+      6,
+      4,
+      2
+     ],
+     "fov": 2,
+     "path": "baked/crab-nebula/rgb642_fov2/frames.json",
+     "epochs": 4
     }
    ]
   }

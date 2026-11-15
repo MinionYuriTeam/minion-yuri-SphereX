@@ -23,7 +23,9 @@ function SearchBar({ targets, onSearch, onNoBackend }) {
     setError("");
 
     // 1. Is it one of our test targets? ("barnard" also finds "Barnard's Star")
-    const target = targets.find((t) => clean(t.name).includes(typed));
+    //    Some targets also answer to other names ("m42" finds the Orion Nebula).
+    const target = targets.find((t) => clean(t.name).includes(typed))
+      || targets.find((t) => (t.aliases || []).some((a) => clean(a) === typed));
     if (target) {
       onSearch({ ra: target.ra, dec: target.dec, array: target.array });
       return;
