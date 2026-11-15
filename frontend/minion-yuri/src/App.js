@@ -3,7 +3,8 @@ import './styles/buttons.css';
 import './styles/Slider.css';
 import { useState, useEffect, useRef } from 'react';
 import { TARGETS } from './data/target';
-import { getFrames, getRgb } from './api/frames';
+import { getFrames, getRgb, newJobId } from './api/frames';
+import { imageWidthArcsec, trackPoints } from './utils/motion';
 
 // SAM
 import SearchBar from './components/SearchBar';     // F1
@@ -13,24 +14,28 @@ import BlinkPlayer from './components/BlinkPlayer'; // F4
 import ShareLink from './components/ShareLink';     // F7
 import HoverTips from './components/HoverTips';     // hover any control -> 1-line explanation
 import TargetInfo from './components/TargetInfo';   // "This target" panel
+import DownloadLog from './components/DownloadLog'; // live backend download log while loading
 // SHOYA
 import BandPicker, { RGB_ARRAYS } from './components/BandPicker'; // F3/F5 + F10 false colour (/api/rgb)
 import RunBackendHelp from './components/RunBackendHelp'; // "start your own backend" help
 import EasterEgg from './components/EasterEgg';           // ↑↑↓↓←→←→ B A Enter
 import SpectrumChart from './components/SpectrumChart';   // F12 (/api/spectrum)
 // JAY
-import Loupe, { DEFAULT_LENS, LensOverlay } from './components/Loupe'; // F6
+import Loupe, { DEFAULT_LENS, LensOverlay, LensToggle } from './components/Loupe'; // F6
 import ViewToggle from './components/ViewToggle';         // F9
 import DifferenceView from './components/DifferenceView'; // F9
+import GaiaMarker from './components/GaiaMarker';         // F11
 // PAGES (opened from the navbar)
 import HowItWorks from './pages/HowItWorks';
 import Team from './pages/Team';
 import AboutData from './pages/AboutData';
+import SkyMap from './pages/SkyMap';
 
 const PAGES = {
   '#/how': HowItWorks,
   '#/team': Team,
   '#/data': AboutData,
+  '#/sky': SkyMap,
 };
 
 function readUrl() {
@@ -73,7 +78,7 @@ function gifFileName(view) {
   return `spherex-${slug}-${what}-${view.fov}arcmin.gif`;
 }
 
-function Loading() {
+function Loading({ job }) {
   const [seconds, setSeconds] = useState(0);
   useEffect(() => {
     const timer = setInterval(() => setSeconds((s) => s + 1), 1000);
@@ -88,6 +93,7 @@ function Loading() {
           ? 'Lining up every visit to this spot.'
           : 'First time for this spot: downloading from NASA\'s archive. This can take up to a minute; next time it\'s instant.'}
       </p>
+      <DownloadLog job={job} />
     </div>
   );
 }
@@ -99,11 +105,14 @@ function App() {
   const [index, setIndex] = useState(0);          // which frame is showing
   const [loadTime, setLoadTime] = useState(null); // seconds, shown next to Field of view
   const [loading, setLoading] = useState(false);
+  const [job, setJob] = useState(null);           // id of the current load's backend log (DownloadLog)
   const [error, setError] = useState(null);       // Error from getFrames (err.code 'NO_BACKEND' = no backend running)
   const [retry, setRetry] = useState(0);          // bump to load the same view again
   const [viewMode, setViewMode] = useState('normal'); // F9: 'normal' | 'difference'
   const canDiff = data?.epochs?.length > 1;
   const [lens, setLens] = useState(DEFAULT_LENS);      // lens zoom + size, shared; each lens keeps its own spot
+  const [mainLens, setMainLens] = useState(true);       // lens on the big picture on/off (2-view)
+  const [searchTrack, setSearchTrack] = useState(null); // F11: proper motion of the last name searched
   const [layout, setLayout] = useState(readLayout);   // 'two': lens on the big picture · 'three': Loupe as its own picture
   const layoutRef = useRef(layout);                    // for the URL write in the frames effect (no refetch on layout change)
   useEffect(() => {
@@ -112,17 +121,22 @@ function App() {
   }, [layout]); // eslint-disable-line react-hooks/exhaustive-deps -- view's own effect keeps the URL in sync for view changes
   const frameUrl = data?.epochs?.[Math.min(index, (data?.epochs?.length || 1) - 1)]?.png_url;
   const showDiff = viewMode === 'difference' && canDiff;
+  // F11: the star whose predicted track we draw: a preset's, or the last name searched
+  const track = presetAt(view)?.track || searchTrack;
+  const widthArcsec = imageWidthArcsec(data, view.fov);
 
   // every time the view changes (search, preset, FOV, array): load the frames
   useEffect(() => {
     const controller = new AbortController();     // cancels this request if the view changes again
     const start = performance.now();
+    const jobId = newJobId();
+    setJob(jobId);
     setLoading(true);
     setError(null);
     setData(null);
 
-    const load = view.rgb ? getRgb({ ...view, arrays: RGB_ARRAYS }, { signal: controller.signal })
-                          : getFrames(view, { signal: controller.signal });
+    const load = view.rgb ? getRgb({ ...view, arrays: RGB_ARRAYS }, { signal: controller.signal, job: jobId })
+                          : getFrames(view, { signal: controller.signal, job: jobId });
     load
       .then((json) => {
         setData(json);
@@ -160,6 +174,7 @@ function App() {
         </div>
 
         <nav className="nav">
+          <a href="#/sky">Sky map</a>
           <a href="#/how">How it works</a>
           <a href="#/team">Team</a>
           <a href="#/data">About the data</a>
@@ -187,9 +202,12 @@ function App() {
             targets={TARGETS}
             // a known target comes with its best array: go there (out of false colour);
             // plain coordinates keep whatever the visitor was looking at
-            onSearch={({ ra, dec, array }) => setView(array != null
-              ? { ...view, ra, dec, array, rgb: 0 }
-              : { ...view, ra, dec })}
+            onSearch={({ ra, dec, array, track }) => {
+              setSearchTrack(track || null);
+              setView(array != null
+                ? { ...view, ra, dec, array, rgb: 0 }
+                : { ...view, ra, dec });
+            }}
             onNoBackend={(err) => { setData(null); setError(err); }}
           />
           <Presets
@@ -203,7 +221,7 @@ function App() {
         {/* 2. Player on the left, info on the right (like the design) */}
         <div className="main">
           <section className="panel player-panel">
-            {loading && <Loading />}
+            {loading && <Loading job={job} />}
 
             {error?.code === 'NO_BACKEND' && (
               <RunBackendHelp
@@ -228,7 +246,21 @@ function App() {
                 setIndex={setIndex}
                 gifTitle={gifLabel(view)}
                 gifName={gifFileName(view)}
-                overlay={layout === 'two' && frameUrl ? <LensOverlay lens={lens} setLens={setLens} src={frameUrl} /> : null}
+                gifTrack={trackPoints(track, data.epochs, view, widthArcsec)}
+                gifZoom={lens.zoom}
+                centered={layout === 'three'}
+                overlay={<>
+                  {layout === 'two' && frameUrl && mainLens && <LensOverlay lens={lens} setLens={setLens} src={frameUrl} />}
+                  {layout === 'two' && <LensToggle on={mainLens} onChange={setMainLens} />}
+                  <GaiaMarker
+                    track={track}
+                    epochs={data.epochs}
+                    index={index}
+                    centre={view}
+                    widthArcsec={widthArcsec}
+                    sizePx={data.size_px}
+                  />
+                </>}
                 side={<>
                   <Loupe imageUrl={frameUrl} lens={lens} setLens={setLens} attached={layout === 'two'} />
                   {showDiff && (

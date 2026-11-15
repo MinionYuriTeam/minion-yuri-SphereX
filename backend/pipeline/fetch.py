@@ -24,6 +24,7 @@ import requests
 from astropy.io import fits
 from astropy.wcs import WCS
 
+from . import progress as _progress
 from .settings import PIXEL_SCALE_ARCSEC
 
 BLOCK = 2880  # FITS block size in bytes
@@ -37,11 +38,19 @@ class Cutout:
     header: fits.Header     # IMAGE header, WCS shifted to this cutout
 
 
-def load_cutout(exposure, coord, fov_arcmin, cache_dir):
+def is_cached(exposure, fov_arcmin, cache_dir):
+    """Is this exposure's square already on disk (for this field or a bigger one)?
+    Only used to count what a batch still has to download."""
+    name = f"{exposure['obs_id']}_D{exposure['array']}.fits"
+    return (cache_dir / name).exists() or bool(_bigger_cached(cache_dir, name, fov_arcmin))
+
+
+def load_cutout(exposure, coord, fov_arcmin, cache_dir, progress=None):
     """The square around `coord` from one exposure, from disk if we have it.
 
     cache_dir is .../cutouts/<fov>arcmin/. A square cached for a BIGGER field
     of view also covers this one, so it is reused instead of downloading again.
+    progress (pipeline.progress.Progress, optional) gets told about each download.
     """
     name = f"{exposure['obs_id']}_D{exposure['array']}.fits"
     path = cache_dir / name
@@ -51,12 +60,20 @@ def load_cutout(exposure, coord, fov_arcmin, cache_dir):
                 # files cached before X0/Y0 existed can't place the cutout on the
                 # detector (the spectrum needs that): skip them, download again
                 if "X0" in hdus[0].header:
+                    if progress:
+                        progress.from_cache()
                     return Cutout(hdus[0].data, hdus["FLAGS"].data, hdus[0].header)
 
     # The output square is north-up but the detector is rotated, so download
     # a box sqrt(2) bigger (plus a small margin) to cover it at any angle.
     box_arcmin = fov_arcmin * 2 ** 0.5 + 4 * PIXEL_SCALE_ARCSEC / 60
+    _progress.take_bytes()          # start counting this thread's bytes from zero
+    t0 = time.time()
     cutout = read_cutout(exposure["aws_url"], coord, box_arcmin)
+    if progress:
+        y0 = cutout.header["Y0"]
+        progress.downloaded(exposure, _progress.take_bytes(), time.time() - t0,
+                            rows=(y0, y0 + cutout.header["NAXIS2"]))
     fits.HDUList([fits.PrimaryHDU(cutout.image, cutout.header),
                   fits.ImageHDU(cutout.flags, name="FLAGS")]).writeto(path, overwrite=True)
     return cutout
@@ -103,7 +120,7 @@ def read_cutout(url, coord, box_arcmin):
     try:
         flags = _read_flag_rows(url, flags_start, y0, y1)[:, x0:x1]
     except Exception as exc:  # flags are nice to have, not essential
-        print(f"   no FLAGS for {url.rsplit('/', 1)[-1]}: {exc}")
+        _progress.say(f"   no FLAGS for {url.rsplit('/', 1)[-1]}: {exc}")
         flags = np.zeros_like(image, dtype=np.int32)
 
     # the cutout's WCS is the detector's WCS shifted by (x0, y0); the SIP
@@ -153,6 +170,7 @@ def _get_bytes(url, start, end, attempts=4):
         try:
             r = _http.get(url, headers={"Range": f"bytes={start}-{end - 1}"}, timeout=60)
             r.raise_for_status()
+            _progress.add_bytes(len(r.content))
             return r.content
         except requests.RequestException:
             if attempt == attempts - 1:

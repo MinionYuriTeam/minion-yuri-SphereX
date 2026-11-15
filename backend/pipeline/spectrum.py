@@ -9,7 +9,8 @@ from astropy import units as u
 from astropy.coordinates import SkyCoord
 from astropy.wcs import WCS
 
-from .fetch import load_cutout
+from .fetch import is_cached, load_cutout
+from .progress import Progress
 from .flags import BAD_FOR_STACKING, FLAG_BITS
 from .search import find_exposures
 from .settings import PIXEL_SCALE_ARCSEC, position_dir
@@ -102,10 +103,16 @@ def get_spectrum(ra, dec, pm_ra=0.0, pm_dec=0.0, fov=3.0, workers=8):
     cache.mkdir(parents=True, exist_ok=True)
     exposures = find_exposures(coord, folder)
     today = Time.now().mjd
+    progress = Progress("spectrum (all arrays)", coord, fov, len(exposures),
+                        sum(not is_cached(e, fov, cache) for e in exposures), workers)
 
     def measure(e):                      # in threads: download and photometry only
         try:
-            cut = load_cutout(e, coord, fov, cache)
+            cut = load_cutout(e, coord, fov, cache, progress)
+        except Exception as exc:
+            progress.fail(e, exc)
+            return None
+        try:
             then = moved_position(ra, dec, pm_ra, pm_dec, (e["mjd"] - today) / 365.25)
             x, y = (float(v) for v in WCS(cut.header).all_world2pix(*then, 0))
             x, y = recentre(cut.image, x, y)
@@ -113,11 +120,12 @@ def get_spectrum(ra, dec, pm_ra=0.0, pm_dec=0.0, fov=3.0, workers=8):
 
             return flux and (e, flux, cut.header["X0"] + x, cut.header["Y0"] + y)
         except Exception as exc:
-            print(f"   spectrum: skipped {e['obs_id']} D{e['array']}: {exc}")
+            progress.say(f"   spectrum: skipped {e['obs_id']} D{e['array']}: {exc}")
             return None
 
     with ThreadPoolExecutor(workers) as pool:
         measured = [m for m in pool.map(measure, exposures) if m]
+    progress.finish()
 
     points = []
     for e, (flux, error, quality), x, y in measured:   # wavelength lookup in ONE thread

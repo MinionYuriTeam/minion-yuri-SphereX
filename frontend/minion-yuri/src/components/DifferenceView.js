@@ -3,7 +3,7 @@
 // What it shows: on a canvas, one of two styles (switch at the top of the panel):
 //
 //  Difference — current picture minus the first one.
-//    brighter now -> orange, fainter now -> teal, unchanged -> black.
+//    brighter -> orange, darker -> teal, unchanged -> black.
 //    Each picture is stretched on its own, so the average difference is removed first.
 //    Boost makes small changes visible; Noise blacks out small ones.
 //
@@ -37,7 +37,7 @@ const DIM = 0.18;
 const motionThreshold = (sens) => 23.3 * Math.pow(1.7 / 23.3, sens / 100);
 
 const STYLES = [
-  { id: "difference", label: "Difference", tip: "This picture minus the first one: brighter in orange, fainter in teal" },
+  { id: "difference", label: "Difference", tip: "This picture minus the first one: brighter in orange, darker in teal" },
   { id: "motion", label: "Motion", tip: "Jay's Motion View: what changed since the previous picture keeps its colour, the rest goes dark" },
 ];
 
@@ -90,6 +90,23 @@ function meanShift(a, b) {
   return m / a.gray.length;
 }
 
+// Difference style: `cur` minus `base` (each { gray }) into RGBA array `out`.
+// Also used by the GIF export, so the GIF looks exactly like this panel.
+export const DIFF_DEFAULTS = { boost: 3, noise: 4 };
+export function paintDifference(base, cur, out, boost = DIFF_DEFAULTS.boost, noise = DIFF_DEFAULTS.noise) {
+  const shift = meanShift(base, cur);
+  for (let i = 0, p = 0; i < base.gray.length; i++, p += 4) {
+    const d = cur.gray[i] - base.gray[i] - shift;
+    const a = Math.abs(d);
+    const t = a <= noise ? 0 : clamp(((a - noise) * boost) / 255, 0, 1);
+    const col = d > 0 ? BRIGHTER : FAINTER;
+    out[p] = col[0] * t;
+    out[p + 1] = col[1] * t;
+    out[p + 2] = col[2] * t;
+    out[p + 3] = 255;
+  }
+}
+
 // Jay's motion update, one step: compare picture `cur` with `prev`, update the heat buffer
 function motionStep(buf, prev, cur, thr, scratch) {
   const W = cur.w, H = cur.h;
@@ -118,8 +135,8 @@ function DifferenceView({ epochs, index, lens, setLens }) {
   const [frames, setFrames] = useState(null); // pixels of pictures 0..index, all at the first one's size
   const [failed, setFailed] = useState(false);
   const [style, setStyle] = useState("difference");
-  const [boost, setBoost] = useState(3);
-  const [noise, setNoise] = useState(4);
+  const [boost, setBoost] = useState(DIFF_DEFAULTS.boost);
+  const [noise, setNoise] = useState(DIFF_DEFAULTS.noise);
   const [sens, setSens] = useState(60);
 
   const at = Math.min(index, (epochs?.length || 1) - 1);
@@ -184,17 +201,7 @@ function DifferenceView({ epochs, index, lens, setLens }) {
         o[p + 3] = 255;
       }
     } else {
-      const shift = meanShift(base, cur);
-      for (let i = 0, p = 0; i < base.gray.length; i++, p += 4) {
-        const d = cur.gray[i] - base.gray[i] - shift;
-        const a = Math.abs(d);
-        const t = a <= noise ? 0 : clamp(((a - noise) * boost) / 255, 0, 1);
-        const col = d > 0 ? BRIGHTER : FAINTER;
-        o[p] = col[0] * t;
-        o[p + 1] = col[1] * t;
-        o[p + 2] = col[2] * t;
-        o[p + 3] = 255;
-      }
+      paintDifference(base, cur, o, boost, noise);
     }
     ctx.putImageData(out, 0, 0);
     if (hasLens) setLensImage(canvas.toDataURL());
@@ -320,8 +327,8 @@ function DifferenceView({ epochs, index, lens, setLens }) {
           </>
         ) : (
           <>
-            <span><i className="diff-key diff-key-up" /> brighter now</span>
-            <span><i className="diff-key diff-key-down" /> fainter now</span>
+            <span><i className="diff-key diff-key-up" /> brighter</span>
+            <span><i className="diff-key diff-key-down" /> darker</span>
             <span><i className="diff-key" /> no change</span>
           </>
         )}

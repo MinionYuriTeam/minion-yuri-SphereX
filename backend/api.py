@@ -10,6 +10,9 @@ then open http://localhost:8000/docs to try every endpoint in the browser.
     GET /api/frames?ra=269.45&dec=4.69&fov=5&array=3
         -> { array, wavelength_um: [lo, hi],
              epochs: [ { date, n_exposures, png_url, flags_png_url, ... } ], ... }
+    GET /api/progress?job=<id>&since=0
+        -> { lines: [...], next, fetch: { done, total, ... }, done }
+           the download log of a request sent with &job=<id> (loading screen)
     GET /api/health
         -> { ok: true }
 
@@ -28,6 +31,7 @@ from fastapi.staticfiles import StaticFiles
 
 from pipeline import (BadInput, NotFound, ResolverUnavailable, SearchUnavailable,
                       get_stacks, resolve)
+from pipeline import progress
 from pipeline.render import save_epoch_pngs
 from pipeline.settings import OUTPUT_ROOT, position_dir
 from pipeline.spectrum import bin_spectrum, get_spectrum
@@ -76,17 +80,21 @@ def api_frames(
     fov: float = Query(5, gt=0, le=60, description="Field of view, arcminutes"),
     array: int = Query(3, ge=1, le=6, description="Detector array, 1 (short) - 6 (long)"),
     per_exposure: bool = Query(False, description="One frame per exposure, not per epoch"),
+    job: str = Query("", max_length=64, description="Any id; GET /api/progress?job= shows this request's log"),
 ):
     """Aligned, stacked frames of one patch of sky on one detector array."""
     t0 = time.time()
-    try:
-        s = get_stacks(ra, dec, fov, array, per_exposure=per_exposure)
-    except SearchUnavailable as exc:
-        raise HTTPException(503, str(exc))
+    with progress.job(job):
+        try:
+            s = get_stacks(ra, dec, fov, array, per_exposure=per_exposure)
+        except SearchUnavailable as exc:
+            progress.say(f"Couldn't search IRSA: {exc}", console=False)
+            raise HTTPException(503, str(exc))
 
-    folder = (position_dir(ra, dec) / "png"
-              / f"D{array}_fov{fov:g}{'_exposures' if per_exposure else ''}")
-    paths = save_epoch_pngs(s, folder)
+        folder = (position_dir(ra, dec) / "png"
+                  / f"D{array}_fov{fov:g}{'_exposures' if per_exposure else ''}")
+        progress.say(f"Making {len(s.epochs)} pictures…", console=False)
+        paths = save_epoch_pngs(s, folder)
     base = os.environ.get("PUBLIC_BASE_URL", str(request.base_url)).rstrip("/")
     stamp = int(time.time())  # so browsers don't show an older PNG at the same URL
 
@@ -126,17 +134,29 @@ def api_frames(
 
 
 
+@app.get("/api/progress")
+def api_progress(
+    job: str = Query(..., max_length=64),
+    since: int = Query(0, ge=0, description="First line number wanted (the last answer's `next`)"),
+):
+    """The download log of a request sent with ?job=<id>, for the loading screen.
+    -> { lines: [...], next, fetch: { what, done, failed, total, mb } | null, done, known }"""
+    return progress.read_job(job, since)
+
+
 @app.get("/api/spectrum")
 def api_spectrum(
     ra: float = Query(..., ge=0, lt=360), dec: float = Query(..., ge=-90, le=90),
     binned: bool = Query(False, description="Median per visit and wavelength bin"),
     pm_ra: float = Query(0.0, description="Proper motion in RA, mas/yr (from /api/resolve)"),
     pm_dec: float = Query(0.0, description="Proper motion in Dec, mas/yr"),
+    job: str = Query("", max_length=64, description="Any id; GET /api/progress?job= shows this request's log"),
 ):
-    try:
-        s = get_spectrum(ra, dec, pm_ra, pm_dec)
-    except SearchUnavailable as exc:
-        raise HTTPException(503, str(exc))
+    with progress.job(job):
+        try:
+            s = get_spectrum(ra, dec, pm_ra, pm_dec)
+        except SearchUnavailable as exc:
+            raise HTTPException(503, str(exc))
     if binned:
         s["points"] = bin_spectrum(s["points"])
     return s
@@ -150,13 +170,15 @@ def api_rgb(
     fov: float = Query(5, gt=0, le=60),
     arrays: str = Query("6,4,2", pattern=r"^[1-6],[1-6],[1-6]$",
                         description="Detector arrays for red, green, blue"),
+    job: str = Query("", max_length=64, description="Any id; GET /api/progress?job= shows this request's log"),
 ):
     picked = tuple(int(a) for a in arrays.split(","))
     folder = position_dir(ra, dec) / "png" / f"rgb{''.join(map(str, picked))}_fov{fov:g}"
-    try:
-        frames = save_rgb_pngs(ra, dec, fov, folder, picked)
-    except SearchUnavailable as exc:
-        raise HTTPException(503, str(exc))
+    with progress.job(job):
+        try:
+            frames = save_rgb_pngs(ra, dec, fov, folder, picked)
+        except SearchUnavailable as exc:
+            raise HTTPException(503, str(exc))
     base = os.environ.get("PUBLIC_BASE_URL", str(request.base_url)).rstrip("/")
     stamp = int(time.time())
     return {"arrays": list(picked), "ra": ra, "dec": dec, "fov": fov,

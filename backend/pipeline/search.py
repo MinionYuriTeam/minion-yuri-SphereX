@@ -23,6 +23,7 @@ import requests
 from astropy.io.votable import parse
 from astropy.time import Time
 
+from .progress import say
 from .settings import COLLECTIONS
 
 SIA_URL = "https://irsa.ipac.caltech.edu/SIA"
@@ -46,6 +47,9 @@ def find_exposures(coord, save_dir, collections=COLLECTIONS, reuse_hours=REUSE_H
     saved = save_dir / CSV_NAME
     if saved.exists() and time.time() - saved.stat().st_mtime < reuse_hours * 3600:
         return _read_csv(saved)
+    say(f"Searching IRSA for SPHEREx images at {coord.ra.deg:.4f} {coord.dec.deg:+.4f} "
+        f"({', '.join(collections)})…")
+    t0 = time.time()
     try:
         exposures = _search_irsa(coord, collections)
     except requests.RequestException as exc:
@@ -53,9 +57,11 @@ def find_exposures(coord, save_dir, collections=COLLECTIONS, reuse_hours=REUSE_H
             raise SearchUnavailable(
                 "IRSA's image search is down and this position has not been "
                 f"searched before. Try again in a few minutes. ({exc})") from exc
-        print(f"IRSA search is down; using the saved list in {saved}")
+        say(f"IRSA search is down; using the saved list in {saved}")
         return _read_csv(saved)
 
+    per_array = ", ".join(f"D{a} {sum(e['array'] == a for e in exposures)}" for a in range(1, 7))
+    say(f"   found {len(exposures)} exposures in {time.time() - t0:.1f} s ({per_array})")
     if exposures:
         _write_csv(saved, exposures)
     return exposures
@@ -98,7 +104,7 @@ def _query_sia(coord, collections, attempts=SEARCH_ATTEMPTS):
         except requests.RequestException as exc:
             if attempt == attempts:
                 raise
-            print(f"   IRSA search attempt {attempt} failed ({exc.__class__.__name__}), retrying")
+            say(f"   IRSA search attempt {attempt} failed ({exc.__class__.__name__}), retrying")
             time.sleep(1 + random.random() * min(attempt, 4))
 
 

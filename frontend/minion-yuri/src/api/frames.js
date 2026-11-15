@@ -34,7 +34,8 @@ export function getApiUrl() {
 // GET frames for one view: baked if we have it, otherwise from the backend.
 // -> { array, wavelength_um: [lo, hi], epochs: [ { date, n_exposures, png_url, flags_png_url } ],
 //      source: 'baked' | 'backend', ... }
-export async function getFrames({ ra, dec, fov, array }, { signal } = {}) {
+// job = any id: the backend keeps this request's download log under it (see getProgress)
+export async function getFrames({ ra, dec, fov, array }, { signal, job } = {}) {
   if (USE_MOCK) return getJson(`${PUBLIC}/mock/frames.json`, signal, 'Could not load the mock data.');
 
   const baked = await findBaked({ ra, dec, fov, array });
@@ -47,7 +48,7 @@ export async function getFrames({ ra, dec, fov, array }, { signal } = {}) {
 
   const api = getApiUrl();
   const json = await getJson(
-    `${api}/api/frames?${new URLSearchParams({ ra, dec, fov, array })}`,
+    `${api}/api/frames?${new URLSearchParams({ ra, dec, fov, array, ...(job ? { job } : {}) })}`,
     signal,
     'Could not load the sky images.',
     api
@@ -67,7 +68,7 @@ export async function resolveName(name, { signal } = {}) {
 // False colour: three detector arrays as the red, green and blue of one picture.
 // GET /api/rgb?ra=&dec=&fov=&arrays=6,4,2 (baked for the test targets)
 // -> { arrays: [r, g, b], fov, epochs: [ { date, png_url } ], source }
-export async function getRgb({ ra, dec, fov, arrays = [6, 4, 2] }, { signal } = {}) {
+export async function getRgb({ ra, dec, fov, arrays = [6, 4, 2] }, { signal, job } = {}) {
   const target = await findBakedTarget(ra, dec);
   const combo = target?.rgb?.find((c) => c.fov === Number(fov) && c.arrays.join() === arrays.join());
   if (combo) {
@@ -77,12 +78,33 @@ export async function getRgb({ ra, dec, fov, arrays = [6, 4, 2] }, { signal } = 
   }
   const api = getApiUrl();
   const json = await getJson(
-    `${api}/api/rgb?${new URLSearchParams({ ra, dec, fov, arrays: arrays.join(',') })}`,
+    `${api}/api/rgb?${new URLSearchParams({ ra, dec, fov, arrays: arrays.join(','), ...(job ? { job } : {}) })}`,
     signal,
     'Could not load the colour images.',
     api
   );
   return { ...json, source: 'backend' };
+}
+
+// The download log of a request sent with { job }, while it runs (the loading screen shows it).
+// GET /api/progress?job=&since= -> { lines, next, fetch: { what, done, failed, total, mb } | null, done }
+// Returns null if there's no backend, or an older one without this endpoint.
+export async function getProgress(job, since = 0, { signal } = {}) {
+  try {
+    const res = await fetch(`${getApiUrl()}/api/progress?${new URLSearchParams({ job, since })}`, { signal });
+    return res.ok ? res.json() : null;
+  } catch {
+    return null;
+  }
+}
+
+// a fresh id for one request's download log
+export function newJobId() {
+  try {
+    return crypto.randomUUID();
+  } catch {
+    return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+  }
 }
 
 // Is the spectrum of this spot baked into the site? (then it loads instantly)

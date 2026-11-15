@@ -2,14 +2,16 @@
 // Props it gets from App.js: epochs, index, setIndex
 //   side     = what goes next to the image (Jay's loupe + difference)
 //   children = what goes next to Speed (the FovPicker)
-//   overlay  = drawn on top of the image (Jay's loupe lens in the 2-view layout)
+//   overlay  = drawn on top of the image (Jay's loupe lens in the 2-view layout, Gaia marker)
+//   gifTrack, gifZoom = F11 track points + loupe zoom, for the GIF options
+//   centered = centre the image next to a tall side column (the 3-view layout)
 import { useEffect, useState } from "react";
 import "../styles/BlinkPlayer.css";
 import GifExport from "./GifExport";
 
 const SPEEDS = [1, 2, 5];
 
-function BlinkPlayer({ epochs, index, setIndex, side, overlay, children, gifTitle = "SPHEREx", gifName = "spherex-blink.gif" }) {
+function BlinkPlayer({ epochs, index, setIndex, side, overlay, centered = false, children, gifTitle = "SPHEREx", gifName = "spherex-blink.gif", gifTrack = [], gifZoom = 2.5 }) {
   const [playing, setPlaying] = useState(true);
   const [fps, setFps] = useState(2);
   const [crosshair, setCrosshair] = useState(false);
@@ -40,7 +42,7 @@ function BlinkPlayer({ epochs, index, setIndex, side, overlay, children, gifTitl
 
   return (
     <div className="player">
-      <div className="viewer-row">
+      <div className={`viewer-row ${centered ? "is-centered" : ""}`}>
         <div className="viewer">
           <img
             src={frame.png_url}
@@ -92,7 +94,7 @@ function BlinkPlayer({ epochs, index, setIndex, side, overlay, children, gifTitl
           onChange={(e) => { setPlaying(false); setIndex(Number(e.target.value)); }}
         />
         <span data-tip="Which picture you're seeing, out of how many SPHEREx visits">{index + 1}/{epochs.length}</span>
-        <GifExport epochs={epochs} fps={fps} title={gifTitle} fileName={gifName} />
+        <GifExport epochs={epochs} fps={fps} title={gifTitle} fileName={gifName} track={gifTrack} zoom={gifZoom} />
       </div>
 
       {/*Field of view */}

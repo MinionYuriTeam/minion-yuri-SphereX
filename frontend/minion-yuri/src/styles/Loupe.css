@@ -274,3 +274,34 @@
   font-variant-numeric: tabular-nums;
   pointer-events: none;
 }
+
+/* lens on/off button on the big picture (2-view layout), left of the track and crosshair buttons */
+.viewer .lens-toggle {
+  position: absolute;
+  top: 10px;
+  right: 90px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid #ffffff33;
+  border-radius: 8px;
+  background: #000000aa;
+  color: #8c96ab;
+  cursor: pointer;
+}
+
+.viewer .lens-toggle svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+.viewer .lens-toggle.is-on {
+  color: #2dd4bf;
+  border-color: #2dd4bf;
+}

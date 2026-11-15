@@ -8,7 +8,8 @@
 //
 // Every lens (this one, the one on the big picture, the Difference one) has its OWN spot: where it is,
 // whether it's showing, whether it's pinned (useLensSpot). Only the settings are shared through
-// App.js (`lens` + `setLens`): zoom and lens size, plus a separate zoom for the big picture's lens.
+// App.js (`lens` + `setLens`): zoom and lens size. Every lens uses the SAME zoom, so the slider,
+// + / −, the keys and the mouse wheel over any picture all move every lens together.
 // The spot is stored as a fraction of the image (uv: 0..1) so it fits any image size.
 import { useCallback, useEffect, useRef, useState } from "react";
 import "../styles/Loupe.css";
@@ -16,9 +17,18 @@ import "../styles/Loupe.css";
 const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
 
 // shared lens settings; App.js keeps one of these and hands it to every lens.
-// zoom = the Loupe / Difference lenses (sliders, + −); cursorZoom = the lens on the big picture
-// (mouse wheel over it), kept apart so each can be set on its own.
-export const DEFAULT_LENS = { zoom: 2.5, cursorZoom: 2.5, lensSize: 120 };
+export const DEFAULT_LENS = { zoom: 2.5, lensSize: 120 };
+
+// Keyboard shortcuts work everywhere, also while a slider or button has focus
+// (after dragging Zoom or Lens). They only stay out of the way while typing
+// in a text box (search, X / Y), where + - [ ] P are real characters.
+const NOT_TYPING = new Set(["range", "checkbox", "radio", "button", "submit", "reset", "color", "file", "image"]);
+export function isTyping(e) {
+  const el = e.target;
+  if (!el || !el.tagName) return false;
+  if (el.isContentEditable || el.tagName === "TEXTAREA" || el.tagName === "SELECT") return true;
+  return el.tagName === "INPUT" && !NOT_TYPING.has((el.type || "text").toLowerCase());
+}
 
 // one lens's own spot. P pins/unpins the lens the mouse was over last.
 const NO_SPOT = { uv: null, visible: false, pinned: false };
@@ -27,7 +37,7 @@ export function useLensSpot(id) {
   const [spot, setSpot] = useState(NO_SPOT);
   useEffect(() => {
     const onKey = (e) => {
-      if (e.target.tagName === "INPUT" || activeSpot !== id) return;
+      if (isTyping(e) || e.ctrlKey || e.metaKey || e.altKey || activeSpot !== id) return;
       if (e.key === "p" || e.key === "P") setSpot((s) => ({ ...s, pinned: !s.pinned, visible: true }));
     };
     window.addEventListener("keydown", onKey);
@@ -74,8 +84,8 @@ export function lensLayout({ uv, zoom, lensSize, w, h, nw, nh, src }) {
 }
 
 // The lens on top of the big picture (2-view layout). Lives inside BlinkPlayer's viewer, covers the
-// image, and draws `src` (the frame itself) zoomed by its own cursorZoom.
-// Hover moves it, double-click pins, wheel zooms (this lens only); the zoom shows in a corner badge.
+// image, and draws `src` (the frame itself) zoomed by the shared zoom.
+// Hover moves it, double-click pins, wheel zooms (all lenses); the zoom shows in a corner badge.
 export function LensOverlay({ lens, setLens, src }) {
   const [spot, setSpot, markActive] = useLensSpot("main");
   const ref = useRef(null);
@@ -96,7 +106,7 @@ export function LensOverlay({ lens, setLens, src }) {
     if (!el) return;
     const onWheel = (e) => {
       e.preventDefault();
-      setLens((l) => ({ ...l, cursorZoom: clamp(l.cursorZoom * (e.deltaY < 0 ? 1.1 : 0.9), ZOOM_MIN, ZOOM_MAX) }));
+      setLens((l) => ({ ...l, zoom: clamp(l.zoom * (e.deltaY < 0 ? 1.1 : 0.9), ZOOM_MIN, ZOOM_MAX) }));
     };
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => el.removeEventListener("wheel", onWheel);
@@ -111,7 +121,7 @@ export function LensOverlay({ lens, setLens, src }) {
   let styles = null;
   const el = ref.current;
   if (src && spot.visible && spot.uv && natural.w && el && el.clientWidth) {
-    styles = lensLayout({ ...lens, uv: spot.uv, zoom: lens.cursorZoom, w: el.clientWidth, h: el.clientHeight, nw: natural.w, nh: natural.h, src });
+    styles = lensLayout({ ...lens, uv: spot.uv, w: el.clientWidth, h: el.clientHeight, nw: natural.w, nh: natural.h, src });
   }
 
   return (
@@ -127,8 +137,27 @@ export function LensOverlay({ lens, setLens, src }) {
       <div className={`loupe-lens ${spot.pinned ? "pinned" : ""}`} style={styles ? styles.lensStyle : { display: "none" }}>
         {styles && <div className="loupe-pixel" style={styles.pixelStyle} />}
       </div>
-      {styles && <span className="lens-overlay-zoom" data-tip="Zoom of this lens (mouse wheel)">{lens.cursorZoom.toFixed(1)}×</span>}
+      {styles && <span className="lens-overlay-zoom" data-tip="Zoom (mouse wheel, + / −, or the Loupe slider)">{lens.zoom.toFixed(1)}×</span>}
     </div>
+  );
+}
+
+// Button in the big picture's corner (2-view layout): turns the lens on the big picture on / off.
+export function LensToggle({ on, onChange }) {
+  return (
+    <button
+      className={`lens-toggle ${on ? "is-on" : ""}`}
+      onClick={() => onChange(!on)}
+      aria-label={on ? "Turn off the magnifying lens" : "Turn on the magnifying lens"}
+      aria-pressed={on}
+      data-tip={on ? "Turn off the magnifying lens on this picture" : "Turn on the magnifying lens on this picture"}
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="10" cy="10" r="6" />
+        <path d="M14.5 14.5L20 20" />
+        {!on && <path d="M4 20L20 4" />}
+      </svg>
+    </button>
   );
 }
 
@@ -242,10 +271,10 @@ function Loupe({ imageUrl, lens: sharedLens, setLens: setSharedLens, attached = 
     return () => stage.removeEventListener("wheel", onWheel);
   }, [imageUrl, patch]);
 
-  // keyboard shortcuts (ignored while typing in a field)
+  // keyboard shortcuts (ignored only while typing in a text box; see isTyping)
   useEffect(() => {
     const onKey = (e) => {
-      if (e.target.tagName === "INPUT") return;
+      if (isTyping(e) || e.ctrlKey || e.metaKey || e.altKey) return; // leave browser zoom (Cmd +/−) alone
       if (e.key === "Escape") setHelpOpen(false);
       if (e.key === "+" || e.key === "=") patch((l) => ({ zoom: clamp(l.zoom + 0.5, ZOOM_MIN, ZOOM_MAX) }));
       if (e.key === "-" || e.key === "_") patch((l) => ({ zoom: clamp(l.zoom - 0.5, ZOOM_MIN, ZOOM_MAX) }));
