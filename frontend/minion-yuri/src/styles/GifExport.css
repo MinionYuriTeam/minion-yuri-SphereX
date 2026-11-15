@@ -1,0 +1,140 @@
+/* GIF options screen (GifExport.js) */
+.gif-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: #050913cc;
+}
+
+.gif-dialog {
+  width: min(460px, 100%);
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+  padding: 20px;
+  border: 1px solid #243049;
+  border-radius: 14px;
+  background: #0e1526;
+  color: #e6eaf2;
+  font-family: 'Archivo', system-ui, sans-serif;
+  text-align: left;
+  box-shadow: 0 20px 60px #000a;
+}
+
+/* undo the search form's global label / input styles inside the dialog */
+.gif-dialog label {
+  width: auto;
+  font-weight: 400;
+}
+
+.gif-dialog input[type="checkbox"] {
+  flex: none;
+  min-width: 0;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  padding: 0;
+}
+
+.gif-dialog input[type="checkbox"]:focus {
+  outline: none;
+}
+
+.gif-dialog input[type="checkbox"]:focus-visible {
+  outline: 2px solid #ff8a4c;
+  outline-offset: 2px;
+}
+
+.gif-dialog h3 {
+  margin: 0 0 4px;
+  font-size: 18px;
+}
+
+.gif-dialog-sub {
+  margin: 0 0 16px;
+  font-size: 13px;
+  color: #8c96ab;
+}
+
+.gif-dialog fieldset {
+  margin: 0 0 16px;
+  padding: 0;
+  border: 0;
+}
+
+.gif-dialog legend {
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: #8c96ab;
+}
+
+.gif-panels {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.gif-choice {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid #243049;
+  border-radius: 10px;
+  background: #131b2e;
+  cursor: pointer;
+}
+
+.gif-choice input {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  accent-color: #ff8a4c;
+}
+
+.gif-choice.is-on {
+  border-color: #ff8a4c;
+}
+
+.gif-choice-name {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.gif-choice-note {
+  font-size: 12px;
+  color: #8c96ab;
+}
+
+.gif-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.gif-check input {
+  accent-color: #ff8a4c;
+}
+
+.gif-check:has(input:disabled) {
+  color: #8c96ab;
+  cursor: default;
+}
+
+.gif-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+@media (max-width: 420px) {
+  .gif-panels {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

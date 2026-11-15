@@ -25,7 +25,8 @@ from astropy.coordinates import SkyCoord
 from astropy.time import Time
 from astropy.wcs import WCS
 
-from .fetch import load_cutout
+from .fetch import is_cached, load_cutout
+from .progress import Progress, say
 from .flags import BAD_FOR_STACKING, FLAG_BITS
 from .grid import fills, make_grid, resample, resample_flags
 from .search import find_exposures
@@ -80,13 +81,15 @@ def get_stacks(ra, dec, fov=5.0, array=1, per_exposure=False, epoch_gap_days=7.0
     exposures = [e for e in find_exposures(coord, folder, collections)
                  if e["array"] == array]
     grid = make_grid(coord, fov)
+    progress = Progress(f"D{array}", coord, fov, len(exposures),
+                        sum(not is_cached(e, fov, cache) for e in exposures), workers)
 
     # 2-3. download each one's square and put it on the shared grid
     def prepare(exposure):
         try:
-            cutout = load_cutout(exposure, coord, fov, cache)
+            cutout = load_cutout(exposure, coord, fov, cache, progress)
         except Exception as exc:
-            print(f"   download failed: {exposure['obs_id']} D{array}: {exc}")
+            progress.fail(exposure, exc)
             return "failed"
         if not fills(grid, cutout):
             return "skipped"
@@ -94,10 +97,13 @@ def get_stacks(ra, dec, fov=5.0, array=1, per_exposure=False, epoch_gap_days=7.0
 
     with ThreadPoolExecutor(workers) as pool:
         results = list(pool.map(prepare, exposures))
+    progress.finish(f", {results.count('skipped')} off the edge" if "skipped" in results else "")
     frames = sorted((r for r in results if isinstance(r, dict)), key=lambda f: f["mjd"])
 
     # 4. group into epochs and stack
     groups = [[f] for f in frames] if per_exposure else _group_by_visit(frames, epoch_gap_days)
+    say(f"Lining up and stacking {len(frames)} D{array} exposures into "
+        f"{len(groups)} {'frames' if per_exposure else 'visits'}…", console=False)
     epochs = [_stack(group, grid) for group in groups]
 
     return Stacks(

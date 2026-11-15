@@ -109,6 +109,12 @@
   color: #0b1120;
   font-weight: 600;
 }
+/* 3-view layout: the side column (loupe + difference) is taller than the image,
+   so centre the image next to it instead of leaving a gap underneath */
+.viewer-row.is-centered .viewer {
+  align-self: center;
+}
+
 /* ===== PHONE: image -> play controls -> speed/FOV -> loupe ===== */
 @media (max-width: 600px) {
   /* let the image and the loupe column join the player's own column so we can reorder them */

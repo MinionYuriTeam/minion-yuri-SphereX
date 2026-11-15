@@ -1,0 +1,70 @@
+/* F11 predicted track (GaiaMarker.js), drawn over the main image */
+.gaia-marker {
+  position: absolute;
+  inset: 0;
+  z-index: 1;            /* above the lens overlay */
+  pointer-events: none;  /* the lens still gets the mouse */
+}
+
+.gaia-marker svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.gaia-marker polyline {
+  fill: none;
+  stroke: #7dd3fc;
+  stroke-width: 1.5px;
+  stroke-dasharray: 4 4;
+  opacity: 0.8;
+  vector-effect: non-scaling-stroke;
+}
+
+.gaia-marker circle {
+  fill: #7dd3fc;
+  opacity: 0.55;
+}
+
+.gaia-marker circle.is-now {
+  opacity: 0;            /* the ring marks the current one */
+}
+
+.gaia-ring {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  border: 2px solid #7dd3fc;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px #00000088;
+}
+
+.viewer .gaia-toggle {
+  position: absolute;
+  top: 10px;
+  right: 50px;           /* left of the crosshair button */
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid #ffffff33;
+  border-radius: 8px;
+  background: #000000aa;
+  color: #8c96ab;
+  cursor: pointer;
+}
+
+.viewer .gaia-toggle svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+.viewer .gaia-toggle.is-on {
+  color: #7dd3fc;
+  border-color: #7dd3fc;
+}

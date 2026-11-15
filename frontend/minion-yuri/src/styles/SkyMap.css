@@ -1,0 +1,132 @@
+/* Sky map page (pages/SkyMap.js) */
+.page-wide {
+  max-width: 1200px;
+}
+
+.sky-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 20px;
+}
+
+.sky-wavelength {
+  flex: 1 1 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sky-label {
+  font-size: 13px;
+  color: #c9d1e0;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.sky-wavelength input[type="range"] {
+  width: 100%;
+  accent-color: #ff8a4c;
+}
+
+.sky-wavelength input[type="range"]:disabled {
+  opacity: 0.4;
+}
+
+.sky-jumps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.sky-jumps button {
+  padding: 8px 12px;
+  font-size: 13px;
+}
+
+.sky-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 1;
+  background: radial-gradient(ellipse at center, #0b1120 60%, transparent 71%);
+}
+
+.sky-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+}
+
+.sky-status {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 10px;
+  color: #c9d1e0;
+  font-size: 14px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.sky-error {
+  pointer-events: auto;
+}
+
+.sky-marker,
+.sky-here {
+  position: absolute;
+  transform: translate(-6px, -6px);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #fff;
+  font-size: 12px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.sky-here {
+  cursor: default;
+}
+
+.sky-dot {
+  width: 12px;
+  height: 12px;
+  border: 2px solid #ff8a4c;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px #000a;
+  flex: none;
+}
+
+.sky-here .sky-dot {
+  border-color: #7dd3fc;
+}
+
+.sky-name {
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: #000a;
+  text-shadow: 0 1px 2px #000;
+}
+
+.sky-marker:hover .sky-name {
+  background: #ff8a4c;
+  color: #1a0d05;
+}
+
+.sky-readout {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  min-height: 1.6em;
+}
+
+@media (max-width: 600px) {
+  .sky-name {
+    display: none; /* dots only on a phone; labels come back as tips */
+  }
+}

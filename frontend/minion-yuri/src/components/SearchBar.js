@@ -1,5 +1,5 @@
 // SAM — F1 search
-// Props it gets from App.js: targets, onSearch({ ra, dec, array? }), onNoBackend(error)
+// Props it gets from App.js: targets, onSearch({ ra, dec, array?, track? }), onNoBackend(error)
 // Accepts:
 //   - one of our test targets ("barnard", "wise 0855")     -> instant
 //   - decimal "RA, Dec" (269.45, 4.69)                       -> instant
@@ -46,7 +46,11 @@ function SearchBar({ targets, onSearch, onNoBackend }) {
     setBusy(true);
     try {
       const found = await resolveName(text);
-      onSearch({ ra: found.ra_now ?? found.ra, dec: found.dec_now ?? found.dec });
+      // with a proper motion we also pass the catalogue position, for the F11 predicted track
+      const track = found.pm_ra_mas_yr != null && found.pm_dec_mas_yr != null
+        ? { ra: found.ra, dec: found.dec, pmRa: found.pm_ra_mas_yr, pmDec: found.pm_dec_mas_yr, source: "SIMBAD" }
+        : null;
+      onSearch({ ra: found.ra_now ?? found.ra, dec: found.dec_now ?? found.dec, track });
     } catch (err) {
       // no backend running: show the same "run your own backend" guide as for coordinates
       if (err.code === "NO_BACKEND" && onNoBackend) {
