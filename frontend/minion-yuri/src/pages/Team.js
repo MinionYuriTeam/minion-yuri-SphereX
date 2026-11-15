@@ -8,7 +8,7 @@ const MEMBERS = [
   { name: "Sam", nick: "Muubi", role: "Frontend · search and blink player", photo: "sam.jpg" },
   { name: "Jay", nick: "Jelly", role: "Frontend · loupe and difference mode", photo: "jelly.jpg" },
   { name: "Shoya", nick: "Trappist", role: "Science features and hosting" },
-  { name: "Yash", nick: "Dub", role: "Science lead and pitch" },
+  { name: "Yash", nick: "Dub", role: "Science lead and pitch", photo: "dub.jpg" },
 ];
 
 function Team() {
