@@ -4,6 +4,7 @@
 // Props: epochs (frames), fps (current speed), title (top label), fileName (download name)
 import { useState } from "react";
 import { encodeGif } from "../utils/gif";
+import { makeIndexedFrames } from "../utils/palette";
 
 const TARGET_SIZE = 512; // small images are scaled up (sharp pixels) to about this size
 
@@ -36,7 +37,8 @@ async function makeGif(epochs, fps, title, onProgress) {
   canvas.height = H;
   const ctx = canvas.getContext("2d", { willReadFrequently: true });
 
-  const frames = [];
+  const rgbaFrames = [];
+  let colour = false; // any pixel that isn't grey -> keep colours (false-colour mode)
   for (let i = 0; i < images.length; i++) {
     onProgress(`Making frame ${i + 1}/${images.length}…`);
     ctx.imageSmoothingEnabled = false; // keep pixels sharp, 1–2 pixel moves must stay visible
@@ -57,23 +59,41 @@ async function makeGif(epochs, fps, title, onProgress) {
     ctx.fillText(count, W - pad - ctx.measureText(count).width, H - pad);
     ctx.shadowBlur = 0;
 
-    // canvas pixels -> grey values for the GIF palette
     let rgba;
     try {
       rgba = ctx.getImageData(0, 0, W, H).data;
     } catch {
       throw new Error("The backend doesn't allow its images to be copied (CORS), so a GIF can't be made here.");
     }
+    if (!colour) {
+      for (let q = 0; q < rgba.length; q += 4) {
+        if (Math.abs(rgba[q] - rgba[q + 1]) > 2 || Math.abs(rgba[q + 1] - rgba[q + 2]) > 2) { colour = true; break; }
+      }
+    }
+    rgbaFrames.push(rgba);
+    await new Promise((r) => setTimeout(r)); // let the page breathe between frames
+  }
+
+  const delay = Math.round(100 / fps);
+  if (colour) {
+    // false colour: pick the 256 best colours for this GIF
+    onProgress("Picking colours…");
+    await new Promise((r) => setTimeout(r));
+    const { frames, palette } = makeIndexedFrames(rgbaFrames);
+    onProgress("Saving…");
+    return encodeGif(frames, W, H, delay, palette);
+  }
+
+  // black and white: 256 greys, exact
+  const frames = rgbaFrames.map((rgba) => {
     const grey = new Uint8Array(W * H);
     for (let p = 0, q = 0; p < grey.length; p++, q += 4) {
       grey[p] = Math.round(0.299 * rgba[q] + 0.587 * rgba[q + 1] + 0.114 * rgba[q + 2]);
     }
-    frames.push(grey);
-    await new Promise((r) => setTimeout(r)); // let the page breathe between frames
-  }
-
+    return grey;
+  });
   onProgress("Saving…");
-  return encodeGif(frames, W, H, Math.round(100 / fps));
+  return encodeGif(frames, W, H, delay);
 }
 
 function GifExport({ epochs, fps, title, fileName }) {
