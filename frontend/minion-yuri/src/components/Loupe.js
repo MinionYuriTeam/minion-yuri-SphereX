@@ -58,10 +58,11 @@ function Loupe({ imageUrl }) {
   }, [imageUrl]);
 
   // colour under the lens, e.g. "#1A2B3C" (null if the image doesn't allow it)
+  // Pixel 27 covers 27.0 up to 27.99, so the pixel under the mouse is floor(), not round().
   function colourAt(p) {
     if (!p || !samplerRef.current) return null;
     try {
-      const d = samplerRef.current.getImageData(Math.round(p.x), Math.round(p.y), 1, 1).data;
+      const d = samplerRef.current.getImageData(Math.floor(p.x), Math.floor(p.y), 1, 1).data;
       return "#" + [d[0], d[1], d[2]].map((v) => v.toString(16).padStart(2, "0")).join("").toUpperCase();
     } catch {
       return null;
@@ -92,7 +93,8 @@ function Loupe({ imageUrl }) {
     const v = Number(value);
     if (isNaN(v) || !natural.w) return;
     const max = (axis === "x" ? natural.w : natural.h) - 1;
-    setPoint((p) => ({ x: p ? p.x : 0, y: p ? p.y : 0, [axis]: clamp(v, 0, max) }));
+    // + 0.5 = the middle of that pixel, so the lens is centred on it
+    setPoint((p) => ({ x: p ? p.x : 0.5, y: p ? p.y : 0.5, [axis]: clamp(Math.floor(v), 0, max) + 0.5 }));
     setPinned(true);
     setVisible(true);
   }
@@ -131,17 +133,26 @@ function Loupe({ imageUrl }) {
 
   // lens position + zoomed background, based on the image size on screen
   let lensStyle = { display: "none" };
+  let pixelStyle = null; // outline of the exact pixel the colour is read from
   if (visible && point && imgRef.current && natural.w) {
     const w = imgRef.current.clientWidth;
     const h = imgRef.current.clientHeight;
     const dx = (point.x / natural.w) * w;
     const dy = (point.y / natural.h) * h;
     const half = lensSize / 2;
+    const BORDER = 2; // lens border (Loupe.css): shift so the lens centre is exactly under the mouse
+    const px = (w / natural.w) * zoom; // one image pixel inside the lens, in screen px
+    pixelStyle = {
+      width: px,
+      height: px,
+      left: half + (Math.floor(point.x) - point.x) * px,
+      top: half + (Math.floor(point.y) - point.y) * px,
+    };
     lensStyle = {
       width: lensSize,
       height: lensSize,
-      left: dx - half,
-      top: dy - half,
+      left: dx - half - BORDER,
+      top: dy - half - BORDER,
       backgroundImage: `url("${imageUrl}")`,
       backgroundSize: `${w * zoom}px ${h * zoom}px`,
       backgroundPosition: `${-(dx * zoom - half)}px ${-(dy * zoom - half)}px`,
@@ -174,7 +185,9 @@ function Loupe({ imageUrl }) {
           draggable="false"
           onLoad={(e) => setNatural({ w: e.target.naturalWidth, h: e.target.naturalHeight })}
         />
-        <div className={`loupe-lens ${pinned ? "pinned" : ""}`} style={lensStyle} />
+        <div className={`loupe-lens ${pinned ? "pinned" : ""}`} style={lensStyle}>
+          {pixelStyle && <div className="loupe-pixel" style={pixelStyle} />}
+        </div>
       </div>
 
       {/* zoom + lens size */}
@@ -210,9 +223,9 @@ function Loupe({ imageUrl }) {
 
       {/* readout: exact pixel, colour, image size */}
       <div className="loupe-readout">
-        <label data-tip="Pixel column under the lens. Type a number to jump there">X <input type="number" min="0" value={point ? Math.round(point.x) : 0}
+        <label data-tip="Pixel column under the lens. Type a number to jump there">X <input type="number" min="0" value={point ? Math.floor(point.x) : 0}
           onChange={(e) => jumpTo("x", e.target.value)} /></label>
-        <label data-tip="Pixel row under the lens. Type a number to jump there">Y <input type="number" min="0" value={point ? Math.round(point.y) : 0}
+        <label data-tip="Pixel row under the lens. Type a number to jump there">Y <input type="number" min="0" value={point ? Math.floor(point.y) : 0}
           onChange={(e) => jumpTo("y", e.target.value)} /></label>
         <span className="loupe-colour" data-tip="Colour of the pixel under the lens. Brighter = more infrared light">
           <span className="loupe-swatch" style={{ background: hex || "transparent" }} />

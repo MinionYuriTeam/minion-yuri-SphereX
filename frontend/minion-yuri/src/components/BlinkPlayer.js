@@ -4,10 +4,11 @@
 //   children = what goes next to Speed (the FovPicker)
 import { useEffect, useState } from "react";
 import "../styles/BlinkPlayer.css";
+import GifExport from "./GifExport";
 
 const SPEEDS = [1, 2, 5];
 
-function BlinkPlayer({ epochs, index, setIndex, side, children }) {
+function BlinkPlayer({ epochs, index, setIndex, side, children, gifTitle = "SPHEREx", gifName = "spherex-blink.gif" }) {
   const [playing, setPlaying] = useState(true);
   const [fps, setFps] = useState(2);
   const [crosshair, setCrosshair] = useState(false);
@@ -81,6 +82,7 @@ function BlinkPlayer({ epochs, index, setIndex, side, children }) {
           onChange={(e) => { setPlaying(false); setIndex(Number(e.target.value)); }}
         />
         <span data-tip="Which picture you're seeing, out of how many SPHEREx visits">{index + 1}/{epochs.length}</span>
+        <GifExport epochs={epochs} fps={fps} title={gifTitle} fileName={gifName} />
       </div>
 
       {/*Field of view */}

@@ -241,3 +241,12 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/* outline of the one pixel the colour readout comes from */
+.loupe-pixel {
+  position: absolute;
+  box-sizing: border-box;
+  border: 1px solid #ff8a4c;
+  box-shadow: 0 0 0 1px #0008;
+  pointer-events: none;
+}

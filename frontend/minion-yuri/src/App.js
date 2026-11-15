@@ -47,6 +47,20 @@ function readUrl() {
 }
 
 // shown while the backend works; the first load of a new spot can take up to a minute
+// name + file name for the GIF export: the preset's name, or the position
+function presetAt(view) {
+  return TARGETS.find((t) => Math.abs(t.ra - view.ra) < 0.01 && Math.abs(t.dec - view.dec) < 0.01);
+}
+function gifLabel(view) {
+  const where = presetAt(view)?.name || `${Number(view.ra).toFixed(4)}, ${Number(view.dec).toFixed(4)}`;
+  return `${where} · array ${view.array} · ${view.fov}′`;
+}
+function gifFileName(view) {
+  const where = presetAt(view)?.name || `ra${Number(view.ra).toFixed(3)}_dec${Number(view.dec).toFixed(3)}`;
+  const slug = where.toLowerCase().replace(/[^a-z0-9.+-]+/g, "-").replace(/^-|-$/g, "");
+  return `spherex-${slug}-array${view.array}-${view.fov}arcmin.gif`;
+}
+
 function Loading() {
   const [seconds, setSeconds] = useState(0);
   useEffect(() => {
@@ -183,6 +197,8 @@ function App() {
                 epochs={data.epochs}
                 index={index}
                 setIndex={setIndex}
+                gifTitle={gifLabel(view)}
+                gifName={gifFileName(view)}
                 side={<><Loupe imageUrl={data.epochs[index]?.png_url} /><DifferenceView /></>}
               >
                 <FovPicker
@@ -190,19 +206,24 @@ function App() {
                   onChange={(f) => setView({ ...view, fov: f })}
                   loadTime={loadTime}
                 />
+                {/* inside the player, so on a phone it sits right under Field of view (not under the loupe) */}
+                <div className="controls-wide">
+                  <BandPicker
+                    array={view.array}
+                    onChange={(a) => setView({ ...view, array: a })}
+                    wavelength={data?.wavelength_um}
+                  />
+                </div>
               </BlinkPlayer>
             )}
 
-            {/* while loading or after an error the player is hidden, so keep FOV reachable */}
+            {/* while loading or after an error the player is hidden, so keep FOV + array reachable */}
             {!data && (
-              <FovPicker fov={view.fov} onChange={(f) => setView({ ...view, fov: f })} loadTime={null} />
+              <>
+                <FovPicker fov={view.fov} onChange={(f) => setView({ ...view, fov: f })} loadTime={null} />
+                <BandPicker array={view.array} onChange={(a) => setView({ ...view, array: a })} wavelength={null} />
+              </>
             )}
-
-            <BandPicker
-              array={view.array}
-              onChange={(a) => setView({ ...view, array: a })}
-              wavelength={data?.wavelength_um}
-            />
             <ViewToggle />
           </section>
 
