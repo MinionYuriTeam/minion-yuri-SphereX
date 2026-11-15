@@ -2,13 +2,14 @@
 // Props it gets from App.js: epochs, index, setIndex
 //   side     = what goes next to the image (Jay's loupe + difference)
 //   children = what goes next to Speed (the FovPicker)
+//   overlay  = drawn on top of the image (Jay's loupe lens in the 2-view layout)
 import { useEffect, useState } from "react";
 import "../styles/BlinkPlayer.css";
 import GifExport from "./GifExport";
 
 const SPEEDS = [1, 2, 5];
 
-function BlinkPlayer({ epochs, index, setIndex, side, children, gifTitle = "SPHEREx", gifName = "spherex-blink.gif" }) {
+function BlinkPlayer({ epochs, index, setIndex, side, overlay, children, gifTitle = "SPHEREx", gifName = "spherex-blink.gif" }) {
   const [playing, setPlaying] = useState(true);
   const [fps, setFps] = useState(2);
   const [crosshair, setCrosshair] = useState(false);
@@ -45,6 +46,7 @@ function BlinkPlayer({ epochs, index, setIndex, side, children, gifTitle = "SPHE
             src={frame.png_url}
             alt={`Sky on ${frame.date}`}
           />
+          {overlay}
           {/* Crosshair on the centre = the target. Gap in the middle so it never covers the star */}
           {crosshair && (
             <svg className="crosshair" viewBox="0 0 100 100" aria-hidden="true">

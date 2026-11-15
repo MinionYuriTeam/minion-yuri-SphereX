@@ -5,26 +5,157 @@
 // Double-click / P -> pin the lens in place (dashed border), again to release
 // Wheel / + / −    -> zoom 1.5× – 10×        [ / ]  -> smaller / bigger lens
 // X / Y fields     -> jump to an exact pixel (pins the lens)
-import { useEffect, useRef, useState } from "react";
+//
+// Every lens (this one, the one on the big picture, the Difference one) has its OWN spot: where it is,
+// whether it's showing, whether it's pinned (useLensSpot). Only the settings are shared through
+// App.js (`lens` + `setLens`): zoom and lens size, plus a separate zoom for the big picture's lens.
+// The spot is stored as a fraction of the image (uv: 0..1) so it fits any image size.
+import { useCallback, useEffect, useRef, useState } from "react";
 import "../styles/Loupe.css";
 
 const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
 
-function Loupe({ imageUrl }) {
+// shared lens settings; App.js keeps one of these and hands it to every lens.
+// zoom = the Loupe / Difference lenses (sliders, + −); cursorZoom = the lens on the big picture
+// (mouse wheel over it), kept apart so each can be set on its own.
+export const DEFAULT_LENS = { zoom: 2.5, cursorZoom: 2.5, lensSize: 120 };
+
+// one lens's own spot. P pins/unpins the lens the mouse was over last.
+const NO_SPOT = { uv: null, visible: false, pinned: false };
+let activeSpot = null;
+export function useLensSpot(id) {
+  const [spot, setSpot] = useState(NO_SPOT);
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.target.tagName === "INPUT" || activeSpot !== id) return;
+      if (e.key === "p" || e.key === "P") setSpot((s) => ({ ...s, pinned: !s.pinned, visible: true }));
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [id]);
+  const markActive = useCallback(() => { activeSpot = id; }, [id]);
+  return [spot, setSpot, markActive];
+}
+
+// the spot under the mouse, as a fraction of element `el` (or null)
+export function spotAt(el, e) {
+  if (!el) return null;
+  const r = el.getBoundingClientRect();
+  return { u: clamp((e.clientX - r.left) / r.width, 0, 0.9999), v: clamp((e.clientY - r.top) / r.height, 0, 0.9999) };
+}
+export const ZOOM_MIN = 1.5, ZOOM_MAX = 10, LENS_MIN = 80, LENS_MAX = 200;
+
+// Where to draw the round lens and the outline of the pixel under it.
+//   uv: lens centre as a fraction of the picture   w, h: picture size on screen
+//   nw, nh: picture size in real pixels            src: what the lens shows (zoomed)
+export function lensLayout({ uv, zoom, lensSize, w, h, nw, nh, src }) {
+  const dx = uv.u * w, dy = uv.v * h;
+  const ix = uv.u * nw, iy = uv.v * nh; // in image pixels
+  const half = lensSize / 2;
+  const BORDER = 2; // lens border (Loupe.css): shift so the lens centre is exactly under the mouse
+  const px = (w / nw) * zoom; // one image pixel inside the lens, in screen px
+  return {
+    pixelStyle: {
+      width: px,
+      height: px,
+      left: half + (Math.floor(ix) - ix) * px,
+      top: half + (Math.floor(iy) - iy) * px,
+    },
+    lensStyle: {
+      width: lensSize,
+      height: lensSize,
+      left: dx - half - BORDER,
+      top: dy - half - BORDER,
+      backgroundImage: `url("${src}")`,
+      backgroundSize: `${w * zoom}px ${h * zoom}px`,
+      backgroundPosition: `${-(dx * zoom - half)}px ${-(dy * zoom - half)}px`,
+    },
+  };
+}
+
+// The lens on top of the big picture (2-view layout). Lives inside BlinkPlayer's viewer, covers the
+// image, and draws `src` (the frame itself) zoomed by its own cursorZoom.
+// Hover moves it, double-click pins, wheel zooms (this lens only); the zoom shows in a corner badge.
+export function LensOverlay({ lens, setLens, src }) {
+  const [spot, setSpot, markActive] = useLensSpot("main");
+  const ref = useRef(null);
+  const [natural, setNatural] = useState({ w: 0, h: 0 });
+
+  // real pixel size of whatever the lens shows (for the pixel outline)
+  useEffect(() => {
+    if (!src) return;
+    let cancelled = false;
+    const im = new Image();
+    im.onload = () => !cancelled && setNatural({ w: im.naturalWidth, h: im.naturalHeight });
+    im.src = src;
+    return () => { cancelled = true; };
+  }, [src]);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const onWheel = (e) => {
+      e.preventDefault();
+      setLens((l) => ({ ...l, cursorZoom: clamp(l.cursorZoom * (e.deltaY < 0 ? 1.1 : 0.9), ZOOM_MIN, ZOOM_MAX) }));
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, [setLens]);
+
+  function handleMove(e) {
+    markActive();
+    if (spot.pinned || !ref.current) return;
+    setSpot((s) => ({ ...s, uv: spotAt(ref.current, e), visible: true }));
+  }
+
+  let styles = null;
+  const el = ref.current;
+  if (src && spot.visible && spot.uv && natural.w && el && el.clientWidth) {
+    styles = lensLayout({ ...lens, uv: spot.uv, zoom: lens.cursorZoom, w: el.clientWidth, h: el.clientHeight, nw: natural.w, nh: natural.h, src });
+  }
+
+  return (
+    <div
+      ref={ref}
+      className="lens-overlay"
+      onMouseMove={handleMove}
+      onMouseLeave={() => !spot.pinned && setSpot((s) => ({ ...s, visible: false }))}
+      onTouchStart={(e) => handleMove(e.touches[0])}
+      onTouchMove={(e) => handleMove(e.touches[0])}
+      onDoubleClick={() => setSpot((s) => ({ ...s, pinned: !s.pinned, visible: true }))}
+    >
+      <div className={`loupe-lens ${spot.pinned ? "pinned" : ""}`} style={styles ? styles.lensStyle : { display: "none" }}>
+        {styles && <div className="loupe-pixel" style={styles.pixelStyle} />}
+      </div>
+      {styles && <span className="lens-overlay-zoom" data-tip="Zoom of this lens (mouse wheel)">{lens.cursorZoom.toFixed(1)}×</span>}
+    </div>
+  );
+}
+
+// attached = 2-view layout: the lens lives on the big picture (LensOverlay), so the Loupe shows
+// only its controls (zoom, lens size), not its own copy of the picture or its own spot.
+function Loupe({ imageUrl, lens: sharedLens, setLens: setSharedLens, attached = false }) {
   const stageRef = useRef(null);
   const imgRef = useRef(null);
   const samplerRef = useRef(null); // hidden canvas to read pixel colours
 
   const [natural, setNatural] = useState({ w: 0, h: 0 }); // real image size in pixels
-  const [point, setPoint] = useState(null);               // lens position in image pixels
-  const [visible, setVisible] = useState(false);
-  const [pinned, setPinned] = useState(false);
-  const [zoom, setZoom] = useState(2.5);
-  const [lensSize, setLensSize] = useState(120);
+  const [localLens, setLocalLens] = useState(DEFAULT_LENS); // used when App.js doesn't share one
+  const [spot, setSpot, markActive] = useLensSpot("loupe");
   const [helpOpen, setHelpOpen] = useState(false);
 
-  const changeZoom = (z) => setZoom(clamp(z, 1.5, 10));
-  const changeLens = (s) => setLensSize(clamp(s, 80, 200));
+  const lens = sharedLens || localLens;
+  const setLens = setSharedLens || setLocalLens;
+  // merge a change into the lens settings; `fn` gets the current settings
+  const patch = useCallback((fn) => setLens((l) => ({ ...l, ...fn(l) })), [setLens]);
+
+  const { zoom, lensSize } = lens;
+  const { pinned, visible } = spot;
+  const point = spot.uv && natural.w ? { x: spot.uv.u * natural.w, y: spot.uv.v * natural.h } : null; // in image pixels
+  const toUv = (p) => ({ u: p.x / natural.w, v: p.y / natural.h });
+
+  const changeZoom = (z) => patch(() => ({ zoom: clamp(z, ZOOM_MIN, ZOOM_MAX) }));
+  const changeLens = (s) => patch(() => ({ lensSize: clamp(s, LENS_MIN, LENS_MAX) }));
 
   // load a copy of each frame into a canvas so we can read pixel colours.
   // Kept per URL, so when the loop comes back to a frame its colours are ready at once
@@ -36,6 +167,7 @@ function Loupe({ imageUrl }) {
     const cached = samplersRef.current.get(imageUrl);
     if (cached) {
       samplerRef.current = cached;
+      setNatural({ w: cached.canvas.width, h: cached.canvas.height });
       return;
     }
     let cancelled = false;
@@ -50,6 +182,7 @@ function Loupe({ imageUrl }) {
       samplersRef.current.set(imageUrl, ctx);
       if (!cancelled) {
         samplerRef.current = ctx; // swap only when ready; until then keep the previous frame's
+        setNatural({ w: c.width, h: c.height });
         setSamplerReady((n) => n + 1);
       }
     };
@@ -79,14 +212,13 @@ function Loupe({ imageUrl }) {
   }
 
   function handleMove(e) {
+    markActive();
     if (pinned || !natural.w) return;
-    setPoint(toImagePoint(e.clientX, e.clientY));
-    setVisible(true);
+    setSpot((s) => ({ ...s, uv: toUv(toImagePoint(e.clientX, e.clientY)), visible: true }));
   }
 
   function togglePin() {
-    setPinned((p) => !p);
-    setVisible(true);
+    setSpot((s) => ({ ...s, pinned: !s.pinned, visible: true }));
   }
 
   function jumpTo(axis, value) {
@@ -94,9 +226,8 @@ function Loupe({ imageUrl }) {
     if (isNaN(v) || !natural.w) return;
     const max = (axis === "x" ? natural.w : natural.h) - 1;
     // + 0.5 = the middle of that pixel, so the lens is centred on it
-    setPoint((p) => ({ x: p ? p.x : 0.5, y: p ? p.y : 0.5, [axis]: clamp(Math.floor(v), 0, max) + 0.5 }));
-    setPinned(true);
-    setVisible(true);
+    const p = { x: point ? point.x : 0.5, y: point ? point.y : 0.5, [axis]: clamp(Math.floor(v), 0, max) + 0.5 };
+    setSpot({ uv: toUv(p), pinned: true, visible: true });
   }
 
   // mouse wheel zoom (needs a non-passive listener to stop the page scrolling)
@@ -105,58 +236,36 @@ function Loupe({ imageUrl }) {
     if (!stage) return;
     const onWheel = (e) => {
       e.preventDefault();
-      setZoom((z) => clamp(z * (e.deltaY < 0 ? 1.1 : 0.9), 1.5, 10));
+      patch((l) => ({ zoom: clamp(l.zoom * (e.deltaY < 0 ? 1.1 : 0.9), ZOOM_MIN, ZOOM_MAX) }));
     };
     stage.addEventListener("wheel", onWheel, { passive: false });
     return () => stage.removeEventListener("wheel", onWheel);
-  }, [imageUrl]);
+  }, [imageUrl, patch]);
 
   // keyboard shortcuts (ignored while typing in a field)
   useEffect(() => {
     const onKey = (e) => {
       if (e.target.tagName === "INPUT") return;
       if (e.key === "Escape") setHelpOpen(false);
-      if (e.key === "+" || e.key === "=") setZoom((z) => clamp(z + 0.5, 1.5, 10));
-      if (e.key === "-" || e.key === "_") setZoom((z) => clamp(z - 0.5, 1.5, 10));
-      if (e.key === "[") setLensSize((s) => clamp(s - 20, 80, 200));
-      if (e.key === "]") setLensSize((s) => clamp(s + 20, 80, 200));
-      if (e.key === "p" || e.key === "P") {
-        setPinned((p) => !p);
-        setVisible(true);
-      }
+      if (e.key === "+" || e.key === "=") patch((l) => ({ zoom: clamp(l.zoom + 0.5, ZOOM_MIN, ZOOM_MAX) }));
+      if (e.key === "-" || e.key === "_") patch((l) => ({ zoom: clamp(l.zoom - 0.5, ZOOM_MIN, ZOOM_MAX) }));
+      if (e.key === "[") patch((l) => ({ lensSize: clamp(l.lensSize - 20, LENS_MIN, LENS_MAX) }));
+      if (e.key === "]") patch((l) => ({ lensSize: clamp(l.lensSize + 20, LENS_MIN, LENS_MAX) }));
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  }, [patch]);
 
   if (!imageUrl) return null;
 
   // lens position + zoomed background, based on the image size on screen
   let lensStyle = { display: "none" };
   let pixelStyle = null; // outline of the exact pixel the colour is read from
-  if (visible && point && imgRef.current && natural.w) {
-    const w = imgRef.current.clientWidth;
-    const h = imgRef.current.clientHeight;
-    const dx = (point.x / natural.w) * w;
-    const dy = (point.y / natural.h) * h;
-    const half = lensSize / 2;
-    const BORDER = 2; // lens border (Loupe.css): shift so the lens centre is exactly under the mouse
-    const px = (w / natural.w) * zoom; // one image pixel inside the lens, in screen px
-    pixelStyle = {
-      width: px,
-      height: px,
-      left: half + (Math.floor(point.x) - point.x) * px,
-      top: half + (Math.floor(point.y) - point.y) * px,
-    };
-    lensStyle = {
-      width: lensSize,
-      height: lensSize,
-      left: dx - half - BORDER,
-      top: dy - half - BORDER,
-      backgroundImage: `url("${imageUrl}")`,
-      backgroundSize: `${w * zoom}px ${h * zoom}px`,
-      backgroundPosition: `${-(dx * zoom - half)}px ${-(dy * zoom - half)}px`,
-    };
+  if (!attached && visible && spot.uv && imgRef.current && natural.w) {
+    ({ lensStyle, pixelStyle } = lensLayout({
+      ...lens, uv: spot.uv, w: imgRef.current.clientWidth, h: imgRef.current.clientHeight,
+      nw: natural.w, nh: natural.h, src: imageUrl,
+    }));
   }
   const hex = colourAt(point);
 
@@ -168,12 +277,12 @@ function Loupe({ imageUrl }) {
           data-tip="All loupe shortcuts">?</button>
       </div>
 
-      {/* the image + the round lens on top */}
-      <div
+      {/* the image + the round lens on top (3-view layout only) */}
+      {!attached && <div
         ref={stageRef}
         className="loupe-stage"
         onMouseMove={handleMove}
-        onMouseLeave={() => !pinned && setVisible(false)}
+        onMouseLeave={() => !pinned && setSpot((s) => ({ ...s, visible: false }))}
         onTouchMove={(e) => handleMove(e.touches[0])}
         onTouchStart={(e) => handleMove(e.touches[0])}
         onDoubleClick={togglePin}
@@ -188,7 +297,7 @@ function Loupe({ imageUrl }) {
         <div className={`loupe-lens ${pinned ? "pinned" : ""}`} style={lensStyle}>
           {pixelStyle && <div className="loupe-pixel" style={pixelStyle} />}
         </div>
-      </div>
+      </div>}
 
       {/* zoom + lens size */}
       <div className="loupe-tools">
@@ -214,15 +323,17 @@ function Loupe({ imageUrl }) {
 
       {/* hint line: always there (fixed height), only the text changes, so the layout never jumps */}
       <p className="loupe-hint">
-        {pinned
-          ? "Pinned · double-click or P to unpin"
-          : visible
-            ? "Double-click or P to pin the lens"
-            : "Hover the image to magnify"}
+        {attached
+          ? "Hover the big picture to magnify · double-click or P to pin"
+          : pinned
+            ? "Pinned · double-click or P to unpin"
+            : visible
+              ? "Double-click or P to pin the lens"
+              : "Hover the image to magnify"}
       </p>
 
-      {/* readout: exact pixel, colour, image size */}
-      <div className="loupe-readout">
+      {/* readout: exact pixel, colour, image size (for this lens's own picture: 3-view only) */}
+      {!attached && <div className="loupe-readout">
         <label data-tip="Pixel column under the lens. Type a number to jump there">X <input type="number" min="0" value={point ? Math.floor(point.x) : 0}
           onChange={(e) => jumpTo("x", e.target.value)} /></label>
         <label data-tip="Pixel row under the lens. Type a number to jump there">Y <input type="number" min="0" value={point ? Math.floor(point.y) : 0}
@@ -232,7 +343,7 @@ function Loupe({ imageUrl }) {
           {hex || "—"}
         </span>
         <span className="loupe-dim" data-tip="Size of the picture in pixels (1 pixel = 6.2″ of sky)">{natural.w ? `${natural.w} × ${natural.h}` : "—"}</span>
-      </div>
+      </div>}
 
       {/* help guide (Jay's modal) */}
       {helpOpen && (

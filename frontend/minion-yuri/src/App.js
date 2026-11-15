@@ -1,7 +1,7 @@
 import './styles/App.css';
 import './styles/buttons.css';
 import './styles/Slider.css';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { TARGETS } from './data/target';
 import { getFrames, getRgb } from './api/frames';
 
@@ -19,7 +19,7 @@ import RunBackendHelp from './components/RunBackendHelp'; // "start your own bac
 import EasterEgg from './components/EasterEgg';           // ↑↑↓↓←→←→ B A Enter
 import SpectrumChart from './components/SpectrumChart';   // F12 (/api/spectrum)
 // JAY
-import Loupe from './components/Loupe';                   // F6
+import Loupe, { DEFAULT_LENS, LensOverlay } from './components/Loupe'; // F6
 import ViewToggle from './components/ViewToggle';         // F9
 import DifferenceView from './components/DifferenceView'; // F9
 // PAGES (opened from the navbar)
@@ -46,6 +46,14 @@ function readUrl() {
     array: num('array', TARGETS[0].array),
     rgb: num('rgb', 0), // 1 = false colour (arrays 6/4/2 as R/G/B)
   };
+}
+
+// layout=3 in the address bar = the 3-view layout; no layout = 2 views (the default)
+function readLayout() {
+  return new URLSearchParams(window.location.search).get('layout') === '3' ? 'three' : 'two';
+}
+function urlQuery(view, layout) {
+  return '?' + new URLSearchParams(layout === 'three' ? { ...view, layout: 3 } : view);
 }
 
 // shown while the backend works; the first load of a new spot can take up to a minute
@@ -93,6 +101,17 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);       // Error from getFrames (err.code 'NO_BACKEND' = no backend running)
   const [retry, setRetry] = useState(0);          // bump to load the same view again
+  const [viewMode, setViewMode] = useState('normal'); // F9: 'normal' | 'difference'
+  const canDiff = data?.epochs?.length > 1;
+  const [lens, setLens] = useState(DEFAULT_LENS);      // lens zoom + size, shared; each lens keeps its own spot
+  const [layout, setLayout] = useState(readLayout);   // 'two': lens on the big picture · 'three': Loupe as its own picture
+  const layoutRef = useRef(layout);                    // for the URL write in the frames effect (no refetch on layout change)
+  useEffect(() => {
+    layoutRef.current = layout;
+    window.history.replaceState(null, '', urlQuery(view, layout) + window.location.hash);
+  }, [layout]); // eslint-disable-line react-hooks/exhaustive-deps -- view's own effect keeps the URL in sync for view changes
+  const frameUrl = data?.epochs?.[Math.min(index, (data?.epochs?.length || 1) - 1)]?.png_url;
+  const showDiff = viewMode === 'difference' && canDiff;
 
   // every time the view changes (search, preset, FOV, array): load the frames
   useEffect(() => {
@@ -117,8 +136,7 @@ function App() {
         if (!controller.signal.aborted) setLoading(false);
       });
 
-    const query = '?' + new URLSearchParams(view);
-    window.history.replaceState(null, '', query + window.location.hash);
+    window.history.replaceState(null, '', urlQuery(view, layoutRef.current) + window.location.hash);
     return () => controller.abort();
   }, [view, retry]);
 
@@ -210,7 +228,13 @@ function App() {
                 setIndex={setIndex}
                 gifTitle={gifLabel(view)}
                 gifName={gifFileName(view)}
-                side={<><Loupe imageUrl={data.epochs[index]?.png_url} /><DifferenceView /></>}
+                overlay={layout === 'two' && frameUrl ? <LensOverlay lens={lens} setLens={setLens} src={frameUrl} /> : null}
+                side={<>
+                  <Loupe imageUrl={frameUrl} lens={lens} setLens={setLens} attached={layout === 'two'} />
+                  {showDiff && (
+                    <DifferenceView epochs={data.epochs} index={index} lens={lens} setLens={setLens} />
+                  )}
+                </>}
               >
                 <FovPicker
                   fov={view.fov}
@@ -243,7 +267,8 @@ function App() {
                 />
               </>
             )}
-            <ViewToggle />
+            {data && <ViewToggle mode={viewMode} onChange={setViewMode} disabled={!canDiff}
+              layout={layout} onLayout={setLayout} />}
           </section>
 
           <aside className="side-panels">
@@ -251,7 +276,7 @@ function App() {
               <TargetInfo view={view} targets={TARGETS} wavelength={data?.wavelength_um} />
             </section>
             <section className="panel">
-              <ShareLink view={view} />
+              <ShareLink view={layout === 'three' ? { ...view, layout: 3 } : view} />
             </section>
           </aside>
         </div>
