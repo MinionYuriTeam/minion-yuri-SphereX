@@ -6,13 +6,16 @@
 //     Difference  each picture minus the first one (orange brighter, teal darker), as in F9
 //   On top:
 //     Predicted track  the F11 ring + dashed path (only when the target has a proper motion)
+//     Flagged pixels   the F13 red overlay (only when some picture has flags); starts the way
+//                      the player's flag button is set
 //     Labels           name, date and frame count
 // Your choices are remembered in this browser.
 //
 // Works for the built-in presets and for anything loaded from a backend (needs the backend
 // to allow cross-origin images, which FastAPI's CORS setting does).
 // Props: epochs (frames), fps (current speed), title (top label), fileName (download name),
-//        track (F11 points per frame as image fractions, or []), zoom (the loupe's zoom)
+//        track (F11 points per frame as image fractions, or []), zoom (the loupe's zoom),
+//        flagsOn (the player's F13 flag button is on)
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { encodeGif } from "../utils/gif";
@@ -25,7 +28,7 @@ const PANEL_SIZE = 360;  // two or three panels: each about this size
 const GAP = 6;           // black gap between panels
 const TRACK_COLOUR = "#7dd3fc";
 const PREFS_KEY = "minion-yuri-gif-options";
-const DEFAULTS = { picture: true, loupe: false, difference: false, track: true, labels: true };
+const DEFAULTS = { picture: true, loupe: false, difference: false, track: true, labels: true, flags: false };
 
 function loadPrefs() {
   try {
@@ -103,9 +106,11 @@ function drawTrack(ctx, points, i, x, y, S, crop, w0) {
 async function makeGif({ epochs, fps, title, opts, track, zoom }, onProgress) {
   const panels = ["picture", "loupe", "difference"].filter((p) => opts[p]);
   const images = [];
+  const flagImages = []; // F13 red overlay per picture, or null (nothing flagged / not wanted)
   for (let i = 0; i < epochs.length; i++) {
     onProgress(`Loading ${i + 1}/${epochs.length}…`);
     images.push(await loadImage(epochs[i].png_url));
+    flagImages.push(opts.flags && epochs[i].flags_png_url ? await loadImage(epochs[i].flags_png_url) : null);
   }
 
   const w0 = images[0].naturalWidth;
@@ -158,9 +163,11 @@ async function makeGif({ epochs, fps, title, opts, track, zoom }, onProgress) {
       const x = k * (S + GAP);
       if (panel === "picture") {
         ctx.drawImage(images[i], x, 0, S, S);
+        if (flagImages[i]) ctx.drawImage(flagImages[i], x, 0, S, S);
         if (showTrack) drawTrack(ctx, track, i, x, 0, S, full, w0);
       } else if (panel === "loupe") {
         ctx.drawImage(images[i], crop.u0 * w0, crop.v0 * h0, crop.size * w0, crop.size * h0, x, 0, S, S);
+        if (flagImages[i]) ctx.drawImage(flagImages[i], crop.u0 * w0, crop.v0 * h0, crop.size * w0, crop.size * h0, x, 0, S, S);
         if (showTrack) drawTrack(ctx, track, i, x, 0, S, crop, w0);
         if (opts.labels) label(`Loupe ${zoom.toFixed(1)}×`, x + pad, pad + font);
       } else if (panel === "difference") {
@@ -217,7 +224,7 @@ const PANEL_CHOICES = [
   { id: "difference", label: "Difference", tip: "Each picture minus the first: orange brighter, teal darker" },
 ];
 
-function GifOptions({ opts, setOpts, hasTrack, zoom, fps, frames, onMake, onClose }) {
+function GifOptions({ opts, setOpts, hasTrack, hasFlags, zoom, fps, frames, onMake, onClose }) {
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
@@ -256,6 +263,10 @@ function GifOptions({ opts, setOpts, hasTrack, zoom, fps, frames, onMake, onClos
             <input type="checkbox" checked={hasTrack && opts.track} disabled={!hasTrack} onChange={() => toggle("track")} />
             Predicted track{!hasTrack && " (none for this view)"}
           </label>
+          <label className="gif-check" data-tip={hasFlags ? "The red pixels SPHEREx marked as unreliable, as with the player's flag button (Picture and Loupe panels)" : "No pixels are flagged in these pictures (false colour has no flags)"}>
+            <input type="checkbox" checked={hasFlags && opts.flags} disabled={!hasFlags} onChange={() => toggle("flags")} />
+            Flagged pixels{!hasFlags && " (none for this view)"}
+          </label>
           <label className="gif-check">
             <input type="checkbox" checked={opts.labels} onChange={() => toggle("labels")} />
             Labels: name, date, frame count
@@ -274,20 +285,23 @@ function GifOptions({ opts, setOpts, hasTrack, zoom, fps, frames, onMake, onClos
   );
 }
 
-function GifExport({ epochs, fps, title, fileName, track = [], zoom = 2.5 }) {
+function GifExport({ epochs, fps, title, fileName, track = [], zoom = 2.5, flagsOn = false }) {
   const [status, setStatus] = useState(null); // null = idle, or a progress / error text
   const [busy, setBusy] = useState(false);
   const [open, setOpen] = useState(false);
   const [opts, setOptsState] = useState(loadPrefs);
   const hasTrack = track.length === epochs.length && track.length > 0;
-  const setOpts = (o) => { setOptsState(o); savePrefs(o); };
+  const hasFlags = epochs.some((e) => e.flags_png_url);
+  // flags aren't remembered: the dialog starts the way the player's flag button is set
+  const setOpts = ({ flags, ...rest }) => { setOptsState({ ...rest, flags }); savePrefs(rest); };
+  const openDialog = () => { setOptsState((o) => ({ ...o, flags: flagsOn })); setOpen(true); };
 
   async function exportGif() {
     setOpen(false);
     setBusy(true);
     setStatus(null);
     try {
-      const bytes = await makeGif({ epochs, fps, title, opts: { ...opts, track: hasTrack && opts.track }, track, zoom }, setStatus);
+      const bytes = await makeGif({ epochs, fps, title, opts: { ...opts, track: hasTrack && opts.track, flags: hasFlags && opts.flags }, track, zoom }, setStatus);
       const url = URL.createObjectURL(new Blob([bytes], { type: "image/gif" }));
       const a = document.createElement("a");
       a.href = url;
@@ -308,15 +322,15 @@ function GifExport({ epochs, fps, title, fileName, track = [], zoom = 2.5 }) {
   return (
     <div className="gif-export">
       <button
-        onClick={() => setOpen(true)}
+        onClick={openDialog}
         disabled={busy || epochs.length < 2}
-        data-tip={`Download this loop as an animated GIF at ${fps} fps; choose loupe, difference and track first`}
+        data-tip={`Download this loop as an animated GIF at ${fps} fps; choose loupe, difference, track and flags first`}
       >
         {busy ? "Making GIF…" : "⬇ GIF"}
       </button>
       {status && <span className="gif-status" role="status">{status}</span>}
       {open && (
-        <GifOptions opts={opts} setOpts={setOpts} hasTrack={hasTrack} zoom={zoom} fps={fps}
+        <GifOptions opts={opts} setOpts={setOpts} hasTrack={hasTrack} hasFlags={hasFlags} zoom={zoom} fps={fps}
           frames={epochs.length} onMake={exportGif} onClose={() => setOpen(false)} />
       )}
     </div>

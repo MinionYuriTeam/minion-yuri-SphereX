@@ -4,6 +4,7 @@
 //   children = what goes next to Speed (the FovPicker)
 //   overlay  = drawn on top of the image (Jay's loupe lens in the 2-view layout, Gaia marker)
 //   gifTrack, gifZoom = F11 track points + loupe zoom, for the GIF options
+//   gifFlags = the F13 flag button is on (the GIF's "Flagged pixels" starts the same)
 //   centered = centre the image next to a tall side column (the 3-view layout)
 import { useEffect, useState } from "react";
 import "../styles/BlinkPlayer.css";
@@ -11,7 +12,7 @@ import GifExport from "./GifExport";
 
 const SPEEDS = [1, 2, 5];
 
-function BlinkPlayer({ epochs, index, setIndex, side, overlay, centered = false, children, gifTitle = "SPHEREx", gifName = "spherex-blink.gif", gifTrack = [], gifZoom = 2.5 }) {
+function BlinkPlayer({ epochs, index, setIndex, side, overlay, centered = false, children, gifTitle = "SPHEREx", gifName = "spherex-blink.gif", gifTrack = [], gifZoom = 2.5, gifFlags = false }) {
   const [playing, setPlaying] = useState(true);
   const [fps, setFps] = useState(2);
   const [crosshair, setCrosshair] = useState(false);
@@ -94,7 +95,7 @@ function BlinkPlayer({ epochs, index, setIndex, side, overlay, centered = false,
           onChange={(e) => { setPlaying(false); setIndex(Number(e.target.value)); }}
         />
         <span data-tip="Which picture you're seeing, out of how many SPHEREx visits">{index + 1}/{epochs.length}</span>
-        <GifExport epochs={epochs} fps={fps} title={gifTitle} fileName={gifName} track={gifTrack} zoom={gifZoom} />
+        <GifExport epochs={epochs} fps={fps} title={gifTitle} fileName={gifName} track={gifTrack} zoom={gifZoom} flagsOn={gifFlags} />
       </div>
 
       {/*Field of view */}

@@ -2,6 +2,41 @@
 
 Newest first. One entry per piece of work, with the branch it landed on.
 
+## 15 Nov 2026: F13 flags overlay + lens fixes (`raman-f13-flags`)
+
+- **`src/components/FlagsOverlay.js`** (+ `styles/FlagsOverlay.css`): a flag
+  button in the big picture's top-left corner lays each frame's
+  `flags_png_url` on top of it: red = pixels SPHEREx marked as unreliable
+  (glare, ghosts, saturation, dead/hot pixels; the list is `OVERLAY` in
+  `backend/pipeline/flags.py`). Pixel-sharp, follows the blink loop.
+  - A legend says "Flagged pixels", or "Nothing flagged in this picture" for a
+    frame without a flags PNG.
+  - Greyed out when no frame has flags (false colour has none).
+  - In false colour it's greyed out and says flags are per array: the colour
+    pictures have no flags layer, on purpose.
+- **GIF export** (`GifExport.js`): new "Flagged pixels" option under "On top",
+  drawn on the Picture and Loupe panels. It starts the way the player's flag
+  button is set, and isn't remembered like the other options.
+- **`App.js`**: `flags=1` in the address bar and the share link; toggling it
+  doesn't reload the frames.
+- **`src/data/target.js`**: the Epsilon Indi B preset turns the overlay on
+  (`showFlags: true`) and its "Look for" text explains the red pixels.
+- **Lens** (`Loupe.js`, `Loupe.css`): with a small lens and a big zoom (e.g.
+  2′, 10×, 80 px) the orange outline of one pixel was wider than the lens and
+  stuck out of the circle. The lens now clips to its circle, and the outline
+  is hidden once one pixel fills more than half the lens. The zoom badge moved
+  below the flag button.
+- Tested in the browser:
+  - Epsilon Indi B at 20′: the saturated core of Epsilon Indi A shows red.
+  - The toggle adds and removes `flags=1` in the address bar and the share link.
+  - Another preset leaves the overlay alone; the Epsilon Indi B preset turns it on.
+  - In false colour the button is greyed out.
+  - All 5 presets, every frame: the flags image loads, or the legend says
+    nothing is flagged (matches the baked `frames.json`).
+  - GIF of Barnard's Star: 721 red pixels in the first frame with flags on, 0 with them off.
+  - At 2′, 10×, 80 px the lens shows no outline and nothing outside the circle.
+  - No console errors.
+
 ## 14 Nov 2026: Easter egg: SPACE JUNK SWEEPER (`frontendApiConnection`)
 
 - Type **↑ ↑ ↓ ↓ ← → ← → B A Enter** anywhere on the site (not in a text
