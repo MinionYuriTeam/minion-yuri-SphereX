@@ -292,6 +292,52 @@ function Chart({ points, array, bands, style }) {
   );
 }
 
+// Bar chart under the spectrum: how many measured exposures fall in each 50 nm slice.
+// Same width and margins as the spectrum, so each bar sits under its part of the curve.
+const BAR_H = 130, BAR_NM = 50;
+function ExposureBars({ points }) {
+  const x0 = M.left, x1 = W - M.right, y0 = BAR_H - 30, y1 = 10;
+  const sx = (um) => x0 + ((um - X_DOMAIN[0]) / (X_DOMAIN[1] - X_DOMAIN[0])) * (x1 - x0);
+  const lo = X_DOMAIN[0] * 1000, n = Math.round((X_DOMAIN[1] - X_DOMAIN[0]) * 1000 / BAR_NM);
+  const counts = new Array(n).fill(0);
+  for (const p of points) {
+    const i = Math.floor((p.wavelength_um * 1000 - lo) / BAR_NM);
+    if (i >= 0 && i < n) counts[i]++;
+  }
+  const max = Math.max(1, ...counts);
+  const ticks = niceLinearTicks(0, max, 3).filter((t) => Number.isInteger(t));
+  const top = Math.max(max, ticks[ticks.length - 1] || 0); // the tallest bar always fits
+  const sy = (c) => y0 - (c / top) * (y0 - y1);
+  const arrayAt = (um) => Number(Object.entries(ARRAY_UM).find(([, [a, b]]) => um >= a && um < b)?.[0] ?? 6);
+
+  return (
+    <svg className="spectrum-svg exposure-bars" viewBox={`0 0 ${W} ${BAR_H}`} role="img"
+      aria-label={`Exposures per wavelength: ${points.length} measured exposures`}>
+      {ticks.map((t) => (
+        <g key={t}>
+          <line x1={x0} x2={x1} y1={sy(t)} y2={sy(t)} className="grid" />
+          <text x={x0 - 8} y={sy(t) + 4} className="tick tick-y">{t}</text>
+        </g>
+      ))}
+      {counts.map((c, i) => {
+        if (!c) return null;
+        const a = (lo + i * BAR_NM) / 1000, b = a + BAR_NM / 1000;
+        return (
+          <rect key={i} x={sx(a) + 0.5} y={sy(c)} width={Math.max(1, sx(b) - sx(a) - 1)} height={y0 - sy(c)}
+            fill={ARRAY_COLOURS[arrayAt((a + b) / 2)]} className="bar"
+            data-tip={`${nm(a)}–${nm(b)} nm: ${c} exposure${c > 1 ? "s" : ""}`} />
+        );
+      })}
+      {[1, 2, 3, 4, 5].map((t) => (
+        <text key={t} x={sx(t)} y={y0 + 16} className="tick">{nm(t)}</text>
+      ))}
+      <line x1={x0} x2={x1} y1={y0} y2={y0} className="axis" />
+      <text x={14} y={(y0 + y1) / 2} className="axis-title"
+        transform={`rotate(-90 14 ${(y0 + y1) / 2})`}>Exposures</text>
+    </svg>
+  );
+}
+
 function SpectrumChart({ ra, dec, array }) {
   const [baked, setBaked] = useState(null);   // null = still checking
   const [requested, setRequested] = useState(false);
@@ -323,13 +369,12 @@ function SpectrumChart({ ra, dec, array }) {
     return () => controller.abort();
   }, [ra, dec, baked, requested, retry]);
 
-  const points = useMemo(() => {
-    if (!data) return [];
-    const good = data.points
-      .filter((p) => Number.isFinite(p.flux_mjy) && Number.isFinite(p.wavelength_um))
-      .map((p) => ({ ...p, flux: p.flux_mjy, error: p.error_mjy })); // the chart's flux is in mJy
-    return binned && style === "dots" ? binPoints(good) : good; // the curve always uses every exposure
-  }, [data, binned, style]);
+  // every measured exposure (also what the bar chart counts)
+  const good = useMemo(() => (data ? data.points
+    .filter((p) => Number.isFinite(p.flux_mjy) && Number.isFinite(p.wavelength_um))
+    .map((p) => ({ ...p, flux: p.flux_mjy, error: p.error_mjy })) : []), [data]); // flux in mJy
+  // the curve always uses every exposure; Dots can be averaged
+  const points = useMemo(() => (binned && style === "dots" ? binPoints(good) : good), [good, binned, style]);
 
   return (
     <div className="spectrum">
@@ -389,6 +434,11 @@ function SpectrumChart({ ra, dec, array }) {
         <>
           <Chart points={points} array={array} style={style}
             bands={LABEL_MODES.find((m) => m.key === labels).bands} />
+          <h4 className="exposure-title"
+            data-tip="How many SPHEREx exposures measured the target at each wavelength (50 nm per bar)">
+            Exposures per wavelength
+          </h4>
+          <ExposureBars points={good} />
           <p className="spectrum-meta">
             {data.points.length} of {data.n_exposures} exposures measured
             {data.n_dropped > 0 && ` (${data.n_dropped} skipped: target off the edge, flagged pixels or cosmic rays)`}
