@@ -14,10 +14,9 @@ import ShareLink from './components/ShareLink';     // F7
 import HoverTips from './components/HoverTips';     // hover any control -> 1-line explanation
 import TargetInfo from './components/TargetInfo';   // "This target" panel
 // SHOYA
-import BandPicker from './components/BandPicker';   // F3/F5, later F10
+import BandPicker, { RGB_ARRAYS } from './components/BandPicker'; // F3/F5 + F10 false colour (/api/rgb)
 import RunBackendHelp from './components/RunBackendHelp'; // "start your own backend" help
 import EasterEgg from './components/EasterEgg';           // ↑↑↓↓←→←→ B A Enter
-import ColourMode, { RGB_ARRAYS } from './components/ColourMode'; // false colour (/api/rgb)
 import SpectrumChart from './components/SpectrumChart';   // F12 (/api/spectrum)
 // JAY
 import Loupe from './components/Loupe';                   // F6
@@ -215,17 +214,14 @@ function App() {
                 />
                 {/* inside the player, so on a phone it sits right under Field of view (not under the loupe) */}
                 <div className="controls-wide">
-                  <ColourMode on={Boolean(view.rgb)} onChange={(on) => setView({ ...view, rgb: on ? 1 : 0 })} />
+                  <BandPicker
+                    array={view.array}
+                    rgb={Boolean(view.rgb)}
+                    onChange={(a) => setView({ ...view, array: a, rgb: 0 })}
+                    onColour={() => setView({ ...view, rgb: 1 })}
+                    wavelength={data?.wavelength_um}
+                  />
                 </div>
-                {!view.rgb && (
-                  <div className="controls-wide">
-                    <BandPicker
-                      array={view.array}
-                      onChange={(a) => setView({ ...view, array: a })}
-                      wavelength={data?.wavelength_um}
-                    />
-                  </div>
-                )}
               </BlinkPlayer>
             )}
 
@@ -233,10 +229,13 @@ function App() {
             {!data && (
               <>
                 <FovPicker fov={view.fov} onChange={(f) => setView({ ...view, fov: f })} loadTime={null} />
-                <ColourMode on={Boolean(view.rgb)} onChange={(on) => setView({ ...view, rgb: on ? 1 : 0 })} />
-                {!view.rgb && (
-                  <BandPicker array={view.array} onChange={(a) => setView({ ...view, array: a })} wavelength={null} />
-                )}
+                <BandPicker
+                  array={view.array}
+                  rgb={Boolean(view.rgb)}
+                  onChange={(a) => setView({ ...view, array: a, rgb: 0 })}
+                  onColour={() => setView({ ...view, rgb: 1 })}
+                  wavelength={null}
+                />
               </>
             )}
             <ViewToggle />
