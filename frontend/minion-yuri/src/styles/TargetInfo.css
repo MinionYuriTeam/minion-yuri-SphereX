@@ -1,0 +1,59 @@
+/* "This target" panel (TargetInfo.js) — like the high-fi design */
+.target-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.target-title {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #8c96ab;
+}
+
+.target-name {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.target-about {
+  margin: -6px 0 0;
+  font-size: 13px;
+  color: #8c96ab;
+}
+
+.target-facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 14px;
+  margin: 0;
+  font-size: 14px;
+}
+
+.target-facts dt {
+  color: #8c96ab;
+}
+
+.target-facts dd {
+  margin: 0;
+  min-width: 0;
+  font-family: 'IBM Plex Mono', monospace;
+  overflow-wrap: anywhere;
+}
+
+.target-look {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #3a1d10;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.target-look strong {
+  color: #ff8a4c;
+}

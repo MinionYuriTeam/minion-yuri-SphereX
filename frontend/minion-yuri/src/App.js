@@ -10,6 +10,7 @@ import Presets from './components/Presets';         // F8
 import FovPicker from './components/FovPicker';     // F2
 import BlinkPlayer from './components/BlinkPlayer'; // F4
 import ShareLink from './components/ShareLink';     // F7
+import TargetInfo from './components/TargetInfo';   // "This target" panel
 // SHOYA
 import BandPicker from './components/BandPicker';   // F3/F5, later F10
 import RunBackendHelp from './components/RunBackendHelp'; // "start your own backend" help
@@ -133,13 +134,14 @@ function App() {
           that spot as a loop, so anything that <strong>moves</strong> or <strong>changes</strong> jumps out.
         </p>
 
-        <p>Now looking at: {view.ra}, {view.dec} · FOV {view.fov}′</p>
+        <p>Now looking at: {Number(view.ra).toFixed(4)}°, {view.dec >= 0 ? '+' : ''}{Number(view.dec).toFixed(4)}° · FOV {view.fov}′</p>
 
         {/* 1. Find a patch of sky */}
         <section className="panel">
           <SearchBar
             targets={TARGETS}
             onSearch={({ ra, dec, array }) => setView({ ...view, ra, dec, array: array ?? view.array })}
+            onNoBackend={(err) => { setData(null); setError(err); }}
           />
           <Presets
             targets={TARGETS}
@@ -199,12 +201,23 @@ function App() {
 
           <aside className="side-panels">
             <section className="panel">
+              <TargetInfo view={view} targets={TARGETS} wavelength={data?.wavelength_um} />
+            </section>
+            <section className="panel">
               <ShareLink view={view} />
             </section>
           </aside>
         </div>
         </>
       )}
+
+      {/* Credits (on every page) */}
+      <footer className="credits">
+        Data: <a href="https://irsa.ipac.caltech.edu/Missions/spherex.html" target="_blank" rel="noreferrer">NASA SPHEREx / IRSA</a>
+        {' · '}Star positions: <a href="https://www.cosmos.esa.int/web/gaia/dr3" target="_blank" rel="noreferrer">ESA Gaia DR3</a>
+        {' · '}Name lookup: <a href="https://cds.unistra.fr/cgi-bin/Sesame" target="_blank" rel="noreferrer">CDS Sesame / SIMBAD</a>
+        {' · '}Made by team Minion Yuri for NASA Space Apps 2026
+      </footer>
     </div>
   );
 }
