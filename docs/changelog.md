@@ -25,6 +25,15 @@ Newest first. One entry per piece of work, with the branch it landed on.
   about 300 exposures per array and could not finish before the deadline.
 - Known gaps: the Orion Nebula spectrum is empty and Kapteyn's Star has 7
   points.
+- **No-backend screen (`RunBackendHelp.js`)**: a spot that isn't built in now
+  offers the built-in targets as buttons (only those in `baked/index.json`);
+  the backend commands are folded under "Want this exact spot?".
+- **Flags are never on by default**: the Epsilon Indi B preset no longer turns
+  the overlay on (`showFlags` removed from `target.js`); only the flag button
+  or `?flags=1` does.
+- **Spectrum wording (`SpectrumChart.js`)**: "N clean measurements from M
+  exposures"; a spot with no clean measurement explains why; with no backend
+  the panel no longer says it will start downloading.
 - Tested in the browser: the 12 presets show, Kapteyn's Star and the Orion
   Nebula (false colour, 40′ on array 1) load from the built-in files, the game
   page loads.

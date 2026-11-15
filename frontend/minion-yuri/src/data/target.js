@@ -32,8 +32,7 @@ export const TARGETS = [
     name: "Epsilon Indi B", ra: 331.0984, dec: -56.801256, array: 3,
     track: { ra: 331.044147, dec: -56.782844, pmRa: 3981.977, pmDec: -2466.832, source: "Gaia DR3" },
     about: "Pair of brown dwarfs · 12 light-years away",
-    lookFor: "Two brown dwarfs only 0.7″ apart, so SPHEREx sees them as one dot. They orbit the bright star Epsilon Indi A, 6.7′ away: at 10′ or more its glare appears at the edge. Moves 4.7″ a year. The red pixels are ones SPHEREx flagged as unreliable, mostly that glare; the flag button (top left of the picture) hides them.",
-    showFlags: true, // F13: the preset turns the flags overlay on
+    lookFor: "Two brown dwarfs only 0.7″ apart, so SPHEREx sees them as one dot. They orbit the bright star Epsilon Indi A, 6.7′ away: at 10′ or more its glare appears at the edge. Moves 4.7″ a year. Press the flag button (top left of the picture) to see, in red, the pixels SPHEREx flagged as unreliable: mostly that glare.",
   },
   {
     name: "RW Aurigae", ra: 76.956526, dec: 30.401438, array: 3,

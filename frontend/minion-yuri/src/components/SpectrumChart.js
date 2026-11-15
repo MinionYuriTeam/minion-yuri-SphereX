@@ -350,7 +350,8 @@ function ExposureBars({ points }) {
   );
 }
 
-function SpectrumChart({ ra, dec, array, ready = false, pm = null }) {
+// noBackend = the pictures of this spot couldn't load because no backend answered
+function SpectrumChart({ ra, dec, array, ready = false, pm = null, noBackend = false }) {
   const [baked, setBaked] = useState(null);   // null = still checking
   const [requested, setRequested] = useState(false);
   const [data, setData] = useState(null);
@@ -423,8 +424,10 @@ function SpectrumChart({ ra, dec, array, ready = false, pm = null }) {
 
       {baked === false && !requested && (
         <div className="spectrum-empty">
-          <p>The spectrum starts downloading by itself once the pictures above have loaded.
-            It uses every exposure on all six arrays, so it can take a few minutes.</p>
+          {noBackend
+            ? <p>The spectrum of this spot isn't built in. Pick one of the built-in spots above to see one.</p>
+            : <p>The spectrum starts downloading by itself once the pictures above have loaded.
+                It uses every exposure on all six arrays, so it can take a few minutes.</p>}
         </div>
       )}
 
@@ -445,7 +448,10 @@ function SpectrumChart({ ra, dec, array, ready = false, pm = null }) {
       )}
 
       {data && points.length === 0 && (
-        <p className="spectrum-status">No usable measurement of the target here ({data.n_exposures} exposures checked).</p>
+        <p className="spectrum-status">
+          No clean measurement at this exact spot: all {data.n_exposures} exposures were flagged or cut off here,
+          which happens in very bright or crowded regions like nebulae. Spectra work best on single stars.
+        </p>
       )}
 
       {data && points.length > 0 && (

@@ -208,7 +208,7 @@ flowchart TD
     Q -- yes --> B[Built-in files in the site<br/>public/baked/ — no backend needed]
     Q -- no --> L{Backend answering at<br/>localhost:8000 on the visitor's computer?}
     L -- yes --> R[Live frames from the visitor's own backend]
-    L -- no --> H[Help screen: how to start the backend]
+    L -- no --> H[Offers the built-in targets;<br/>how to start the backend is folded away]
 ```
 
 **1. 12 targets are built in** (see [Built-in Targets](#built-in-targets)).
@@ -238,8 +238,10 @@ Then commit `frontend/minion-yuri/public/baked/` and push; Vercel redeploys.
 
 **2. Anything else needs the visitor's own backend.** The public page calls
 `http://localhost:8000` from the visitor's browser, so it reaches **their** computer.
-If nothing answers, the site shows the three commands to clone, install and
-start the backend, then a **Try again** button. This works because:
+If nothing answers, the site says the spot isn't built in and offers the built-in
+targets as one-click buttons. Under a fold ("Want this exact spot?") are the
+three commands to clone, install and start the backend, and a **Try again**
+button. This works because:
 - the backend allows any site to call it (CORS) and answers Chrome's
   local-network check (`allow_private_network`), so Chrome may show a
   "this site wants to access your local network" prompt: click **Allow**;
@@ -420,8 +422,25 @@ are today's (`ra_now`/`dec_now` from `/api/resolve`).
 | Andromeda Galaxy | The core of the nearest large galaxy | 10.684708, 41.268750 | D2 | 4 | – | andromeda, m31 |
 | Crab Nebula | Supernova remnant from the year 1054 | 83.632400, 22.017400 | D3 | 4 | – | crab, m1 |
 
+### 8 more, baking on 15 Nov
+
+Listed in `src/data/target.js` and being baked the same way. Each one counts as
+built in once its entry is in `public/baked/index.json`; any that doesn't
+finish is removed from `target.js` so it never shows as a preset.
+
+| Target | Why it's here | Today's position (RA, Dec) | Best array | Predicted track | Also found as |
+|---|---|---|---|---|---|
+| Wolf 359 | One of the nearest stars; moves 4.7″ a year (0.75 px) | 164.091558, 6.994666 | D2 | yes | wolf, cn leo |
+| 61 Cygni | First star whose distance was measured (1838); two stars moving 5.3″ a year | 316.764424, 38.773564 | D2 | yes | 61 cyg, bessel's star |
+| Teegarden's Star | Faint red dwarf with Earth-mass planets; moves 5.1″ a year (0.8 px) | 43.280343, 16.853009 | D2 | yes | teegarden, gat 1370 |
+| Ring Nebula | Planetary nebula, about a dozen pixels across | 283.396251, 33.029153 | D4 | – | ring, m57 |
+| Carina Nebula | Giant star-forming cloud around Eta Carinae | 161.264612, −59.684400 | D4 | – | carina, eta carinae |
+| Eagle Nebula | Star-forming cloud, home of the Pillars of Creation | 274.688001, −13.792012 | D4 | – | eagle, m16, pillars of creation |
+| Flame Nebula | Star-forming cloud in Orion | 85.429200, −1.841700 | D4 | – | flame, ngc 2024 |
+| Whirlpool Galaxy | Spiral galaxy and its companion in one frame | 202.469575, 47.195258 | D2 | – | whirlpool, m51 |
+
 Known gaps: the spectrum is empty for the Orion Nebula (every exposure at the
-centre is flagged) and has only 7 points for Kapteyn's Star. The nebulae and the
+centre is flagged; the panel says so) and has only 7 points for Kapteyn's Star. The nebulae and the
 galaxy have no predicted track because they don't move measurably.
 
 <p align="center">

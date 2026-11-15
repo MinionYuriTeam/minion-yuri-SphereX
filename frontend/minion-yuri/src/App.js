@@ -176,10 +176,9 @@ function App() {
   const Page = PAGES[page]; // undefined on the main tool
 
   // Open a built-in target (preset buttons, and the spots offered when a view isn't built in).
-  // It opens on its own best array, so it also leaves false colour;
-  // a target made to show the flags overlay (Epsilon Indi B) turns it on.
+  // It opens on its own best array, so it also leaves false colour.
+  // The flags overlay is never turned on for the visitor: only the flag button or ?flags=1 does.
   const pickTarget = (t) => {
-    if (t.showFlags) setShowFlags(true);
     setView({ ...view, ra: t.ra, dec: t.dec, array: t.array ?? view.array, rgb: 0 });
   };
 
@@ -341,6 +340,7 @@ function App() {
         <section className="panel">
           <SpectrumChart ra={view.ra} dec={view.dec} array={view.rgb ? null : view.array}
             ready={Boolean(data) && !loading && data.source === 'backend'}
+            noBackend={error?.code === 'NO_BACKEND'}
             pm={track ? { pmRa: track.pmRa, pmDec: track.pmDec } : null} />
         </section>
         </>
