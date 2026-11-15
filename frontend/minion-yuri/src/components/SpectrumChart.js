@@ -2,7 +2,8 @@
 // Props it gets from App.js: ra, dec, array (the detector array the player shows, highlighted)
 //
 // One dot per SPHEREx exposure: how bright the target is (flux, mJy) at that exposure's
-// wavelength. All six arrays together make a spectrum from 0.75 to 5 µm.
+// wavelength. All six arrays together make a spectrum from 750 to 5000 nm.
+// The data is in µm (as the API sends it); the chart shows nanometres.
 // Baked test targets load instantly; any other spot needs a backend and can take minutes
 // (every exposure is downloaded), so it only starts when you press the button.
 import { useEffect, useMemo, useState } from "react";
@@ -52,6 +53,7 @@ function niceLinearTicks(lo, hi, count = 8) { // gives 4–8 ticks
   return ticks;
 }
 
+const nm = (um) => Math.round(um * 1000); // µm -> nm for display
 const fmtFlux = (v) => (Math.abs(v) >= 1000 ? `${+(v / 1000).toPrecision(3)}k` : `${+v.toPrecision(3)}`);
 
 const LABEL_MODES = [
@@ -124,7 +126,7 @@ function layoutBands(bands, sx) {
 }
 
 function Chart({ points, array, bands, style }) {
-  const [hover, setHover] = useState(null);
+  const [hoverState, setHover] = useState(null);
   const x0 = M.left, x1 = W - M.right, y0 = H - M.bottom, y1 = M.top;
   const sx = (um) => x0 + ((um - X_DOMAIN[0]) / (X_DOMAIN[1] - X_DOMAIN[0])) * (x1 - x0);
 
@@ -148,6 +150,8 @@ function Chart({ points, array, bands, style }) {
   }
 
   const curve = style === "curve" ? smoothCurve(points) : null;
+  // a dot and a curve point aren't the same shape: only use a hover from what's on screen
+  const hover = hoverState && Boolean(hoverState.curvePoint) === Boolean(curve) ? hoverState : null;
   const peaks = curve ? findPeaks(curve, sy) : [];
   // break the line where there are no measurements, instead of drawing a straight bridge
   const segments = [];
@@ -163,7 +167,7 @@ function Chart({ points, array, bands, style }) {
   return (
     <>
       <svg className="spectrum-svg" viewBox={`0 0 ${W} ${H}`} role="img"
-        aria-label={`Spectrum: ${points.length} measurements from 0.75 to 5 µm`}>
+        aria-label={`Spectrum: ${points.length} measurements from 750 to 5000 nm`}>
         {/* fill colour follows wavelength: the arrays' blue (short) to red (long) */}
         <defs>
           <linearGradient id="spectrum-fill" gradientUnits="userSpaceOnUse" x1={x0} x2={x1} y1="0" y2="0">
@@ -188,7 +192,7 @@ function Chart({ points, array, bands, style }) {
 
         {/* molecule bands: where each molecule absorbs light (dips in the spectrum) */}
         {layoutBands(bands, sx).map((b, i) => (
-          <g key={`${b.name}-${i}`} data-tip={`${b.name}: absorbs around ${b.lo}–${b.hi} µm`}>
+          <g key={`${b.name}-${i}`} data-tip={`${b.name}: absorbs around ${nm(b.lo)}–${nm(b.hi)} nm`}>
             <rect x={b.x0} y={y1} width={b.x1 - b.x0} height={y0 - y1} className="molecule" />
             <text x={b.mid} y={y1 + 28 + b.row * 13} className="molecule-label">{b.name}</text>
           </g>
@@ -201,25 +205,23 @@ function Chart({ points, array, bands, style }) {
           </g>
         ))}
         {[1, 2, 3, 4, 5].map((t) => (
-          <text key={t} x={sx(t)} y={y0 + 18} className="tick">{t}</text>
+          <text key={t} x={sx(t)} y={y0 + 18} className="tick">{nm(t)}</text>
         ))}
         <line x1={x0} x2={x1} y1={y0} y2={y0} className="axis" />
-        <text x={(x0 + x1) / 2} y={H - 4} className="axis-title">Wavelength (µm)</text>
+        <text x={(x0 + x1) / 2} y={H - 4} className="axis-title">Wavelength (nm)</text>
         <text x={14} y={(y0 + y1) / 2} className="axis-title"
           transform={`rotate(-90 14 ${(y0 + y1) / 2})`}>Flux (mJy{log ? ", log" : ""})</text>
 
         {curve && <path d={area} fill="url(#spectrum-fill)" mask="url(#spectrum-mask)" className="curve-fill" />}
 
-        {points.map((p, i) => {
+        {/* Dots style only: one dot per measurement */}
+        {!curve && points.map((p, i) => {
           const cx = sx(p.wavelength_um), cy = sy(p.flux_mjy), c = ARRAY_COLOURS[p.array];
           return (
-            <g key={i} onMouseEnter={() => setHover(p)} onMouseLeave={() => setHover(null)}
-              className={curve ? "dot-faint" : ""}>
-              {!curve && (
-                <line x1={cx} x2={cx} y1={sy(p.flux_mjy - p.error_mjy)} y2={sy(p.flux_mjy + p.error_mjy)}
-                  stroke={c} className="errbar" />
-              )}
-              <circle cx={cx} cy={cy} r={hover === p ? 6 : curve ? 2.5 : 4}
+            <g key={i} onMouseEnter={() => setHover(p)} onMouseLeave={() => setHover(null)}>
+              <line x1={cx} x2={cx} y1={sy(p.flux_mjy - p.error_mjy)} y2={sy(p.flux_mjy + p.error_mjy)}
+                stroke={c} className="errbar" />
+              <circle cx={cx} cy={cy} r={hover === p ? 6 : 4}
                 fill={p.quality === "bright" ? "none" : c} stroke={c} strokeWidth="1.6" />
               <circle cx={cx} cy={cy} r="10" fill="transparent" />{/* bigger hover target */}
             </g>
@@ -228,11 +230,29 @@ function Chart({ points, array, bands, style }) {
 
         {curve && <path d={line} className="curve-line" />}
 
+        {/* Curve style: hover anywhere to read the curve at that wavelength */}
+        {curve && hover && (
+          <g className="curve-hover" pointerEvents="none">
+            <line x1={sx(hover.um)} x2={sx(hover.um)} y1={y1} y2={y0} />
+            <circle cx={sx(hover.um)} cy={sy(hover.flux)} r="4.5" />
+          </g>
+        )}
+        {curve && (
+          <rect x={x0} y={y1} width={x1 - x0} height={y0 - y1} fill="transparent"
+            onMouseLeave={() => setHover(null)}
+            onMouseMove={(e) => {
+              const box = e.currentTarget.ownerSVGElement.getBoundingClientRect();
+              const um = X_DOMAIN[0] + (((e.clientX - box.left) / box.width) * W - x0) / (x1 - x0) * (X_DOMAIN[1] - X_DOMAIN[0]);
+              const near = curve.reduce((a, b) => (Math.abs(b.um - um) < Math.abs(a.um - um) ? b : a));
+              setHover(Math.abs(near.um - um) <= CURVE_GAP_UM / 2 ? { ...near, curvePoint: true } : null);
+            }} />
+        )}
+
         {/* tagged peaks: wavelength of each big bump, like a lab spectrum */}
         {peaks.map((p) => {
-          const x = sx(p.um), label = p.um.toFixed(2), w = label.length * 6.6 + 8;
+          const x = sx(p.um), label = String(nm(p.um)), w = label.length * 6.6 + 8;
           return (
-            <g key={p.um} className="peak" data-tip={`Peak at ${label} µm: ${fmtFlux(p.flux)} mJy`}>
+            <g key={p.um} className="peak" data-tip={`Peak at ${label} nm: ${fmtFlux(p.flux)} mJy`}>
               <line x1={x} x2={x} y1={sy(p.flux)} y2={y0 - 16} />
               <rect x={x - w / 2} y={y0 - 16} width={w} height="14" rx="2" />
               <text x={x} y={y0 - 5.5}>{label}</text>
@@ -241,14 +261,16 @@ function Chart({ points, array, bands, style }) {
         })}
       </svg>
       <p className="spectrum-readout">
-        {hover
+        {hover && curve
+          ? <><strong>{nm(hover.um)} nm</strong> · {fmtFlux(hover.flux)} mJy (smoothed)</>
+          : hover
           ? <>
-              <strong>{hover.wavelength_um.toFixed(3)} µm</strong> · {fmtFlux(hover.flux_mjy)} ± {fmtFlux(hover.error_mjy)} mJy
+              <strong>{nm(hover.wavelength_um)} nm</strong> · {fmtFlux(hover.flux_mjy)} ± {fmtFlux(hover.error_mjy)} mJy
               {" "}· array {hover.array} · {hover.date}{hover.n > 1 && ` · median of ${hover.n}`}
               {hover.quality === "bright" && " · saturated core, approximate"}
             </>
           : curve
-            ? <>Line = smoothed spectrum, yellow tags = its peaks (µm). Hover a dot for its value.</>
+            ? <>Smoothed spectrum, yellow tags = its peaks (nm). Hover the graph for a value, or switch to Dots for every measurement.</>
             : style === "curve"
               ? <>Too few measurements for a smooth line here, showing the dots. Hover a dot for its value.</>
               : <>Hover a dot for its value. Hollow dots = star so bright the detector saturated (approximate).</>}
@@ -291,8 +313,8 @@ function SpectrumChart({ ra, dec, array }) {
   const points = useMemo(() => {
     if (!data) return [];
     const good = data.points.filter((p) => Number.isFinite(p.flux_mjy) && Number.isFinite(p.wavelength_um));
-    return binned ? binPoints(good) : good;
-  }, [data, binned]);
+    return binned && style === "dots" ? binPoints(good) : good; // the curve always uses every exposure
+  }, [data, binned, style]);
 
   return (
     <div className="spectrum">
@@ -314,12 +336,12 @@ function SpectrumChart({ ra, dec, array }) {
                 data-tip={m.tip}>{m.label}</button>
             ))}
           </div>
-          <div className="fov-buttons spectrum-mode">
+          {style === "dots" && <div className="fov-buttons spectrum-mode">
             <button className={binned ? "" : "active"} onClick={() => setBinned(false)}
               data-tip="One dot per SPHEREx exposure">Every exposure</button>
             <button className={binned ? "active" : ""} onClick={() => setBinned(true)}
               data-tip="Median of nearby wavelengths per visit: steadier dots for faint targets">Averaged</button>
-          </div>
+          </div>}
           </div>
         )}
       </div>

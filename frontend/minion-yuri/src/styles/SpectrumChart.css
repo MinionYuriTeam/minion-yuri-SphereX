@@ -51,8 +51,8 @@
   stroke-linejoin: round;
   pointer-events: none;
 }
-.spectrum-svg .dot-faint { opacity: 0.35; }
-.spectrum-svg .dot-faint:hover { opacity: 1; }
+.spectrum-svg .curve-hover line { stroke: #e6eaf2; stroke-width: 1; opacity: 0.4; }
+.spectrum-svg .curve-hover circle { fill: #e6eaf2; stroke: #0b1120; stroke-width: 1.5; }
 
 /* yellow wavelength tags on the peaks */
 .spectrum-svg .peak line { stroke: #ff6b6b; stroke-width: 1.2; stroke-dasharray: 3 3; }
