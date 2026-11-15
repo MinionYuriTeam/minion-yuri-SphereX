@@ -30,6 +30,7 @@ from pipeline import (BadInput, NotFound, ResolverUnavailable, SearchUnavailable
                       get_stacks, resolve)
 from pipeline.render import save_epoch_pngs
 from pipeline.settings import OUTPUT_ROOT, position_dir
+from pipeline.spectrum import bin_spectrum, get_spectrum
 
 app = FastAPI(title="Minion Yuri SPHEREx API")
 # Any site may call this API, including the public frontend (stealingthemoon.earth)
@@ -122,3 +123,18 @@ def api_frames(
         "n_failed": s.n_failed,
         "elapsed_s": round(time.time() - t0, 1),
     }
+
+
+
+@app.get("/api/spectrum")
+def api_spectrum(
+    ra: float = Query(..., ge=0, lt=360), dec: float = Query(..., ge=-90, le=90),
+    binned: bool = Query(False, description="Median per visit and wavelength bin"),
+):
+    try:
+        s = get_spectrum(ra, dec)
+    except SearchUnavailable as exc:
+        raise HTTPException(503, str(exc))
+    if binned:
+        s["points"] = bin_spectrum(s["points"])
+    return s
