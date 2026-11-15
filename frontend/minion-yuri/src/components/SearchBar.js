@@ -70,9 +70,10 @@ function SearchBar({ targets, onSearch, onNoBackend }) {
         id="search"
         value={text}
         onChange={(e) => setText(e.target.value)}
+        data-tip="A star name, or a sky position in degrees (RA Dec)"
         placeholder="Barnard's Star  ·  269.45, 4.69  ·  08h55m10.8s -07d14m42s"
       />
-      <button type="submit" disabled={busy}>{busy ? "Looking up…" : "Show this patch"}</button>
+      <button type="submit" disabled={busy} data-tip="Load the SPHEREx pictures of this spot">{busy ? "Looking up…" : "Show this patch"}</button>
       {error && <p className="search-error">{error}</p>}
     </form>
   );

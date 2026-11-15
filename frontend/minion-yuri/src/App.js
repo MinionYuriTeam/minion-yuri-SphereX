@@ -1,5 +1,6 @@
 import './styles/App.css';
 import './styles/buttons.css';
+import './styles/Slider.css';
 import { useState, useEffect } from 'react';
 import { TARGETS } from './data/target';
 import { getFrames } from './api/frames';
@@ -10,6 +11,7 @@ import Presets from './components/Presets';         // F8
 import FovPicker from './components/FovPicker';     // F2
 import BlinkPlayer from './components/BlinkPlayer'; // F4
 import ShareLink from './components/ShareLink';     // F7
+import HoverTips from './components/HoverTips';     // hover any control -> 1-line explanation
 import TargetInfo from './components/TargetInfo';   // "This target" panel
 // SHOYA
 import BandPicker from './components/BandPicker';   // F3/F5, later F10
@@ -112,6 +114,7 @@ function App() {
   return (
     <div className="app">
       <EasterEgg />
+      <HoverTips />
       <header className="topbar">
         <div>
           <p className="eyebrow">NASA SPHEREx · Infrared sky explorer</p>
@@ -132,6 +135,10 @@ function App() {
         <p className="intro">
           Type any position in the sky, or pick a famous object. We play NASA SPHEREx's infrared snapshots of
           that spot as a loop, so anything that <strong>moves</strong> or <strong>changes</strong> jumps out.
+        </p>
+        <p className="intro-hint">
+          New here? Pick a famous object below, then <strong>hover any button</strong> for a one-line explanation.
+          {' '}<a href="#/how">Full guide →</a>
         </p>
 
         <p>Now looking at: {Number(view.ra).toFixed(4)}°, {view.dec >= 0 ? '+' : ''}{Number(view.dec).toFixed(4)}° · FOV {view.fov}′</p>

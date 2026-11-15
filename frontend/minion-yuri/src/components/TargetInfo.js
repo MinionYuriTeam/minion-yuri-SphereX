@@ -19,11 +19,11 @@ function TargetInfo({ view, targets, wavelength }) {
       {target && <p className="target-about">{target.about}</p>}
 
       <dl className="target-facts">
-        <dt>RA / Dec</dt>
+        <dt data-tip="Where this is in the sky, like longitude and latitude on Earth">RA / Dec</dt>
         <dd>{view.ra.toFixed(4)}°, {sign}{view.dec.toFixed(4)}°</dd>
-        <dt>Detector array</dt>
+        <dt data-tip="Which of the 6 SPHEREx detectors (infrared colours) you're viewing">Detector array</dt>
         <dd>{view.array}{lo !== undefined && ` · ${Number(lo).toFixed(2)}–${Number(hi).toFixed(2)} µm`}</dd>
-        <dt>Pixel</dt>
+        <dt data-tip="One pixel covers 6.2 arcseconds of sky, about 1/300 of the Moon">Pixel</dt>
         <dd>6.2″ per pixel</dd>
       </dl>
 

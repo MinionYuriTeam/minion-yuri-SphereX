@@ -191,3 +191,12 @@
   color: #ff8a4c;
   border-color: #ff8a4c;
 }
+
+/* more breathing room between the player rows */
+.player {
+  gap: 18px;
+}
+
+.controls-grid {
+  gap: 16px;
+}

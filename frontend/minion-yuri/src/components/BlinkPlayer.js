@@ -10,7 +10,7 @@ const SPEEDS = [1, 2, 5];
 function BlinkPlayer({ epochs, index, setIndex, side, children }) {
   const [playing, setPlaying] = useState(true);
   const [fps, setFps] = useState(2);
-  const [crosshair, setCrosshair] = useState(true);
+  const [crosshair, setCrosshair] = useState(false);
 
   useEffect(() => {
     if (!playing || epochs.length < 2) return;
@@ -52,7 +52,7 @@ function BlinkPlayer({ epochs, index, setIndex, side, children }) {
             className={`crosshair-toggle ${crosshair ? "is-on" : ""}`}
             onClick={() => setCrosshair(!crosshair)}
             aria-label={crosshair ? "Hide crosshair" : "Show crosshair"}
-            title={crosshair ? "Hide crosshair" : "Show crosshair"}
+            data-tip={crosshair ? "Hide the marker on the centre (your target)" : "Show a marker on the centre, where your target is"}
           >
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <circle cx="12" cy="12" r="5" />
@@ -60,33 +60,37 @@ function BlinkPlayer({ epochs, index, setIndex, side, children }) {
             </svg>
           </button>
           <div className="hud">
-            <span>{frame.date}</span>
-            <span>{frame.n_exposures} exposures</span>
+            <span data-tip="The date SPHEREx took this picture">{frame.date}</span>
+            <span data-tip="How many SPHEREx photos were stacked to make this picture">{frame.n_exposures} exposures</span>
           </div>
         </div>
         <div className="side">{side}</div>
       </div>
 
       <div className="transport">
-        <button onClick={() => step(-1)} aria-label="Previous frame">◀</button>
-        <button className="active" onClick={() => setPlaying(!playing)}>
+        <button onClick={() => step(-1)} aria-label="Previous frame" data-tip="Previous picture (stops the loop)">◀</button>
+        <button className="active" onClick={() => setPlaying(!playing)}
+          data-tip={playing ? "Stop the loop on this picture" : "Play the pictures as a loop"}>
           {playing ? "Pause" : "Play"}
         </button>
-        <button onClick={() => step(1)} aria-label="Next frame">▶</button>
+        <button onClick={() => step(1)} aria-label="Next frame" data-tip="Next picture (stops the loop)">▶</button>
         <input
           type="range" min="0" max={epochs.length - 1} value={index} aria-label="Frame"
+          style={{ "--p": epochs.length > 1 ? index / (epochs.length - 1) : 0 }}
+          data-tip="Drag to pick one picture. Oldest on the left, newest on the right"
           onChange={(e) => { setPlaying(false); setIndex(Number(e.target.value)); }}
         />
-        <span>{index + 1}/{epochs.length}</span>
+        <span data-tip="Which picture you're seeing, out of how many SPHEREx visits">{index + 1}/{epochs.length}</span>
       </div>
 
       {/*Field of view */}
       <div className="controls-grid">
         <div className="speeds">
-          <span className="speeds-label">Speed</span>
+          <span className="speeds-label" data-tip="How fast the pictures switch">Speed</span>
           <div className="speeds-buttons">
             {SPEEDS.map((n) => (
-              <button key={n} className={n === fps ? "active" : ""} onClick={() => setFps(n)}>
+              <button key={n} className={n === fps ? "active" : ""} onClick={() => setFps(n)}
+                data-tip={`${n} picture${n > 1 ? "s" : ""} per second`}>
                 {n} fps
               </button>
             ))}

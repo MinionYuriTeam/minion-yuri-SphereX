@@ -13,7 +13,7 @@ input {
   font-family: 'IBM Plex Mono', monospace;
 }
 
-.panel { background: #131b2e; border: 1px solid #243049; border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+.panel { background: #131b2e; border: 1px solid #243049; border-radius: 14px; padding: 22px; display: flex; flex-direction: column; gap: 16px; }
 
 /* side by side, stacks on a phone */
 .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; }
@@ -68,12 +68,18 @@ input {
 }
 
 .side-panels {
-  flex: 0 0 320px;   /* fixed width: never grows with long text */
-  max-width: 100%;   /* on a phone it fits the screen */
+  flex: 1 1 320px;   /* 320px next to the player; full width once it wraps underneath */
+  max-width: 100%;
   min-width: 0;
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;   /* under the player: This target and Share sit side by side */
   gap: 18px;
+  align-content: flex-start;
+}
+
+.side-panels > .panel {
+  flex: 1 1 280px;
+  min-width: 0;
 }
 
 /* ===== TITLE = link back to the main tool ===== */
@@ -280,5 +286,20 @@ input {
 }
 
 .credits a:hover {
+  color: #ff8a4c;
+}
+
+/* "New here? hover any button" line under the intro */
+.intro-hint {
+  margin: -6px 0 0;
+  font-size: 14px;
+  color: #8c96ab;
+}
+
+.intro-hint strong {
+  color: #e6eaf2;
+}
+
+.intro-hint a {
   color: #ff8a4c;
 }

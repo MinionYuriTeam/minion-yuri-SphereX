@@ -152,8 +152,9 @@ function Loupe({ imageUrl }) {
   return (
     <div className="loupe">
       <div className="loupe-head">
-        <span className="loupe-title">Loupe</span>
-        <button className="loupe-help-btn" onClick={() => setHelpOpen(true)} aria-label="How to use the loupe">?</button>
+        <span className="loupe-title" data-tip="A magnifying glass for the picture, to see 1–2 pixel moves">Loupe</span>
+        <button className="loupe-help-btn" onClick={() => setHelpOpen(true)} aria-label="How to use the loupe"
+          data-tip="All loupe shortcuts">?</button>
       </div>
 
       {/* the image + the round lens on top */}
@@ -179,17 +180,21 @@ function Loupe({ imageUrl }) {
       {/* zoom + lens size */}
       <div className="loupe-tools">
         <div className="loupe-tool">
-          <span>Zoom</span>
-          <button onClick={() => changeZoom(zoom - 0.5)} aria-label="Zoom out">−</button>
+          <span data-tip="How much the lens magnifies">Zoom</span>
+          <button onClick={() => changeZoom(zoom - 0.5)} aria-label="Zoom out" data-tip="Zoom out">−</button>
           <input type="range" min="1.5" max="10" step="0.5" value={zoom}
-            onChange={(e) => changeZoom(Number(e.target.value))} aria-label="Zoom level" />
-          <button onClick={() => changeZoom(zoom + 0.5)} aria-label="Zoom in">+</button>
+            style={{ "--p": (zoom - 1.5) / (10 - 1.5) }}
+            onChange={(e) => changeZoom(Number(e.target.value))} aria-label="Zoom level"
+            data-tip="How much the lens magnifies (also: mouse wheel)" />
+          <button onClick={() => changeZoom(zoom + 0.5)} aria-label="Zoom in" data-tip="Zoom in">+</button>
           <span className="loupe-badge">{zoom.toFixed(1)}×</span>
         </div>
         <div className="loupe-tool">
-          <span>Lens</span>
+          <span data-tip="Size of the magnifying circle">Lens</span>
           <input type="range" min="80" max="200" step="10" value={lensSize}
-            onChange={(e) => changeLens(Number(e.target.value))} aria-label="Lens size" />
+            style={{ "--p": (lensSize - 80) / (200 - 80) }}
+            onChange={(e) => changeLens(Number(e.target.value))} aria-label="Lens size"
+            data-tip="Size of the magnifying circle (also: [ and ] keys)" />
           <span className="loupe-badge">{lensSize}px</span>
         </div>
       </div>
@@ -205,15 +210,15 @@ function Loupe({ imageUrl }) {
 
       {/* readout: exact pixel, colour, image size */}
       <div className="loupe-readout">
-        <label>X <input type="number" min="0" value={point ? Math.round(point.x) : 0}
+        <label data-tip="Pixel column under the lens. Type a number to jump there">X <input type="number" min="0" value={point ? Math.round(point.x) : 0}
           onChange={(e) => jumpTo("x", e.target.value)} /></label>
-        <label>Y <input type="number" min="0" value={point ? Math.round(point.y) : 0}
+        <label data-tip="Pixel row under the lens. Type a number to jump there">Y <input type="number" min="0" value={point ? Math.round(point.y) : 0}
           onChange={(e) => jumpTo("y", e.target.value)} /></label>
-        <span className="loupe-colour">
+        <span className="loupe-colour" data-tip="Colour of the pixel under the lens. Brighter = more infrared light">
           <span className="loupe-swatch" style={{ background: hex || "transparent" }} />
           {hex || "—"}
         </span>
-        <span className="loupe-dim">{natural.w ? `${natural.w} × ${natural.h}` : "—"}</span>
+        <span className="loupe-dim" data-tip="Size of the picture in pixels (1 pixel = 6.2″ of sky)">{natural.w ? `${natural.w} × ${natural.h}` : "—"}</span>
       </div>
 
       {/* help guide (Jay's modal) */}

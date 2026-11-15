@@ -19,7 +19,7 @@ const ARRAYS = [
 function BandPicker({ array, onChange, wavelength }) {
   return (
     <div className="fov">
-      <span className="fov-label">
+      <span className="fov-label" data-tip="SPHEREx has 6 detectors, each seeing a different infrared colour">
         Detector array (wavelength)
         {wavelength && wavelength[0] != null && ` · now ${wavelength[0]}–${wavelength[1]} µm`}
       </span>
@@ -29,7 +29,7 @@ function BandPicker({ array, onChange, wavelength }) {
             key={a.n}
             className={a.n === array ? "active" : ""}
             onClick={() => onChange(a.n)}
-            title={`Array ${a.n}: ${a.um} µm`}
+            data-tip={`${a.n <= 2 ? "Short" : a.n <= 4 ? "Middle" : "Long"} infrared, ${a.um} µm${a.n >= 5 ? ". Cold brown dwarfs show up here" : ""}`}
           >
             {a.n} <small>{a.um} µm</small>
           </button>
