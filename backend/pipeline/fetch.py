@@ -48,7 +48,10 @@ def load_cutout(exposure, coord, fov_arcmin, cache_dir):
     for candidate in [path] + _bigger_cached(cache_dir, name, fov_arcmin):
         if candidate.exists():
             with fits.open(candidate) as hdus:
-                return Cutout(hdus[0].data, hdus["FLAGS"].data, hdus[0].header)
+                # files cached before X0/Y0 existed can't place the cutout on the
+                # detector (the spectrum needs that): skip them, download again
+                if "X0" in hdus[0].header:
+                    return Cutout(hdus[0].data, hdus["FLAGS"].data, hdus[0].header)
 
     # The output square is north-up but the detector is rotated, so download
     # a box sqrt(2) bigger (plus a small margin) to cover it at any angle.

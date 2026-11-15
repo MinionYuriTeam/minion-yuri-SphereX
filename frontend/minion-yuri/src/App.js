@@ -3,7 +3,7 @@ import './styles/buttons.css';
 import './styles/Slider.css';
 import { useState, useEffect } from 'react';
 import { TARGETS } from './data/target';
-import { getFrames } from './api/frames';
+import { getFrames, getRgb } from './api/frames';
 
 // SAM
 import SearchBar from './components/SearchBar';     // F1
@@ -17,6 +17,8 @@ import TargetInfo from './components/TargetInfo';   // "This target" panel
 import BandPicker from './components/BandPicker';   // F3/F5, later F10
 import RunBackendHelp from './components/RunBackendHelp'; // "start your own backend" help
 import EasterEgg from './components/EasterEgg';           // ↑↑↓↓←→←→ B A Enter
+import ColourMode, { RGB_ARRAYS } from './components/ColourMode'; // false colour (/api/rgb)
+import SpectrumChart from './components/SpectrumChart';   // F12 (/api/spectrum)
 // JAY
 import Loupe from './components/Loupe';                   // F6
 import ViewToggle from './components/ViewToggle';         // F9
@@ -43,6 +45,7 @@ function readUrl() {
     dec: num('dec', TARGETS[0].dec),
     fov: num('fov', 5),
     array: num('array', TARGETS[0].array),
+    rgb: num('rgb', 0), // 1 = false colour (arrays 6/4/2 as R/G/B)
   };
 }
 
@@ -84,7 +87,9 @@ function App() {
     setError(null);
     setData(null);
 
-    getFrames(view, { signal: controller.signal })
+    const load = view.rgb ? getRgb({ ...view, arrays: RGB_ARRAYS }, { signal: controller.signal })
+                          : getFrames(view, { signal: controller.signal });
+    load
       .then((json) => {
         setData(json);
         setIndex(0);
@@ -198,11 +203,14 @@ function App() {
               <FovPicker fov={view.fov} onChange={(f) => setView({ ...view, fov: f })} loadTime={null} />
             )}
 
-            <BandPicker
-              array={view.array}
-              onChange={(a) => setView({ ...view, array: a })}
-              wavelength={data?.wavelength_um}
-            />
+            <ColourMode on={Boolean(view.rgb)} onChange={(on) => setView({ ...view, rgb: on ? 1 : 0 })} />
+            {!view.rgb && (
+              <BandPicker
+                array={view.array}
+                onChange={(a) => setView({ ...view, array: a })}
+                wavelength={data?.wavelength_um}
+              />
+            )}
             <ViewToggle />
           </section>
 
@@ -215,6 +223,11 @@ function App() {
             </section>
           </aside>
         </div>
+
+        {/* 3. Spectrum of the target across all six arrays */}
+        <section className="panel">
+          <SpectrumChart ra={view.ra} dec={view.dec} array={view.rgb ? null : view.array} />
+        </section>
         </>
       )}
 
