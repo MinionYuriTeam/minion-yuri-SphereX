@@ -44,6 +44,14 @@
 
 /* Curve style: wavelength-coloured fill under a smooth line, dots faint behind it */
 .spectrum-svg .curve-fill { pointer-events: none; }
+
+/* outline in the chart's background colour: grid lines and the curve stop at the letters */
+.spectrum-svg .label-halo {
+  paint-order: stroke;
+  stroke: #0e1526;
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
 .spectrum-svg .curve-line {
   fill: none;
   stroke: #e6eaf2;
