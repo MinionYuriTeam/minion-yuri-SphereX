@@ -3,7 +3,7 @@ import "../styles/Pages.css";
 
 const MEMBERS = [
   { name: "Raman", nick: "Bamba", role: "Team lead · data pipeline" },
-  { name: "Axe", nick: "", role: "Backend API and cache" },
+  { name: "Antonio", nick: "Axe", role: "Backend API and cache" },
   { name: "Sam", nick: "Muubi", role: "Frontend · search and blink player" },
   { name: "Jay", nick: "Jelly", role: "Frontend · loupe and difference mode" },
   { name: "Shoya", nick: "Trappist", role: "Science features and hosting" },
