@@ -2,6 +2,44 @@
 
 Newest first. One entry per piece of work, with the branch it landed on.
 
+## 15 Nov 2026: F15 "Spot the mover" game (`raman-f15-game`)
+
+- **`src/pages/SpotTheMover.js`** (+ `styles/SpotTheMover.css`): a new page
+  at `#/game`, linked as "Spot the mover" in the navbar. A random patch of
+  sky blinks at 2 fps and the player clicks the star that moves.
+  - The patches come from the baked 20′ pictures, so the game works without a
+    backend. The movers and their arrays are Barnard's Star (1–3), WISE 0855
+    (5–6) and Epsilon Indi B (3).
+  - Each patch is a random ~8′ square of the 20′ picture. The square always
+    holds the mover's whole track, at least 8 px from the edge. It's randomly
+    flipped, so the mover is never just "the one in the middle".
+  - Clicks are checked against the catalogue. The page uses the Gaia DR3 or
+    SIMBAD position and proper motion, moved to the date of the picture on
+    screen (`utils/motion.js`, same as F11). A click within 3 SPHEREx pixels
+    (~18″) counts.
+  - Up to 3 tries per patch: 100 / 50 / 25 points. After 2 misses, a dashed
+    circle shows roughly where to look.
+  - When a patch is done, the page shows the predicted track and ring, the
+    star's name and how fast it moves, and a link that opens it in the
+    explorer.
+  - One round is 5 patches, with every mover at least once. It ends with a
+    score summary and Play again.
+  - Pause / Next picture let the player step through the visits; each picture
+    shows its date. Tapping works on phones.
+- **`App.js`**: `#/game` added to `PAGES`, plus the navbar link.
+- Tested in the browser:
+  - Two full rounds played to the score screen; the total matches the clicks.
+  - A click 10+ px off says "Not that one"; a click on the predicted spot scores.
+  - 3 misses end the patch with 0 points and reveal the answer.
+  - The hint circle appears after 2 misses.
+  - All 6 star/array patches: the catalogue position is on a source in every
+    picture.
+  - WISE 0855 is faint (peak ~30–60 of 255 over a ~5–10 background), so it's
+    the hard one.
+  - Phone width (375 px): no sideways scrolling.
+  - No console errors.
+  - `CI=true react-scripts build` passes.
+
 ## 15 Nov 2026: F13 flags overlay + lens fixes (`raman-f13-flags`)
 
 - **`src/components/FlagsOverlay.js`** (+ `styles/FlagsOverlay.css`): a flag

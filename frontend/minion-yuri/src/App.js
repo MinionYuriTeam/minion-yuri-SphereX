@@ -31,12 +31,14 @@ import HowItWorks from './pages/HowItWorks';
 import Team from './pages/Team';
 import AboutData from './pages/AboutData';
 import SkyMap from './pages/SkyMap';
+import SpotTheMover from './pages/SpotTheMover'; // F15 game
 
 const PAGES = {
   '#/how': HowItWorks,
   '#/team': Team,
   '#/data': AboutData,
   '#/sky': SkyMap,
+  '#/game': SpotTheMover,
 };
 
 function readUrl() {
@@ -185,6 +187,7 @@ function App() {
 
         <nav className="nav">
           <a href="#/sky">Sky map</a>
+          <a href="#/game">Spot the mover</a>
           <a href="#/how">How it works</a>
           <a href="#/team">Team</a>
           <a href="#/data">About the data</a>
