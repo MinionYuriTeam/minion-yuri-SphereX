@@ -1,0 +1,23 @@
+/* Easter egg: SPACE JUNK SWEEPER (EasterEgg.js / SpaceJunkSweeper.js) */
+.junk-game {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: #0a0418;
+}
+
+.junk-game canvas {
+  display: block;
+}
+
+.junk-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 50%;
+  background: rgba(14, 21, 38, 0.7);
+  color: #e6eaf2;
+}

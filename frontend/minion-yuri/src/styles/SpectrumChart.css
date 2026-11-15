@@ -1,0 +1,106 @@
+.spectrum { display: flex; flex-direction: column; gap: 10px; }
+
+.spectrum-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.spectrum-title { margin: 0; font-size: 18px; }
+
+.spectrum-mode button { height: 30px; font-size: 12px; }
+.spectrum-controls { display: flex; flex-wrap: wrap; gap: 8px; }
+/* size to the words, not equal widths (FovPicker.css squeezes buttons on a phone) */
+.spectrum-mode button { flex: 0 0 auto; }
+
+.spectrum-svg .molecule { fill: #c9a7ff; opacity: 0.08; }
+.spectrum-svg g:hover > .molecule { opacity: 0.18; }
+.spectrum-svg .molecule-label {
+  fill: #c9a7ff;
+  font-size: 10.5px;
+  font-weight: 600;
+  text-anchor: middle;
+}
+
+.spectrum-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  background: #0e1526;
+  border-radius: 10px;
+}
+
+.spectrum-svg .band { fill: #ffffff; opacity: 0.02; }
+.spectrum-svg .band-now { opacity: 0.07; }
+.spectrum-svg .band-label { font-size: 11px; font-weight: 600; text-anchor: middle; }
+.spectrum-svg .grid { stroke: #243049; stroke-width: 1; }
+.spectrum-svg .axis { stroke: #8c96ab; stroke-width: 1; }
+.spectrum-svg .tick { fill: #8c96ab; font-size: 11px; text-anchor: middle; font-family: 'IBM Plex Mono', monospace; }
+.spectrum-svg .tick-y { text-anchor: end; }
+.spectrum-svg .axis-title { fill: #8c96ab; font-size: 12px; text-anchor: middle; }
+.spectrum-svg .errbar { stroke-width: 1.2; opacity: 0.6; }
+
+/* Curve style: wavelength-coloured fill under a smooth line, dots faint behind it */
+.spectrum-svg .curve-fill { pointer-events: none; }
+
+/* exposures-per-wavelength bar chart under the spectrum */
+.exposure-title { margin: 6px 0 0; font-size: 13px; font-weight: 600; color: #8c96ab; }
+.exposure-bars .bar { opacity: 0.85; }
+.exposure-bars .bar:hover { opacity: 1; }
+
+/* outline in the chart's background colour: grid lines and the curve stop at the letters */
+.spectrum-svg .label-halo {
+  paint-order: stroke;
+  stroke: #0e1526;
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+.spectrum-svg .curve-line {
+  fill: none;
+  stroke: #e6eaf2;
+  stroke-width: 2.2;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+.spectrum-svg .curve-hover line { stroke: #e6eaf2; stroke-width: 1; opacity: 0.4; }
+.spectrum-svg .curve-hover circle { fill: #e6eaf2; stroke: #0b1120; stroke-width: 1.5; }
+
+/* yellow wavelength tags on the peaks */
+.spectrum-svg .peak line { stroke: #ff6b6b; stroke-width: 1.2; stroke-dasharray: 3 3; }
+.spectrum-svg .peak rect { fill: #f5d90a; stroke: #8a7a00; stroke-width: 0.8; }
+.spectrum-svg .peak text {
+  fill: #0b1120;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-anchor: middle;
+  font-family: 'IBM Plex Mono', monospace;
+}
+.spectrum-svg circle { cursor: pointer; }
+
+.spectrum-readout,
+.spectrum-meta,
+.spectrum-status {
+  margin: 0;
+  font-size: 12px;
+  color: #8c96ab;
+}
+
+.spectrum-readout strong { color: #e6eaf2; }
+
+.spectrum-status { display: flex; align-items: center; gap: 8px; }
+.spectrum-status .status-spinner { width: 14px; height: 14px; }
+
+.spectrum-empty {
+  background: #0e1526;
+  border-radius: 10px;
+  padding: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.spectrum-empty p { margin: 0; font-size: 13px; color: #8c96ab; flex: 1 1 260px; }

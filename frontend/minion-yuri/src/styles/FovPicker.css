@@ -38,3 +38,15 @@
   color: #0b1120;
   font-weight: 600;
 }
+/* ===== PHONE: buttons wrap instead of running off the screen ===== */
+@media (max-width: 600px) {
+  .fov-buttons {
+    flex-wrap: wrap;
+  }
+
+  .fov-buttons button {
+    flex: 1 1 0;
+    min-width: 48px;
+    padding: 0 8px;
+  }
+}

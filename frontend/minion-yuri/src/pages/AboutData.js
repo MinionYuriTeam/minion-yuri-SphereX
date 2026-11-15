@@ -12,7 +12,7 @@ function AboutData() {
 
       <dl className="terms">
         <dt>Source</dt><dd>SPHEREx Quick Release images from IRSA (NASA/IPAC Infrared Science Archive).</dd>
-        <dt>Wavelengths</dt><dd>0.75 to 5 micrometres, split over 6 detectors (the 6 bands in the tool).</dd>
+        <dt>Wavelengths</dt><dd>0.75 to 5 micrometres, split over 6 detectors (the 6 detector arrays in the tool).</dd>
         <dt>Pixel size</dt><dd>6.2 arcseconds per pixel, so a moving star often shifts only 1–2 pixels.</dd>
         <dt>Updates</dt><dd>New images are released weekly; the tool always asks the archive for the latest.</dd>
         <dt>Star positions</dt><dd>Positions and motions from ESA's Gaia Data Release 3.</dd>

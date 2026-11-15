@@ -1,0 +1,6 @@
+# downloaded SPHEREx data and generated images (re-created on demand)
+output/
+.venv/
+__pycache__/
+*.pyc
+.DS_Store

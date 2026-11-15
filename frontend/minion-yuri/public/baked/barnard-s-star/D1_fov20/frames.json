@@ -1,0 +1,57 @@
+{
+ "array": 1,
+ "wavelength_um": [
+  0.746,
+  1.117
+ ],
+ "epochs": [
+  {
+   "date": "2025-08-30",
+   "datetime": "2025-08-30T16:06:53.896",
+   "date_start": "2025-08-28T10:21:47.532",
+   "date_end": "2025-09-05T02:35:19.911",
+   "n_exposures": 17,
+   "png_url": "baked/barnard-s-star/D1_fov20/epoch_00.png",
+   "flags_png_url": "baked/barnard-s-star/D1_fov20/epoch_00_flags.png"
+  },
+  {
+   "date": "2025-10-01",
+   "datetime": "2025-10-01T00:16:40.349",
+   "date_start": "2025-09-30T15:41:37.244",
+   "date_end": "2025-10-01T06:23:52.554",
+   "n_exposures": 4,
+   "png_url": "baked/barnard-s-star/D1_fov20/epoch_01.png",
+   "flags_png_url": "baked/barnard-s-star/D1_fov20/epoch_01_flags.png"
+  },
+  {
+   "date": "2026-03-11",
+   "datetime": "2026-03-11T11:50:13.505",
+   "date_start": "2026-03-11T02:14:43.702",
+   "date_end": "2026-03-11T18:30:18.293",
+   "n_exposures": 17,
+   "png_url": "baked/barnard-s-star/D1_fov20/epoch_02.png",
+   "flags_png_url": "baked/barnard-s-star/D1_fov20/epoch_02_flags.png"
+  },
+  {
+   "date": "2026-08-26",
+   "datetime": "2026-08-26T10:18:19.007",
+   "date_start": "2026-08-23T23:02:11.249",
+   "date_end": "2026-09-02T06:11:05.473",
+   "n_exposures": 16,
+   "png_url": "baked/barnard-s-star/D1_fov20/epoch_03.png",
+   "flags_png_url": "baked/barnard-s-star/D1_fov20/epoch_03_flags.png"
+  }
+ ],
+ "ra": 269.446074,
+ "dec": 4.770708,
+ "fov": 20,
+ "size_px": 195,
+ "pixel_scale_arcsec": 6.15,
+ "display_range": [
+  -0.04975949972867966,
+  8.068701171874933
+ ],
+ "n_skipped": 6,
+ "n_failed": 0,
+ "baked": true
+}

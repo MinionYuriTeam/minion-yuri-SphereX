@@ -1,0 +1,48 @@
+{
+ "array": 4,
+ "wavelength_um": [
+  2.403,
+  3.847
+ ],
+ "epochs": [
+  {
+   "date": "2025-05-06",
+   "datetime": "2025-05-06T12:24:35.843",
+   "date_start": "2025-05-06T12:21:22.447",
+   "date_end": "2025-05-06T12:27:49.239",
+   "n_exposures": 4,
+   "png_url": "baked/wise-0855/D4_fov2/epoch_00.png",
+   "flags_png_url": "baked/wise-0855/D4_fov2/epoch_00_flags.png"
+  },
+  {
+   "date": "2025-11-01",
+   "datetime": "2025-11-01T16:43:52.250",
+   "date_start": "2025-10-31T17:21:36.866",
+   "date_end": "2025-11-03T17:01:07.508",
+   "n_exposures": 18,
+   "png_url": "baked/wise-0855/D4_fov2/epoch_01.png",
+   "flags_png_url": null
+  },
+  {
+   "date": "2026-05-03",
+   "datetime": "2026-05-03T17:25:12.416",
+   "date_start": "2026-05-01T15:44:24.553",
+   "date_end": "2026-05-05T14:10:45.896",
+   "n_exposures": 14,
+   "png_url": "baked/wise-0855/D4_fov2/epoch_02.png",
+   "flags_png_url": "baked/wise-0855/D4_fov2/epoch_02_flags.png"
+  }
+ ],
+ "ra": 133.757786,
+ "dec": -7.242023,
+ "fov": 2,
+ "size_px": 21,
+ "pixel_scale_arcsec": 6.15,
+ "display_range": [
+  -0.008313945308327676,
+  0.1425520101189614
+ ],
+ "n_skipped": 0,
+ "n_failed": 0,
+ "baked": true
+}

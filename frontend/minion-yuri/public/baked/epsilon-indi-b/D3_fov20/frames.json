@@ -1,0 +1,84 @@
+{
+ "array": 3,
+ "wavelength_um": [
+  1.63,
+  2.435
+ ],
+ "epochs": [
+  {
+   "date": "2025-04-30",
+   "datetime": "2025-04-30T17:58:20.980",
+   "date_start": "2025-04-29T01:36:26.310",
+   "date_end": "2025-05-07T05:17:22.097",
+   "n_exposures": 16,
+   "png_url": "baked/epsilon-indi-b/D3_fov20/epoch_00.png",
+   "flags_png_url": "baked/epsilon-indi-b/D3_fov20/epoch_00_flags.png"
+  },
+  {
+   "date": "2025-05-20",
+   "datetime": "2025-05-20T03:09:53.438",
+   "date_start": "2025-05-20T03:09:53.438",
+   "date_end": "2025-05-20T03:09:53.438",
+   "n_exposures": 1,
+   "png_url": "baked/epsilon-indi-b/D3_fov20/epoch_01.png",
+   "flags_png_url": "baked/epsilon-indi-b/D3_fov20/epoch_01_flags.png"
+  },
+  {
+   "date": "2025-06-10",
+   "datetime": "2025-06-10T04:32:08.353",
+   "date_start": "2025-06-10T04:29:59.423",
+   "date_end": "2025-06-10T04:34:17.284",
+   "n_exposures": 3,
+   "png_url": "baked/epsilon-indi-b/D3_fov20/epoch_02.png",
+   "flags_png_url": "baked/epsilon-indi-b/D3_fov20/epoch_02_flags.png"
+  },
+  {
+   "date": "2025-09-30",
+   "datetime": "2025-09-30T12:09:14.851",
+   "date_start": "2025-09-28T23:11:25.699",
+   "date_end": "2025-10-06T05:30:38.021",
+   "n_exposures": 17,
+   "png_url": "baked/epsilon-indi-b/D3_fov20/epoch_03.png",
+   "flags_png_url": "baked/epsilon-indi-b/D3_fov20/epoch_03_flags.png"
+  },
+  {
+   "date": "2025-11-03",
+   "datetime": "2025-11-03T06:44:00.182",
+   "date_start": "2025-11-01T10:41:08.692",
+   "date_end": "2025-11-04T12:06:04.613",
+   "n_exposures": 4,
+   "png_url": "baked/epsilon-indi-b/D3_fov20/epoch_04.png",
+   "flags_png_url": "baked/epsilon-indi-b/D3_fov20/epoch_04_flags.png"
+  },
+  {
+   "date": "2026-04-29",
+   "datetime": "2026-04-29T18:44:04.586",
+   "date_start": "2026-04-29T03:54:48.723",
+   "date_end": "2026-05-04T02:49:22.017",
+   "n_exposures": 11,
+   "png_url": "baked/epsilon-indi-b/D3_fov20/epoch_05.png",
+   "flags_png_url": "baked/epsilon-indi-b/D3_fov20/epoch_05_flags.png"
+  },
+  {
+   "date": "2026-09-27",
+   "datetime": "2026-09-27T08:37:46.726",
+   "date_start": "2026-09-26T08:49:50.024",
+   "date_end": "2026-09-28T08:05:41.877",
+   "n_exposures": 17,
+   "png_url": "baked/epsilon-indi-b/D3_fov20/epoch_06.png",
+   "flags_png_url": "baked/epsilon-indi-b/D3_fov20/epoch_06_flags.png"
+  }
+ ],
+ "ra": 331.0984,
+ "dec": -56.801256,
+ "fov": 20,
+ "size_px": 195,
+ "pixel_scale_arcsec": 6.15,
+ "display_range": [
+  -0.02945922315120697,
+  14.72275485992435
+ ],
+ "n_skipped": 27,
+ "n_failed": 0,
+ "baked": true
+}

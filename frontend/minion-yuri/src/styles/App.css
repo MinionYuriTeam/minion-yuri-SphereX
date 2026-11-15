@@ -13,7 +13,7 @@ input {
   font-family: 'IBM Plex Mono', monospace;
 }
 
-.panel { background: #131b2e; border: 1px solid #243049; border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+.panel { background: #131b2e; border: 1px solid #243049; border-radius: 14px; padding: 22px; display: flex; flex-direction: column; gap: 16px; }
 
 /* side by side, stacks on a phone */
 .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; }
@@ -68,12 +68,18 @@ input {
 }
 
 .side-panels {
-  flex: 0 0 320px;   /* fixed width: never grows with long text */
-  max-width: 100%;   /* on a phone it fits the screen */
+  flex: 1 1 320px;   /* 320px next to the player; full width once it wraps underneath */
+  max-width: 100%;
   min-width: 0;
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;   /* under the player: This target and Share sit side by side */
   gap: 18px;
+  align-content: flex-start;
+}
+
+.side-panels > .panel {
+  flex: 1 1 280px;
+  min-width: 0;
 }
 
 /* ===== TITLE = link back to the main tool ===== */
@@ -92,5 +98,208 @@ input {
 }
 
 .intro strong {
+  color: #ff8a4c;
+}
+
+/* ===== LOADING / ERROR box in the player (App.js) ===== */
+.status {
+  aspect-ratio: 1;
+  max-width: 560px;
+  width: 100%;
+  background: #000;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 24px;
+  box-sizing: border-box;
+  text-align: center;
+  color: #c9d1e0;
+}
+
+.status p {
+  margin: 0;
+  max-width: 360px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.status-error strong {
+  color: #ff8a4c;
+}
+
+.status-spinner {
+  width: 36px;
+  height: 36px;
+  margin-bottom: 8px;
+  border: 3px solid #243049;
+  border-top-color: #ff8a4c;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* detector-array buttons (BandPicker.js) reuse the FOV look, with a wavelength line */
+.band-buttons {
+  flex-wrap: wrap;
+}
+
+.band-buttons button {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: auto;
+  min-height: 36px;
+  padding: 4px 10px;
+  line-height: 1.2;
+}
+
+.band-buttons small {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+/* ===== "run your own backend" help (RunBackendHelp.js) ===== */
+.status.run-backend {
+  aspect-ratio: auto;
+  min-height: 360px;
+  align-items: stretch;
+  text-align: left;
+  gap: 10px;
+}
+
+.run-backend p {
+  max-width: none;
+}
+
+.run-backend code {
+  color: #ff8a4c;
+}
+
+.run-steps {
+  margin: 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 14px;
+}
+
+.run-cmd {
+  margin-top: 4px;
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.run-cmd pre {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  padding: 8px 10px;
+  overflow-x: auto;
+  border-radius: 8px;
+  background: #0e1526;
+  border: 1px solid #243049;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #e6eaf2;
+}
+
+.run-cmd button {
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+.run-note {
+  font-size: 13px !important;
+  color: #8c96ab;
+}
+
+.run-actions {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.run-actions a {
+  color: #ff8a4c;
+  font-size: 14px;
+}
+
+/* ===== PHONE (screens up to 600px wide) ===== */
+@media (max-width: 600px) {
+  .app {
+    padding: 16px 12px;
+    gap: 14px;
+  }
+
+  h1 {
+    font-size: 26px;
+  }
+
+  .nav {
+    gap: 14px;
+  }
+
+  .nav a {
+    line-height: 1.4;
+  }
+
+  .intro {
+    font-size: 15px;
+  }
+
+  .panel {
+    padding: 14px;
+  }
+
+  .side-panels {
+    flex: 1 1 100%;
+  }
+
+  .status {
+    padding: 16px;
+  }
+}
+
+/* Credits footer */
+.credits {
+  margin-top: 32px;
+  padding: 16px 0 24px;
+  border-top: 1px solid #ffffff1a;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #8c96ab;
+  text-align: center;
+}
+
+.credits a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.credits a:hover {
+  color: #ff8a4c;
+}
+
+/* "New here? hover any button" line under the intro */
+.intro-hint {
+  margin: -6px 0 0;
+  font-size: 14px;
+  color: #8c96ab;
+}
+
+.intro-hint strong {
+  color: #e6eaf2;
+}
+
+.intro-hint a {
   color: #ff8a4c;
 }

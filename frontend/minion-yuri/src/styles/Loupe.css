@@ -134,10 +134,22 @@
 }
 
 .loupe-swatch {
+  flex: 0 0 14px;
   width: 14px;
   height: 14px;
   border-radius: 3px;
   border: 1px solid #243049;
+}
+
+/* fixed widths so "—", "#000000" and the image size never push each other around */
+.loupe-colour {
+  min-width: 10ch;
+  font-variant-numeric: tabular-nums;
+}
+
+.loupe-dim {
+  min-width: 10ch;
+  font-variant-numeric: tabular-nums;
 }
 
 /* help guide */
@@ -202,4 +214,39 @@
   border: none;
   background: none;
   font-size: 22px;
+}
+
+/* drag a finger over the image without scrolling the page */
+.loupe-stage {
+  touch-action: none;
+}
+
+/* ===== PHONE: smaller loupe so the page isn't endless ===== */
+@media (max-width: 600px) {
+  .loupe-stage {
+    max-width: 260px;
+    width: 100%;
+    margin: 0 auto;
+  }
+}
+
+/* hint under the lens until the user hovers */
+.loupe-hint {
+  margin: 0;
+  height: 18px;        /* fixed, so changing the text never moves anything */
+  line-height: 18px;
+  font-size: 12px;
+  color: #2dd4bf;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* outline of the one pixel the colour readout comes from */
+.loupe-pixel {
+  position: absolute;
+  box-sizing: border-box;
+  border: 1px solid #ff8a4c;
+  box-shadow: 0 0 0 1px #0008;
+  pointer-events: none;
 }
