@@ -31,6 +31,11 @@ from pathlib import Path
 
 from pipeline import get_stacks
 from pipeline.render import save_epoch_pngs
+from pipeline.spectrum import get_spectrum
+from pipeline.rgb import save_rgb_pngs
+
+RGB_ARRAYS = (6, 4, 2)     # red, green, blue
+RGB_FOVS = [10, 5, 2]
 
 FRONTEND = Path(__file__).resolve().parent.parent / "frontend" / "minion-yuri"
 TARGETS_JS = FRONTEND / "src" / "data" / "target.js"
@@ -88,6 +93,23 @@ def bake_one(target, array, fov):
     return {"array": array, "fov": fov, "path": rel(folder / "frames.json"),
             "epochs": len(s.epochs), "complete": s.n_failed == 0}
 
+def bake_rgb(target, fov, arrays=RGB_ARRAYS):
+    """False-colour frames for one target and field of view, same JSON shape as GET /api/rgb."""
+    folder = BAKED / slug(target["name"]) / f"rgb{''.join(map(str, arrays))}_fov{fov:g}"
+    t0 = time.time()
+    frames = save_rgb_pngs(target["ra"], target["dec"], fov, folder, arrays)
+
+    def rel(path):  # path inside the website, e.g. baked/wise-0855/rgb642_fov5/rgb_00.png
+        return path.relative_to(FRONTEND / "public").as_posix()
+
+    body = {"arrays": list(arrays), "ra": target["ra"], "dec": target["dec"], "fov": fov,
+            "epochs": [{"date": date, "png_url": rel(path)} for date, path in frames],
+            "baked": True}
+    (folder / "frames.json").write_text(json.dumps(body, indent=1))
+    print(f"  colour D{'-D'.join(map(str, arrays))} {fov:>2}'  {len(frames)} frames  "
+          f"{time.time() - t0:5.1f}s", flush=True)
+    return {"arrays": list(arrays), "fov": fov, "path": rel(folder / "frames.json"),
+            "epochs": len(frames)}
 
 def main():
     targets = read_targets()
@@ -108,6 +130,19 @@ def main():
             for fov in fovs:
                 combos.append(bake_one(target, array, fov))
         by_name[target["name"]] = {**target, "slug": slug(target["name"]), "baked": combos}
+        
+        try:                                              # new: bake the spectrum too
+            spectrum = get_spectrum(target["ra"], target["dec"])
+            path = BAKED / slug(target["name"]) / "spectrum.json"
+            path.write_text(json.dumps(spectrum))
+            by_name[target["name"]]["spectrum"] = path.relative_to(FRONTEND / "public").as_posix()
+            print(f"  spectrum: {len(spectrum['points'])} points, {spectrum['n_dropped']} dropped")
+        except Exception as exc:
+            print(f"  spectrum failed, frames are still baked: {exc}")
+        try:                                              # new: bake false colour too
+            by_name[target["name"]]["rgb"] = [bake_rgb(target, fov) for fov in RGB_FOVS]
+        except Exception as exc:
+            print(f"  false colour failed, frames are still baked: {exc}")
 
     index = {
         "generated": datetime.now(timezone.utc).isoformat(timespec="seconds"),

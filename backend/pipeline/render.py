@@ -46,3 +46,20 @@ def save_epoch_pngs(stacks, folder):
         flg = flags_png(epoch.flags, folder / f"epoch_{i:02d}_flags.png")
         out.append((img, flg))
     return out
+
+def stretch(image, display_range, kind="linear", a=10.0):
+    """Brightness 0..1. "asinh" lifts faint sources; NaN stays NaN."""
+    lo, hi = display_range
+    x = np.clip((image - lo) / ((hi - lo) or 1.0), 0, 1)
+    if kind == "asinh":
+        x = np.arcsinh(a * x) / np.arcsinh(a)
+    elif kind == "sqrt":
+        x = np.sqrt(x)
+    return x
+
+def rgb_png(red, green, blue, ranges, path, kind="asinh"):
+    """Three images (one per detector array) as the red, green and blue of one PNG."""
+    planes = [np.nan_to_num(stretch(img, rng, kind), nan=1.0)   # saturated = brightest
+              for img, rng in zip((red, green, blue), ranges)]
+    Image.fromarray(np.flipud((np.dstack(planes) * 255).astype(np.uint8))).save(path)
+    return path

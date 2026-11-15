@@ -30,6 +30,7 @@ from pipeline import (BadInput, NotFound, ResolverUnavailable, SearchUnavailable
                       get_stacks, resolve)
 from pipeline.render import save_epoch_pngs
 from pipeline.settings import OUTPUT_ROOT, position_dir
+from pipeline.spectrum import bin_spectrum, get_spectrum
 
 app = FastAPI(title="Minion Yuri SPHEREx API")
 # Any site may call this API, including the public frontend (stealingthemoon.earth)
@@ -122,3 +123,43 @@ def api_frames(
         "n_failed": s.n_failed,
         "elapsed_s": round(time.time() - t0, 1),
     }
+
+
+
+@app.get("/api/spectrum")
+def api_spectrum(
+    ra: float = Query(..., ge=0, lt=360), dec: float = Query(..., ge=-90, le=90),
+    binned: bool = Query(False, description="Median per visit and wavelength bin"),
+    pm_ra: float = Query(0.0, description="Proper motion in RA, mas/yr (from /api/resolve)"),
+    pm_dec: float = Query(0.0, description="Proper motion in Dec, mas/yr"),
+):
+    try:
+        s = get_spectrum(ra, dec, pm_ra, pm_dec)
+    except SearchUnavailable as exc:
+        raise HTTPException(503, str(exc))
+    if binned:
+        s["points"] = bin_spectrum(s["points"])
+    return s
+
+from pipeline.rgb import save_rgb_pngs
+
+@app.get("/api/rgb")
+def api_rgb(
+    request: Request,
+    ra: float = Query(..., ge=0, lt=360), dec: float = Query(..., ge=-90, le=90),
+    fov: float = Query(5, gt=0, le=60),
+    arrays: str = Query("6,4,2", pattern=r"^[1-6],[1-6],[1-6]$",
+                        description="Detector arrays for red, green, blue"),
+):
+    picked = tuple(int(a) for a in arrays.split(","))
+    folder = position_dir(ra, dec) / "png" / f"rgb{''.join(map(str, picked))}_fov{fov:g}"
+    try:
+        frames = save_rgb_pngs(ra, dec, fov, folder, picked)
+    except SearchUnavailable as exc:
+        raise HTTPException(503, str(exc))
+    base = os.environ.get("PUBLIC_BASE_URL", str(request.base_url)).rstrip("/")
+    stamp = int(time.time())
+    return {"arrays": list(picked), "ra": ra, "dec": dec, "fov": fov,
+            "epochs": [{"date": date,
+                        "png_url": f"{base}/files/{path.relative_to(OUTPUT_ROOT).as_posix()}?v={stamp}"}
+                       for date, path in frames]}

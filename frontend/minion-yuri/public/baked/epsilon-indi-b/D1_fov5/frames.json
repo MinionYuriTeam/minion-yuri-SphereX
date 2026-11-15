@@ -15,13 +15,22 @@
    "flags_png_url": "baked/epsilon-indi-b/D1_fov5/epoch_00_flags.png"
   },
   {
-   "date": "2025-10-09",
-   "datetime": "2025-10-09T13:11:28.603",
+   "date": "2025-10-08",
+   "datetime": "2025-10-08T23:52:53.485",
    "date_start": "2025-10-03T17:16:08.713",
-   "date_end": "2025-10-20T02:04:35.829",
-   "n_exposures": 20,
+   "date_end": "2025-10-16T18:06:50.125",
+   "n_exposures": 19,
    "png_url": "baked/epsilon-indi-b/D1_fov5/epoch_01.png",
    "flags_png_url": null
+  },
+  {
+   "date": "2025-10-20",
+   "datetime": "2025-10-20T02:04:35.829",
+   "date_start": "2025-10-20T02:04:35.829",
+   "date_end": "2025-10-20T02:04:35.829",
+   "n_exposures": 1,
+   "png_url": "baked/epsilon-indi-b/D1_fov5/epoch_02.png",
+   "flags_png_url": "baked/epsilon-indi-b/D1_fov5/epoch_02_flags.png"
   },
   {
    "date": "2025-11-11",
@@ -29,17 +38,26 @@
    "date_start": "2025-11-11T03:49:10.066",
    "date_end": "2025-11-12T20:35:51.640",
    "n_exposures": 4,
-   "png_url": "baked/epsilon-indi-b/D1_fov5/epoch_02.png",
-   "flags_png_url": "baked/epsilon-indi-b/D1_fov5/epoch_02_flags.png"
+   "png_url": "baked/epsilon-indi-b/D1_fov5/epoch_03.png",
+   "flags_png_url": "baked/epsilon-indi-b/D1_fov5/epoch_03_flags.png"
   },
   {
-   "date": "2026-04-22",
-   "datetime": "2026-04-22T01:14:47.450",
+   "date": "2026-04-21",
+   "datetime": "2026-04-21T09:41:28.848",
    "date_start": "2026-04-18T20:17:27.423",
-   "date_end": "2026-05-03T17:14:22.275",
-   "n_exposures": 19,
-   "png_url": "baked/epsilon-indi-b/D1_fov5/epoch_03.png",
+   "date_end": "2026-04-27T03:03:48.654",
+   "n_exposures": 18,
+   "png_url": "baked/epsilon-indi-b/D1_fov5/epoch_04.png",
    "flags_png_url": null
+  },
+  {
+   "date": "2026-05-03",
+   "datetime": "2026-05-03T17:14:22.275",
+   "date_start": "2026-05-03T17:14:22.275",
+   "date_end": "2026-05-03T17:14:22.275",
+   "n_exposures": 1,
+   "png_url": "baked/epsilon-indi-b/D1_fov5/epoch_05.png",
+   "flags_png_url": "baked/epsilon-indi-b/D1_fov5/epoch_05_flags.png"
   }
  ],
  "ra": 331.0984,
@@ -48,8 +66,8 @@
  "size_px": 49,
  "pixel_scale_arcsec": 6.15,
  "display_range": [
-  -0.07583817094564438,
-  1.4373424071073948
+  -0.3123399168252945,
+  1.5620176136493835
  ],
  "n_skipped": 2,
  "n_failed": 0,
