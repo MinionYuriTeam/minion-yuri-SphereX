@@ -1,7 +1,7 @@
 <!-- Hero -->
 <h1 align="center">🔭 Minion Yuri – SPHEREx Blink</h1>
 
-<p align="center"><b>🚀 Named after Yuri Gagarin, the first person in space (Vostok 1, 12 April 1961). He looked back at Earth; we're looking out at the infrared sky.</b></p>
+<p align="center"><b>🚀 In honour of Yuri Gagarin, the first human in space (12 April 1961). Поехали! ("Let's go!")</b></p>
 
 <!-- Badges -->
 <div align="center">
