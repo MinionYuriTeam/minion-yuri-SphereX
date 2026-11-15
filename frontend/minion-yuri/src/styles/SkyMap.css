@@ -68,10 +68,52 @@
   font-size: 14px;
   text-align: center;
   pointer-events: none;
+  z-index: 2; /* above the target markers */
 }
 
 .sky-error {
   pointer-events: auto;
+}
+
+/* while a new wavelength loads: dim the old map so the message stands out */
+.sky-canvas {
+  transition: opacity 0.2s, filter 0.2s;
+}
+
+.sky-canvas.is-loading {
+  opacity: 0.35;
+  filter: grayscale(0.5);
+}
+
+.sky-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border: 1px solid #ff8a4c;
+  border-radius: 999px;
+  background: #0b1120e6;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 4px 18px #000a;
+}
+
+.sky-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #243049;
+  border-top-color: #ff8a4c;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+  flex: none;
+}
+
+.sky-label-loading {
+  color: #ff8a4c;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 .sky-marker,
