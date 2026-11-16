@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 🔒 Report a security vulnerability
+    url: https://github.com/MinionYuriTeam/minion-yuri-SphereX/security/advisories/new
+    about: Please report security problems privately, not as an issue.
+  - name: 📖 Read the README first
+    url: https://github.com/MinionYuriTeam/minion-yuri-SphereX#if-something-doesnt-work
+    about: Setup steps and fixes for common problems (slow first loads, backend not found, Safari).

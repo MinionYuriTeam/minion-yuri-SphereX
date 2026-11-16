@@ -1,0 +1,76 @@
+name: 🐛 Bug report
+description: Something on the site or in the backend doesn't work as expected
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! Please check the README's **"If something doesn't work"** table first; slow first loads (15–45 s) are normal.
+        Security problem? Don't file it here; see [SECURITY.md](https://github.com/MinionYuriTeam/minion-yuri-SphereX/blob/main/SECURITY.md).
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where did it happen?
+      options:
+        - Public site (stealingthemoon.earth), built-in target
+        - Public site with my own local backend
+        - Local development (npm start + uvicorn)
+        - Backend / API only
+        - bake.py / epochs.py / deploy scripts
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which part?
+      multiple: true
+      options:
+        - Search / name resolve (F1, F2)
+        - Blink player (F4)
+        - Detector arrays / stacking (F3, F5)
+        - Zoom loupe (F6)
+        - Shareable URL (F7)
+        - Presets / built-in targets (F8)
+        - Difference mode (F9)
+        - False colour / wavelengths (F10)
+        - Gaia track (F11)
+        - Spectrum (F12)
+        - Flags overlay (F13)
+        - GIF export (F14)
+        - Spot the mover game (F15)
+        - Sky map
+        - Other
+  - type: input
+    id: url
+    attributes:
+      label: Link or target
+      description: The page URL (it includes `?ra=&dec=&fov=&array=`) or the target/coordinates you searched.
+      placeholder: https://stealingthemoon.earth/?ra=269.446074&dec=4.770708&fov=10&array=1
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Search "Barnard's Star"
+        2. Click array 6
+        3. Switch to Difference
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected vs. what happened
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error messages, console or backend logs
+      description: Paste any error text. Screenshots are welcome too.
+      render: shell
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and OS
+      description: Note that Safari blocks the public site from reaching a local backend.
+      placeholder: Chrome 131 on macOS 15

@@ -1,0 +1,39 @@
+name: ✨ Feature request
+description: Suggest a new feature or an improvement
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What would you like to do?
+      description: The problem or idea, from the point of view of someone using the site.
+      placeholder: I'd like to compare two detector arrays side by side so I can see…
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: How could it work?
+      description: A sketch of the solution. Mention if it needs a new or changed API endpoint.
+  - type: dropdown
+    id: side
+    attributes:
+      label: Which side does it touch?
+      multiple: true
+      options:
+        - Frontend
+        - Backend / pipeline
+        - API contract
+        - Built-in targets / bake.py
+        - Docs
+  - type: textarea
+    id: science
+    attributes:
+      label: Science context
+      description: Any astronomy background, example targets or references that help.
+  - type: checkboxes
+    id: help
+    attributes:
+      label: Contributing
+      options:
+        - label: I'd like to work on this myself

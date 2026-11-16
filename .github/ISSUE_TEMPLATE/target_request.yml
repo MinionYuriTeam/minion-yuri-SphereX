@@ -1,0 +1,28 @@
+name: 🔭 Built-in target request
+description: Suggest a sky object to build into the public site
+labels: ["target"]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Target name
+      placeholder: Gliese 581
+    validations:
+      required: true
+  - type: input
+    id: position
+    attributes:
+      label: Position (RA, Dec in decimal degrees), if you know it
+      placeholder: 229.861733, -7.722208
+  - type: textarea
+    id: why
+    attributes:
+      label: Why it's interesting in SPHEREx
+      description: Does it move, vary in brightness, or look different at long wavelengths? Which array shows it best?
+    validations:
+      required: true
+  - type: input
+    id: aliases
+    attributes:
+      label: Other names people might search for
+      placeholder: gj 581, hip 74995
