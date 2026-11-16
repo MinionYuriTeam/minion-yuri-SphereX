@@ -206,7 +206,7 @@ function App() {
       ) : (
         <>
         <p className="intro">
-          hello world :)
+          hello world :) bye world :(
           Type any position in the sky, or pick a famous object. We play NASA SPHEREx's infrared snapshots of
           that spot as a loop, so anything that <strong>moves</strong> or <strong>changes</strong> jumps out.
         </p>
