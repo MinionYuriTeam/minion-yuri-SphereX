@@ -459,6 +459,11 @@ on the server.
 
 ## Contribution Guidelines
 
+Full guide: [CONTRIBUTING.md](CONTRIBUTING.md). Please also read the
+[Code of Conduct](CODE_OF_CONDUCT.md), and report security problems privately
+as described in the [Security Policy](SECURITY.md). The project is
+[MIT licensed](LICENSE). In short:
+
 - **Branch per feature.** Branch off `main`, work there, and open a pull request.
   Pull `main` into your branch before asking for a review.
 - **Merge only when it works against the API contract.** Don't break `main`.
